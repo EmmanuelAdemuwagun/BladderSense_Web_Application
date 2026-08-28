@@ -1,46 +1,89 @@
-const BASE = '/.netlify/functions'
+const BASE = "https://bladdersense-582048c5cf7e.herokuapp.com/api";
 
 async function request(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...options.headers },
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
     ...options,
-  })
-  const data = await res.json()
-  if (!res.ok) {
-    throw new Error(data.error || 'Something went wrong. Please try again.')
+  });
+
+  let data;
+
+  try {
+    data = await res.json();
+  } catch {
+    throw new Error("Server returned an invalid response.");
   }
-  return data
+
+  if (!res.ok) {
+    throw new Error(
+      data.error || "Something went wrong. Please try again."
+    );
+  }
+
+  return data;
 }
 
 export const api = {
-  register: (body) =>
-    request('/register', { method: 'POST', body: JSON.stringify(body) }),
+  // ============================
+  // AUTHENTICATION
+  // ============================
 
-  verifyRegistration: (params) =>
-    request(`/verify-registration?email=${encodeURIComponent(params.email)}&token=${params.token}`),
+  register: (body) =>
+    request("/auth/register", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
+  verifyRegistration: (body) =>
+    request("/auth/verify-email", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
 
   requestLoginToken: (body) =>
-    request('/request-login-token', { method: 'POST', body: JSON.stringify(body) }),
+    request("/auth/request-login", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
 
   verifyLoginToken: (body) =>
-    request('/verify-login-token', { method: 'POST', body: JSON.stringify(body) }),
-
-  updateProfile: (body, sessionToken) =>
-    request('/update-profile', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${sessionToken}` },
+    request("/auth/verify-login", {
+      method: "POST",
       body: JSON.stringify(body),
     }),
 
-  saveTracking: (body, sessionToken) =>
-    request('/save-tracking', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${sessionToken}` },
+  logout: () =>
+    request("/auth/logout", {
+      method: "POST",
+    }),
+
+  // ============================
+  // PROFILE
+  // ============================
+
+  getProfile: () =>
+    request("/profile"),
+
+  updateProfile: (body) =>
+    request("/profile", {
+      method: "PUT",
       body: JSON.stringify(body),
     }),
 
-  getTracking: (sessionToken) =>
-    request('/get-tracking', {
-      headers: { Authorization: `Bearer ${sessionToken}` },
+  // ============================
+  // TRACKING
+  // ============================
+
+  saveTracking: (body) =>
+    request("/tracking", {
+      method: "POST",
+      body: JSON.stringify(body),
     }),
-}
+
+  getTracking: () =>
+    request("/tracking"),
+};
