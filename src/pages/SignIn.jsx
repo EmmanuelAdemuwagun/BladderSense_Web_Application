@@ -49,7 +49,7 @@ export default function SignIn() {
         email: email.trim().toLowerCase(),
         token: cleaned,
       })
-      saveSession(data.sessionToken, data.user)
+
       navigate('/dashboard', { replace: true })
     } catch (err) {
       setApiError(err.message)
