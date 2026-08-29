@@ -53,40 +53,29 @@
 // Do not store authentication tokens or session data
 // in localStorage.
 
-const SESSION_KEY = 'gbapp_session'
+const USER_KEY = 'gbapp_user'
 
-/*
- * The backend is now the source of truth for authentication.
- *
- * The browser stores the actual session in the HTTP-only
- * "bladdersense_session" cookie.
- *
- * localStorage is used only to remember basic user information
- * for immediate UI rendering. It is NOT used as an authentication token.
- */
+export function saveSession(_token, user) {
+  if (!user) return
 
-export function saveSession(user) {
-  const session = {
-    user,
-  }
-
-  localStorage.setItem(SESSION_KEY, JSON.stringify(session))
+  localStorage.setItem(USER_KEY, JSON.stringify(user))
 }
 
 export function getSession() {
   try {
-    const raw = localStorage.getItem(SESSION_KEY)
-
+    const raw = localStorage.getItem(USER_KEY)
     if (!raw) return null
 
-    const session = JSON.parse(raw)
+    const user = JSON.parse(raw)
 
-    if (!session || !session.user) {
+    if (!user || !user.id) {
       clearSession()
       return null
     }
 
-    return session
+    return {
+      user,
+    }
   } catch {
     clearSession()
     return null
@@ -94,7 +83,7 @@ export function getSession() {
 }
 
 export function clearSession() {
-  localStorage.removeItem(SESSION_KEY)
+  localStorage.removeItem(USER_KEY)
 }
 
 export function getSessionUser() {
@@ -102,19 +91,24 @@ export function getSessionUser() {
   return session ? session.user : null
 }
 
+/*
+ * Authentication is now handled by the backend HTTP-only cookie.
+ * This function is kept for compatibility with any existing code
+ * that may still call getSessionToken().
+ */
+export function getSessionToken() {
+  return null
+}
+
 export function updateSessionUser(updatedUser) {
   const session = getSession()
 
   if (session) {
-    session.user = {
+    const updatedUserData = {
       ...session.user,
       ...updatedUser,
     }
 
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session))
+    localStorage.setItem(USER_KEY, JSON.stringify(updatedUserData))
   }
-}
-
-export function updateSessionUser() {
-  // User updates are now persisted through the backend.
 }
