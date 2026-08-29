@@ -273,27 +273,39 @@ function ReferenceKey() {
         aria-expanded={open}
       >
         <span>📖 Guide to categories</span>
-        <span className="ref-key__arrow">{open ? '▲' : '▼'}</span>
+        <span className="ref-key__arrow">
+          {open ? '▲' : '▼'}
+        </span>
       </button>
 
       {open && (
         <div className="ref-key__body">
           <div className="ref-key__group">
-            <p className="ref-key__heading">🥤 Evening fluid intake</p>
+            <p className="ref-key__heading">
+              🥤 Evening fluid intake
+            </p>
             <p><strong>Small</strong> = 1 small drink</p>
             <p><strong>Moderate</strong> = 2–3 drinks</p>
-            <p><strong>Large</strong> = several drinks or larger amounts in the evening</p>
+            <p>
+              <strong>Large</strong> = several drinks or larger amounts in the evening
+            </p>
           </div>
 
           <div className="ref-key__group">
-            <p className="ref-key__heading">🚶 Physical activity</p>
+            <p className="ref-key__heading">
+              🚶 Physical activity
+            </p>
             <p><strong>Light</strong> = short walks or light movement</p>
             <p><strong>Moderate</strong> = regular walking or active movement</p>
-            <p><strong>Higher</strong> = longer periods of movement or exercise</p>
+            <p>
+              <strong>Higher</strong> = longer periods of movement or exercise
+            </p>
           </div>
 
           <div className="ref-key__group">
-            <p className="ref-key__heading">😴 Sleep quality</p>
+            <p className="ref-key__heading">
+              😴 Sleep quality
+            </p>
             <p><strong>Poor</strong> = very disrupted sleep</p>
             <p><strong>Fair</strong> = some disruption but manageable</p>
             <p><strong>Good</strong> = mostly restful sleep</p>
@@ -304,15 +316,27 @@ function ReferenceKey() {
   )
 }
 
-function OptionGroup({ fieldId, options, value, onChange, disabled }) {
+function OptionGroup({
+  fieldId,
+  options,
+  value,
+  onChange,
+  disabled,
+}) {
   return (
     <div className="option-group" role="group">
       {options.map((opt) => (
         <button
           key={opt}
           type="button"
-          className={`option-btn${value === opt ? ' option-btn--selected' : ''}`}
-          onClick={() => !disabled && onChange(fieldId, opt)}
+          className={`option-btn${
+            value === opt ? ' option-btn--selected' : ''
+          }`}
+          onClick={() => {
+            if (!disabled) {
+              onChange(fieldId, opt)
+            }
+          }}
           aria-pressed={value === opt}
           disabled={disabled}
         >
@@ -326,7 +350,6 @@ function OptionGroup({ fieldId, options, value, onChange, disabled }) {
 export default function DailyTracking() {
   const navigate = useNavigate()
 
-  const [user, setUser] = useState(null)
   const [values, setValues] = useState({})
   const [notes, setNotes] = useState('')
   const [loading, setLoading] = useState(false)
@@ -339,14 +362,8 @@ export default function DailyTracking() {
   useEffect(() => {
     let mounted = true
 
-    async function loadData() {
+    async function loadTracking() {
       try {
-        const profileData = await api.getProfile()
-
-        if (!mounted) return
-
-        setUser(profileData.user || profileData)
-
         const trackingData = await api.getTracking()
 
         if (!mounted) return
@@ -371,39 +388,35 @@ export default function DailyTracking() {
       }
     }
 
-    loadData()
+    loadTracking()
 
     return () => {
       mounted = false
     }
   }, [navigate])
 
-  if (fetchLoading) {
-    return (
-      <main className="page">
-        <div className="spinner" />
-        <p className="loading-text">Loading…</p>
-      </main>
-    )
-  }
-
-  if (!user) return null
-
   function handleChange(fieldId, val) {
-    setValues((v) => ({ ...v, [fieldId]: val }))
+    setValues((current) => ({
+      ...current,
+      [fieldId]: val,
+    }))
+
     setSuccess(false)
+    setError('')
   }
 
   async function handleSubmit(e) {
     e.preventDefault()
+
     setError('')
+    setSuccess(false)
     setLoading(true)
 
     try {
       await api.saveTracking({
         date: TODAY,
         values,
-        notes,
+        notes: notes.trim(),
       })
 
       setSuccess(true)
@@ -430,36 +443,62 @@ export default function DailyTracking() {
 
   const isReadOnly = alreadyTracked && !editing
 
+  if (fetchLoading) {
+    return (
+      <main className="page">
+        <div className="spinner" />
+        <p className="loading-text">Loading…</p>
+      </main>
+    )
+  }
+
   return (
     <>
-      <Header title="Daily Tracking" backTo="/dashboard" />
+      <Header
+        title="Daily Tracking"
+        backTo="/dashboard"
+      />
 
       <main className="page">
-        <p className="text-muted mb-md">{todayFormatted}</p>
+        <p className="text-muted mb-md">
+          {todayFormatted}
+        </p>
 
         {success && (
-          <div className="alert alert--success" role="alert">
+          <div
+            className="alert alert--success"
+            role="alert"
+          >
             Today's record saved. Well done!
           </div>
         )}
 
         {error && (
-          <div className="alert alert--error" role="alert">
+          <div
+            className="alert alert--error"
+            role="alert"
+          >
             {error}
           </div>
         )}
 
         {alreadyTracked && !editing && (
           <div className="alert alert--info mb-md">
-            ✅ You have already recorded today. <br />
+            ✅ You have already recorded today.
+            <br />
 
             <button
+              type="button"
               className="btn btn--ghost mt-sm"
               style={{
                 display: 'inline',
                 padding: 0,
               }}
-              onClick={() => setEditing(true)}
+              onClick={() => {
+                setEditing(true)
+                setSuccess(false)
+                setError('')
+              }}
             >
               Tap here to update today's entry
             </button>
@@ -496,7 +535,7 @@ export default function DailyTracking() {
                 options={field.options}
                 value={values[field.id] || ''}
                 onChange={handleChange}
-                disabled={isReadOnly}
+                disabled={isReadOnly || loading}
               />
             </div>
           ))}
@@ -518,7 +557,11 @@ export default function DailyTracking() {
               className="form-input"
               rows={4}
               value={notes}
-              onChange={(e) => setNotes(e.target.value)}
+              onChange={(e) => {
+                setNotes(e.target.value)
+                setSuccess(false)
+                setError('')
+              }}
               placeholder="e.g. Reduced fluids after 7pm. Went for a short walk."
               style={{
                 minHeight: 100,
@@ -547,7 +590,10 @@ export default function DailyTracking() {
             <button
               type="button"
               className="btn btn--secondary mt-md"
-              onClick={() => setEditing(false)}
+              onClick={() => {
+                setEditing(false)
+                setError('')
+              }}
             >
               Cancel
             </button>
@@ -566,4 +612,6 @@ export default function DailyTracking() {
     </>
   )
 }
+
+
 
