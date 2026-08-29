@@ -138,25 +138,28 @@ export default function Profile() {
   useEffect(() => {
     let mounted = true
 
-    api.getProfile()
-      .then((data) => {
+    async function loadProfile() {
+      try {
+        const data = await api.getProfile()
+
         if (!mounted) return
 
         const profile = data.user || data
 
         setUser(profile)
         setPreferredName(profile.preferredName || '')
-      })
-      .catch(() => {
+      } catch {
         if (mounted) {
           navigate('/', { replace: true })
         }
-      })
-      .finally(() => {
+      } finally {
         if (mounted) {
           setLoading(false)
         }
-      })
+      }
+    }
+
+    loadProfile()
 
     return () => {
       mounted = false
@@ -331,4 +334,6 @@ export default function Profile() {
     </>
   )
 }
+
+
 
