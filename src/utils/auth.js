@@ -53,29 +53,66 @@
 // Do not store authentication tokens or session data
 // in localStorage.
 
-export function saveSession() {
-  // Kept temporarily for compatibility with older imports.
-  // Authentication is handled by the backend.
+const SESSION_KEY = 'gbapp_session'
+
+/*
+ * The backend is now the source of truth for authentication.
+ *
+ * The browser stores the actual session in the HTTP-only
+ * "bladdersense_session" cookie.
+ *
+ * localStorage is used only to remember basic user information
+ * for immediate UI rendering. It is NOT used as an authentication token.
+ */
+
+export function saveSession(user) {
+  const session = {
+    user,
+  }
+
+  localStorage.setItem(SESSION_KEY, JSON.stringify(session))
 }
 
 export function getSession() {
-  // Session state is managed by the backend.
-  // The browser automatically sends the HTTP-only cookie.
-  return null
+  try {
+    const raw = localStorage.getItem(SESSION_KEY)
+
+    if (!raw) return null
+
+    const session = JSON.parse(raw)
+
+    if (!session || !session.user) {
+      clearSession()
+      return null
+    }
+
+    return session
+  } catch {
+    clearSession()
+    return null
+  }
 }
 
 export function clearSession() {
-  // Session clearing is handled by the backend /api/auth/logout endpoint.
+  localStorage.removeItem(SESSION_KEY)
 }
 
 export function getSessionUser() {
-  // User information should now be retrieved from the backend.
-  return null
+  const session = getSession()
+  return session ? session.user : null
 }
 
-export function getSessionToken() {
-  // No session token is stored in the frontend anymore.
-  return null
+export function updateSessionUser(updatedUser) {
+  const session = getSession()
+
+  if (session) {
+    session.user = {
+      ...session.user,
+      ...updatedUser,
+    }
+
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session))
+  }
 }
 
 export function updateSessionUser() {
