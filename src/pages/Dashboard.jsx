@@ -120,6 +120,7 @@
 //   )
 // }
 
+
 import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { api } from '../utils/api'
@@ -141,7 +142,7 @@ export default function Dashboard() {
         if (mounted) {
           setUser(data.user || data)
         }
-      } catch (error) {
+      } catch {
         if (mounted) {
           navigate('/signin', { replace: true })
         }
@@ -330,3 +331,4 @@ export default function Dashboard() {
     </>
   )
 }
+
