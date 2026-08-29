@@ -231,13 +231,10 @@ export default function SignIn() {
       })
 
       /*
-       * The backend now creates the authenticated session
-       * using an HTTP-only cookie.
-       *
-       * We only keep the returned user information locally
-       * for displaying the user's name/profile information.
+       * The backend now authenticates using an HTTP-only cookie.
+       * We only keep the user information locally for UI purposes.
        */
-      saveSession(data.user)
+      saveSession(null, data.user)
 
       navigate('/dashboard', { replace: true })
     } catch (err) {
@@ -253,6 +250,7 @@ export default function SignIn() {
 
       <main className="page">
         <div className="card mt-md">
+
           {step === 1 && (
             <>
               <h2 className="mb-md">Enter Your Email</h2>
@@ -281,10 +279,7 @@ export default function SignIn() {
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value)
-
-                      if (emailError) {
-                        setEmailError('')
-                      }
+                      if (emailError) setEmailError('')
                     }}
                     autoComplete="email"
                     inputMode="email"
@@ -303,7 +298,6 @@ export default function SignIn() {
 
               <p className="text-muted text-center mt-md">
                 Not registered yet?{' '}
-
                 <button
                   className="btn btn--ghost"
                   onClick={() => navigate('/register')}
@@ -342,10 +336,7 @@ export default function SignIn() {
                     value={token}
                     onChange={(e) => {
                       setToken(e.target.value.toUpperCase())
-
-                      if (tokenError) {
-                        setTokenError('')
-                      }
+                      if (tokenError) setTokenError('')
                     }}
                     maxLength={6}
                     autoComplete="one-time-code"
@@ -373,7 +364,6 @@ export default function SignIn() {
 
               <p className="text-muted text-center">
                 Did not receive the email?{' '}
-
                 <button
                   className="btn btn--ghost"
                   onClick={() => {
@@ -387,11 +377,9 @@ export default function SignIn() {
               </p>
             </>
           )}
+
         </div>
       </main>
     </>
   )
 }
-}
-```
-
