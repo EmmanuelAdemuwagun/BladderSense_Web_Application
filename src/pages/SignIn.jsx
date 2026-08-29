@@ -162,12 +162,12 @@
 //   )
 // }
 
-```jsx
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import FormField from '../components/FormField'
 import { api } from '../utils/api'
+import { saveSession } from '../utils/auth'
 
 export default function SignIn() {
   const navigate = useNavigate()
@@ -225,13 +225,20 @@ export default function SignIn() {
     setLoading(true)
 
     try {
-      await api.verifyLoginToken({
+      const data = await api.verifyLoginToken({
         email: email.trim().toLowerCase(),
         token: cleaned,
       })
 
-      // The backend creates the authenticated session and
-      // sets the HTTP-only session cookie.
+      /*
+       * The backend now creates the authenticated session
+       * using an HTTP-only cookie.
+       *
+       * We only keep the returned user information locally
+       * for displaying the user's name/profile information.
+       */
+      saveSession(data.user)
+
       navigate('/dashboard', { replace: true })
     } catch (err) {
       setApiError(err.message)
@@ -274,7 +281,10 @@ export default function SignIn() {
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value)
-                      if (emailError) setEmailError('')
+
+                      if (emailError) {
+                        setEmailError('')
+                      }
                     }}
                     autoComplete="email"
                     inputMode="email"
@@ -293,6 +303,7 @@ export default function SignIn() {
 
               <p className="text-muted text-center mt-md">
                 Not registered yet?{' '}
+
                 <button
                   className="btn btn--ghost"
                   onClick={() => navigate('/register')}
@@ -331,7 +342,10 @@ export default function SignIn() {
                     value={token}
                     onChange={(e) => {
                       setToken(e.target.value.toUpperCase())
-                      if (tokenError) setTokenError('')
+
+                      if (tokenError) {
+                        setTokenError('')
+                      }
                     }}
                     maxLength={6}
                     autoComplete="one-time-code"
@@ -359,6 +373,7 @@ export default function SignIn() {
 
               <p className="text-muted text-center">
                 Did not receive the email?{' '}
+
                 <button
                   className="btn btn--ghost"
                   onClick={() => {
@@ -376,6 +391,7 @@ export default function SignIn() {
       </main>
     </>
   )
+}
 }
 ```
 
