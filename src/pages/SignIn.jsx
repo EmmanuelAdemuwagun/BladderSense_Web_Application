@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import FormField from '../components/FormField'
 import { api } from '../utils/api'
-import { saveSession } from '../utils/auth'
 
 export default function SignIn() {
   const navigate = useNavigate()
