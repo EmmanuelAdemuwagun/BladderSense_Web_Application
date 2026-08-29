@@ -1,15 +1,35 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { getSessionUser, clearSession } from '../utils/auth'
+import { api } from '../utils/api'
 import { guideSections } from '../content/guide'
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const user = getSessionUser()
+
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!user) navigate('/', { replace: true })
-  }, [user, navigate])
+    api.getProfile()
+      .then((data) => {
+        setUser(data.user || data)
+      })
+      .catch(() => {
+        navigate('/signin', { replace: true })
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [navigate])
+
+  if (loading) {
+    return (
+      <main className="page">
+        <div className="spinner" />
+        <p className="loading-text">Loading…</p>
+      </main>
+    )
+  }
 
   if (!user) return null
 
