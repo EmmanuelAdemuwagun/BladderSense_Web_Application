@@ -1,9 +1,7 @@
 import { useNavigate } from 'react-router-dom'
-import { getSessionUser } from '../utils/auth'
 
 export default function Header({ title, showBack = true, backTo, onBack, showProfile = true }) {
   const navigate = useNavigate()
-  const user = getSessionUser()
 
   function handleBack() {
     if (onBack) return onBack()
@@ -13,7 +11,6 @@ export default function Header({ title, showBack = true, backTo, onBack, showPro
 
   return (
     <header className="header">
-      {/* Left: back button or home */}
       {showBack ? (
         <button className="header__back" onClick={handleBack} aria-label="Go back">
           ← Back
@@ -26,8 +23,7 @@ export default function Header({ title, showBack = true, backTo, onBack, showPro
 
       <h1 className="header__title">{title}</h1>
 
-      {/* Right: profile button if logged in */}
-      {showProfile && user && (
+      {showProfile && (
         <button
           className="header__back"
           onClick={() => navigate('/profile')}
