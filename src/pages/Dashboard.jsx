@@ -35,10 +35,15 @@ export default function Dashboard() {
 
   const displayName = user.preferredName || user.firstName
 
-  function handleLogout() {
-    clearSession()
+async function handleLogout() {
+  try {
+    await api.logout()
+  } catch (error) {
+    console.error('Logout error:', error)
+  } finally {
     navigate('/', { replace: true })
   }
+}
 
   return (
     <>
