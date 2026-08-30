@@ -78,21 +78,19 @@ export const api = {
   // TRACKING
   // ============================
 
-  saveTracking: (body) =>
-    request("/tracking", {
-      method: "POST",
-      body: JSON.stringify(body),
-    }),
+getTracking: () =>
+  request("/tracking"),
 
-  updateTracking(id, data) {
-  return request(`/tracking/${id}`, {
-    method: 'PUT',
+saveTracking: (data) =>
+  request("/tracking", {
+    method: "POST",
     body: JSON.stringify(data),
-  })
-}
+  }),
 
-  getTracking: () =>
-    request("/tracking"),
+updateTracking: (id, data) =>
+  request(`/tracking/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  }),
 };
-
 
