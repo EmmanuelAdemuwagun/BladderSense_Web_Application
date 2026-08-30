@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
@@ -47,7 +48,10 @@ function getLast7Days() {
   for (let i = 6; i >= 0; i--) {
     const d = new Date()
     d.setDate(d.getDate() - i)
-    days.push(d.toISOString().split('T')[0])
+
+    days.push(
+      d.toISOString().split('T')[0]
+    )
   }
 
   return days
@@ -71,7 +75,6 @@ function getDotColor(value, field) {
 
   const max = field.options.length - 1
 
-  // Prevent division by zero if a field ever has only one option.
   if (max === 0) {
     return '#1a7a3c'
   }
@@ -79,14 +82,24 @@ function getDotColor(value, field) {
   const ratio = idx / max
 
   if (field.lowerIsBetter) {
-    if (ratio <= 0.25) return '#1a7a3c'
-    if (ratio <= 0.5) return '#d4ac0d'
+    if (ratio <= 0.25) {
+      return '#1a7a3c'
+    }
+
+    if (ratio <= 0.5) {
+      return '#d4ac0d'
+    }
 
     return '#922b21'
   }
 
-  if (ratio >= 0.75) return '#1a7a3c'
-  if (ratio >= 0.5) return '#d4ac0d'
+  if (ratio >= 0.75) {
+    return '#1a7a3c'
+  }
+
+  if (ratio >= 0.5) {
+    return '#d4ac0d'
+  }
 
   return '#922b21'
 }
@@ -105,13 +118,24 @@ export default function Progress() {
       try {
         const data = await api.getTracking()
 
-        if (!mounted) return
+        if (!mounted) {
+          return
+        }
 
-        setEntries(data.entries || [])
+        setEntries(
+          Array.isArray(data.entries)
+            ? data.entries
+            : []
+        )
       } catch (err) {
-        if (!mounted) return
+        if (!mounted) {
+          return
+        }
 
-        setError(err.message || 'Unable to load your progress.')
+        setError(
+          err.message ||
+          'Unable to load your progress.'
+        )
       } finally {
         if (mounted) {
           setLoading(false)
@@ -128,10 +152,30 @@ export default function Progress() {
 
   const last7 = getLast7Days()
 
+  /*
+   * The backend returns:
+   *
+   * {
+   *   id,
+   *   entryDate,
+   *   nightTimeUrination,
+   *   eveningFluids,
+   *   activityLevel,
+   *   stressLevel,
+   *   sleepQuality,
+   *   notes,
+   *   updatedAt
+   * }
+   *
+   * Therefore we index entries by entryDate.
+   */
+
   const entryMap = {}
 
   entries.forEach((entry) => {
-    entryMap[entry.date] = entry
+    if (entry.entryDate) {
+      entryMap[entry.entryDate] = entry
+    }
   })
 
   const trackedCount = last7.filter(
@@ -149,6 +193,7 @@ export default function Progress() {
         {loading ? (
           <>
             <div className="spinner" />
+
             <p className="loading-text">
               Loading your progress…
             </p>
@@ -165,7 +210,11 @@ export default function Progress() {
                 <button
                   type="button"
                   className="btn btn--ghost mt-sm"
-                  onClick={() => navigate('/signin', { replace: true })}
+                  onClick={() =>
+                    navigate('/signin', {
+                      replace: true,
+                    })
+                  }
                 >
                   Sign In Again
                 </button>
@@ -202,9 +251,10 @@ export default function Progress() {
             </div>
 
             {trackedCount === 0 && (
-              <div className="alert alert--info">
+              <div className="alert alert--info mb-md">
                 No entries yet for the last 7 days.
-                Start tracking today to see your progress here.
+                Start tracking today to see your
+                progress here.
               </div>
             )}
 
@@ -223,7 +273,9 @@ export default function Progress() {
                   }}
                 >
                   <span
-                    style={{ fontSize: 28 }}
+                    style={{
+                      fontSize: 28,
+                    }}
                     aria-hidden="true"
                   >
                     {field.icon}
@@ -232,8 +284,10 @@ export default function Progress() {
                   <span
                     style={{
                       fontWeight: 700,
-                      fontSize: 'var(--font-size-base)',
-                      color: 'var(--color-primary)',
+                      fontSize:
+                        'var(--font-size-base)',
+                      color:
+                        'var(--color-primary)',
                     }}
                   >
                     {field.label}
@@ -251,10 +305,19 @@ export default function Progress() {
                 >
                   {last7.map((date) => {
                     const entry = entryMap[date]
-                    const value = entry?.values?.[field.id]
+
+                    /*
+                     * The backend fields are directly
+                     * on the entry object.
+                     */
+                    const value =
+                      entry?.[field.id]
 
                     const color = value
-                      ? getDotColor(value, field)
+                      ? getDotColor(
+                          value,
+                          field
+                        )
                       : '#e8edf2'
 
                     return (
@@ -269,19 +332,27 @@ export default function Progress() {
                         <div
                           title={
                             value
-                              ? `${shortDate(date)}: ${value}`
-                              : `${shortDate(date)}: Not recorded`
+                              ? `${shortDate(
+                                  date
+                                )}: ${value}`
+                              : `${shortDate(
+                                  date
+                                )}: Not recorded`
                           }
                           style={{
                             width: 36,
                             height: 36,
                             borderRadius: '50%',
                             background: color,
-                            margin: '0 auto 4px',
+                            margin:
+                              '0 auto 4px',
                             display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            border: '2px solid rgba(0,0,0,0.08)',
+                            alignItems:
+                              'center',
+                            justifyContent:
+                              'center',
+                            border:
+                              '2px solid rgba(0,0,0,0.08)',
                           }}
                         >
                           {value && (
@@ -293,9 +364,12 @@ export default function Progress() {
                                 lineHeight: 1,
                               }}
                             >
-                              {value.length <= 2
+                              {String(value)
+                                .length <= 2
                                 ? value
-                                : value.charAt(0)}
+                                : String(
+                                    value
+                                  ).charAt(0)}
                             </span>
                           )}
                         </div>
@@ -303,11 +377,14 @@ export default function Progress() {
                         <span
                           style={{
                             fontSize: 11,
-                            color: 'var(--color-text-muted)',
+                            color:
+                              'var(--color-text-muted)',
                             display: 'block',
                           }}
                         >
-                          {shortDate(date).split(' ')[0]}
+                          {shortDate(
+                            date
+                          ).split(' ')[0]}
                         </span>
                       </div>
                     )
@@ -320,7 +397,8 @@ export default function Progress() {
                     display: 'flex',
                     gap: 16,
                     fontSize: 13,
-                    color: 'var(--color-text-muted)',
+                    color:
+                      'var(--color-text-muted)',
                     flexWrap: 'wrap',
                   }}
                 >
@@ -365,13 +443,16 @@ export default function Progress() {
                       style={{
                         color: '#e8edf2',
                         fontWeight: 700,
-                        border: '1px solid #ccc',
+                        border:
+                          '1px solid #ccc',
                         borderRadius: '50%',
-                        display: 'inline-block',
+                        display:
+                          'inline-block',
                         width: 12,
                         height: 12,
                       }}
                     />
+
                     {' '}Not recorded
                   </span>
                 </div>
@@ -380,7 +461,8 @@ export default function Progress() {
 
             {/* Notes from this week */}
             {last7.some(
-              (date) => entryMap[date]?.notes
+              (date) =>
+                entryMap[date]?.notes
             ) && (
               <div className="card card--compact mb-md">
                 <h3 className="mb-md">
@@ -389,7 +471,8 @@ export default function Progress() {
 
                 {last7
                   .filter(
-                    (date) => entryMap[date]?.notes
+                    (date) =>
+                      entryMap[date]?.notes
                   )
                   .map((date) => (
                     <div
@@ -404,7 +487,8 @@ export default function Progress() {
                       <p
                         style={{
                           fontWeight: 700,
-                          color: 'var(--color-primary)',
+                          color:
+                            'var(--color-primary)',
                           marginBottom: 4,
                         }}
                       >
@@ -414,8 +498,10 @@ export default function Progress() {
                       <p
                         style={{
                           margin: 0,
-                          color: 'var(--color-text-muted)',
-                          fontSize: 'var(--font-size-sm)',
+                          color:
+                            'var(--color-text-muted)',
+                          fontSize:
+                            'var(--font-size-sm)',
                         }}
                       >
                         {entryMap[date].notes}
@@ -427,8 +513,9 @@ export default function Progress() {
 
             {/* Reminder */}
             <div className="guide-tip">
-              💡 Patterns matter more than single days.
-              Keep recording daily for the best picture.
+              💡 Patterns matter more than single
+              days. Keep recording daily for the
+              best picture.
             </div>
           </>
         )}
@@ -436,6 +523,3 @@ export default function Progress() {
     </>
   )
 }
-
-
-
