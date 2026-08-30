@@ -44,43 +44,42 @@ export default function SignIn() {
     }
   }
 
-  async function handleTokenSubmit(e) {
-    e.preventDefault()
-    setApiError('')
+async function handleTokenSubmit(e) {
+  e.preventDefault()
+  setApiError('')
+  setTokenError('')
 
-    const cleaned = token.trim().toUpperCase()
+  const cleaned = token.trim().toUpperCase()
 
-    if (!cleaned) {
-      return setTokenError('Please enter the 6-letter sign-in characters.')
-    }
-
-    if (!signInWord || signInWord.length !== 6) {
-  setError('The sign-in code must be exactly 6 characters.')
-  return
-}
-
-    setTokenError('')
-    setLoading(true)
-
-    try {
-      const data = await api.verifyLoginToken({
-        email: email.trim().toLowerCase(),
-        token: cleaned,
-      })
-
-      /*
-       * The backend now authenticates using an HTTP-only cookie.
-       * We only keep the user information locally for UI purposes.
-       */
-      saveSession(null, data.user)
-
-      navigate('/dashboard', { replace: true })
-    } catch (err) {
-      setApiError(err.message)
-    } finally {
-      setLoading(false)
-    }
+  if (!cleaned) {
+    return setTokenError('Please enter the 6-letter sign-in characters.')
   }
+
+  if (cleaned.length !== 6) {
+    return setTokenError('The sign-in code must be exactly 6 characters.')
+  }
+
+  setLoading(true)
+
+  try {
+    const data = await api.verifyLoginToken({
+      email: email.trim().toLowerCase(),
+      token: cleaned,
+    })
+
+    /*
+     * The backend now authenticates using an HTTP-only cookie.
+     * We only keep the user information locally for UI purposes.
+     */
+    saveSession(null, data.user)
+
+    navigate('/dashboard', { replace: true })
+  } catch (err) {
+    setApiError(err.message)
+  } finally {
+    setLoading(false)
+  }
+}
 
   return (
     <>
