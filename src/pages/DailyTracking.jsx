@@ -1,4 +1,4 @@
-```jsx
+
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import Header from '../components/Header'
@@ -559,4 +559,4 @@ export default function DailyTracking() {
     </>
   )
 }
-```
+
