@@ -84,6 +84,13 @@ export const api = {
       body: JSON.stringify(body),
     }),
 
+  updateTracking(id, data) {
+  return request(`/tracking/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  })
+}
+
   getTracking: () =>
     request("/tracking"),
 };
