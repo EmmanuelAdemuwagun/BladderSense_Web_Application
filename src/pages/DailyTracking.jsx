@@ -47,11 +47,10 @@ function ReferenceKey() {
       <button
         type="button"
         className="ref-key__toggle"
-        onClick={() => setOpen((current) => !current)}
+        onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
       >
         <span>📖 Guide to categories</span>
-
         <span className="ref-key__arrow">
           {open ? '▲' : '▼'}
         </span>
@@ -63,12 +62,10 @@ function ReferenceKey() {
             <p className="ref-key__heading">
               🥤 Evening fluid intake
             </p>
-
             <p><strong>Small</strong> = 1 small drink</p>
             <p><strong>Moderate</strong> = 2–3 drinks</p>
             <p>
-              <strong>Large</strong> = several drinks or larger amounts
-              in the evening
+              <strong>Large</strong> = several drinks or larger amounts in the evening
             </p>
           </div>
 
@@ -76,15 +73,8 @@ function ReferenceKey() {
             <p className="ref-key__heading">
               🚶 Physical activity
             </p>
-
-            <p>
-              <strong>Light</strong> = short walks or light movement
-            </p>
-
-            <p>
-              <strong>Moderate</strong> = regular walking or active movement
-            </p>
-
+            <p><strong>Light</strong> = short walks or light movement</p>
+            <p><strong>Moderate</strong> = regular walking or active movement</p>
             <p>
               <strong>High</strong> = longer periods of movement or exercise
             </p>
@@ -94,18 +84,9 @@ function ReferenceKey() {
             <p className="ref-key__heading">
               😴 Sleep quality
             </p>
-
-            <p>
-              <strong>Poor</strong> = very disrupted sleep
-            </p>
-
-            <p>
-              <strong>Fair</strong> = some disruption but manageable
-            </p>
-
-            <p>
-              <strong>Good</strong> = mostly restful sleep
-            </p>
+            <p><strong>Poor</strong> = very disrupted sleep</p>
+            <p><strong>Fair</strong> = some disruption but manageable</p>
+            <p><strong>Good</strong> = mostly restful sleep</p>
           </div>
         </div>
       )}
@@ -121,27 +102,23 @@ function OptionGroup({
   disabled,
 }) {
   return (
-    <div
-      className="option-group"
-      role="group"
-      aria-label={fieldId}
-    >
-      {options.map((option) => (
+    <div className="option-group" role="group">
+      {options.map((opt) => (
         <button
-          key={option}
+          key={opt}
           type="button"
           className={`option-btn${
-            value === option ? ' option-btn--selected' : ''
+            value === opt ? ' option-btn--selected' : ''
           }`}
           onClick={() => {
             if (!disabled) {
-              onChange(fieldId, option)
+              onChange(fieldId, opt)
             }
           }}
-          aria-pressed={value === option}
+          aria-pressed={value === opt}
           disabled={disabled}
         >
-          {option}
+          {opt}
         </button>
       ))}
     </div>
@@ -153,15 +130,16 @@ export default function DailyTracking() {
 
   const [values, setValues] = useState({})
   const [notes, setNotes] = useState('')
+  const [entryId, setEntryId] = useState(null)
 
   const [loading, setLoading] = useState(false)
   const [fetchLoading, setFetchLoading] = useState(true)
 
   const [success, setSuccess] = useState(false)
+  const [error, setError] = useState('')
+
   const [alreadyTracked, setAlreadyTracked] = useState(false)
   const [editing, setEditing] = useState(false)
-
-  const [error, setError] = useState('')
 
   useEffect(() => {
     let mounted = true
@@ -172,43 +150,30 @@ export default function DailyTracking() {
 
         if (!mounted) return
 
-        const todayEntry = (trackingData.entries || []).find(
-          (entry) => {
-            const entryDate = String(entry.entryDate).split('T')[0]
-            return entryDate === TODAY
-          }
+        const todayEntry = trackingData.entries?.find(
+          (entry) => entry.entryDate === TODAY
         )
 
         if (todayEntry) {
+          setEntryId(todayEntry.id)
+
           setValues({
-            nightTimeUrination:
-              todayEntry.nightTimeUrination || '',
-
-            eveningFluids:
-              todayEntry.eveningFluids || '',
-
-            activityLevel:
-              todayEntry.activityLevel || '',
-
-            stressLevel:
-              todayEntry.stressLevel || '',
-
-            sleepQuality:
-              todayEntry.sleepQuality || '',
+            nightTimeUrination: todayEntry.nightTimeUrination || '',
+            eveningFluids: todayEntry.eveningFluids || '',
+            activityLevel: todayEntry.activityLevel || '',
+            stressLevel: todayEntry.stressLevel || '',
+            sleepQuality: todayEntry.sleepQuality || '',
           })
 
           setNotes(todayEntry.notes || '')
           setAlreadyTracked(true)
         }
       } catch (err) {
-        if (!mounted) return
-
-        /*
-         * If the session has expired, send the user back
-         * to the sign-in page rather than silently sending
-         * them to the landing page.
-         */
-        navigate('/signin', { replace: true })
+        if (mounted) {
+          setError(
+            err.message || 'Unable to load your tracking data.'
+          )
+        }
       } finally {
         if (mounted) {
           setFetchLoading(false)
@@ -221,40 +186,16 @@ export default function DailyTracking() {
     return () => {
       mounted = false
     }
-  }, [navigate])
+  }, [])
 
-  function handleChange(fieldId, value) {
+  function handleChange(fieldId, val) {
     setValues((current) => ({
       ...current,
-      [fieldId]: value,
+      [fieldId]: val,
     }))
 
     setSuccess(false)
     setError('')
-  }
-
-  function validateBeforeSubmit() {
-    const requiredFields = [
-      'nightTimeUrination',
-      'eveningFluids',
-      'activityLevel',
-      'stressLevel',
-      'sleepQuality',
-    ]
-
-    const missingField = requiredFields.find(
-      (field) => !values[field]
-    )
-
-    if (missingField) {
-      const field = FIELDS.find(
-        (item) => item.id === missingField
-      )
-
-      return `Please select an option for "${field.label}".`
-    }
-
-    return ''
   }
 
   async function handleSubmit(e) {
@@ -263,95 +204,43 @@ export default function DailyTracking() {
     setError('')
     setSuccess(false)
 
-    const validationError = validateBeforeSubmit()
+    const missingField = FIELDS.find(
+      (field) => !values[field.id]
+    )
 
-    if (validationError) {
-      setError(validationError)
+    if (missingField) {
+      setError(
+        `Please select an option for "${missingField.label}".`
+      )
       return
     }
 
     setLoading(true)
 
+    const payload = {
+      entryDate: TODAY,
+      nightTimeUrination: values.nightTimeUrination,
+      eveningFluids: values.eveningFluids,
+      activityLevel: values.activityLevel,
+      stressLevel: values.stressLevel,
+      sleepQuality: values.sleepQuality,
+      notes: notes.trim(),
+    }
+
     try {
-      /*
-       * IMPORTANT:
-       * The backend expects these fields at the top level.
-       * Do not send { date, values } here.
-       */
-      const payload = {
-        entryDate: TODAY,
-        nightTimeUrination: values.nightTimeUrination,
-        eveningFluids: values.eveningFluids,
-        activityLevel: values.activityLevel,
-        stressLevel: values.stressLevel,
-        sleepQuality: values.sleepQuality,
-        notes: notes.trim() || null,
-      }
+      if (alreadyTracked && entryId) {
+        await api.updateTracking(entryId, payload)
+      } else {
+        const data = await api.saveTracking(payload)
 
-      let result
-
-      if (alreadyTracked) {
-        /*
-         * The current backend exposes PUT /api/tracking/:id.
-         * We need the existing entry ID to update it.
-         */
-        const trackingData = await api.getTracking()
-
-        const todayEntry = (trackingData.entries || []).find(
-          (entry) =>
-            String(entry.entryDate).split('T')[0] === TODAY
-        )
-
-        if (!todayEntry) {
-          throw new Error(
-            "Today's record could not be found. Please refresh the page and try again."
-          )
+        if (data.entry?.id) {
+          setEntryId(data.entry.id)
         }
 
-        result = await api.updateTracking(
-          todayEntry.id,
-          {
-            nightTimeUrination: values.nightTimeUrination,
-            eveningFluids: values.eveningFluids,
-            activityLevel: values.activityLevel,
-            stressLevel: values.stressLevel,
-            sleepQuality: values.sleepQuality,
-            notes: notes.trim() || null,
-          }
-        )
-      } else {
-        result = await api.saveTracking(payload)
-      }
-
-      /*
-       * If the API returns the saved entry, use it to
-       * synchronize the UI with the database.
-       */
-      if (result?.entry) {
-        const savedEntry = result.entry
-
-        setValues({
-          nightTimeUrination:
-            savedEntry.nightTimeUrination || '',
-
-          eveningFluids:
-            savedEntry.eveningFluids || '',
-
-          activityLevel:
-            savedEntry.activityLevel || '',
-
-          stressLevel:
-            savedEntry.stressLevel || '',
-
-          sleepQuality:
-            savedEntry.sleepQuality || '',
-        })
-
-        setNotes(savedEntry.notes || '')
+        setAlreadyTracked(true)
       }
 
       setSuccess(true)
-      setAlreadyTracked(true)
       setEditing(false)
 
       window.scrollTo({
@@ -359,21 +248,9 @@ export default function DailyTracking() {
         behavior: 'smooth',
       })
     } catch (err) {
-      /*
-       * api.js should expose the backend's error message.
-       * If validation fields are returned, show them too.
-       */
-      let message = err.message || 'Unable to save today’s record.'
-
-      if (err.fields && typeof err.fields === 'object') {
-        const fieldMessages = Object.values(err.fields)
-
-        if (fieldMessages.length > 0) {
-          message = fieldMessages.join(' ')
-        }
-      }
-
-      setError(message)
+      setError(
+        err.message || 'Unable to save your tracking entry.'
+      )
     } finally {
       setLoading(false)
     }
@@ -417,9 +294,7 @@ export default function DailyTracking() {
             className="alert alert--success"
             role="alert"
           >
-            {alreadyTracked && !editing
-              ? "Today's record has been saved successfully."
-              : "Today's record has been saved successfully."}
+            Today's record has been saved successfully.
           </div>
         )}
 
@@ -434,19 +309,24 @@ export default function DailyTracking() {
 
         {alreadyTracked && !editing && (
           <div className="alert alert--info mb-md">
-            <strong>Today's tracking is already recorded.</strong>
+            ✅ You have already recorded today's information.
+
             <br />
 
             <button
               type="button"
               className="btn btn--ghost mt-sm"
+              style={{
+                display: 'inline',
+                padding: 0,
+              }}
               onClick={() => {
                 setEditing(true)
                 setSuccess(false)
                 setError('')
               }}
             >
-              Update today's entry
+              Tap here if you want to update today's entry
             </button>
           </div>
         )}
@@ -458,7 +338,7 @@ export default function DailyTracking() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} noValidate>
+        <form onSubmit={handleSubmit}>
           <ReferenceKey />
 
           {FIELDS.map((field) => (
@@ -559,4 +439,3 @@ export default function DailyTracking() {
     </>
   )
 }
-
