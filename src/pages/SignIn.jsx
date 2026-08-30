@@ -214,12 +214,13 @@ export default function SignIn() {
     const cleaned = token.trim().toUpperCase()
 
     if (!cleaned) {
-      return setTokenError('Please enter the 6-letter sign-in word.')
+      return setTokenError('Please enter the 6-letter sign-in characters.')
     }
 
-    if (cleaned.length !== 6 || !/^[A-Z]+$/.test(cleaned)) {
-      return setTokenError('The sign-in word must be exactly 6 letters.')
-    }
+    if (!signInWord || signInWord.length !== 6) {
+  setError('The sign-in code must be exactly 6 characters.')
+  return
+}
 
     setTokenError('')
     setLoading(true)
