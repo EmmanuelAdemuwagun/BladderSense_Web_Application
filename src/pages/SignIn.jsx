@@ -257,7 +257,7 @@ export default function SignIn() {
               <h2 className="mb-md">Enter Your Email</h2>
 
               <p className="mb-md">
-                We will send you a 6-letter sign-in word by email. No password needed.
+                We will send you a 6-letter sign-in characters by email. No password needed.
               </p>
 
               {apiError && (
@@ -325,7 +325,7 @@ export default function SignIn() {
 
               <form onSubmit={handleTokenSubmit} noValidate>
                 <FormField
-                  label="Your 6-Letter Sign-In Word"
+                  label="Your 6-Letter Sign-In Characters"
                   id="token"
                   hint="Type the word exactly as shown in the email. Capital letters."
                   error={tokenError}
