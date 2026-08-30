@@ -42,7 +42,7 @@ loadProfile()
 return () => {
   mounted = false
 }
-```
+
 
 }, [navigate])
 
@@ -64,7 +64,6 @@ const initials = `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) |
 async function handleSave(e) {
 e.preventDefault()
 
-```
 setError('')
 setSuccess(false)
 setSaving(true)
@@ -89,7 +88,6 @@ try {
 } finally {
   setSaving(false)
 }
-```
 
 }
 
@@ -106,7 +104,6 @@ navigate('/', { replace: true })
 return (
 <> <Header title="My Profile" backTo="/dashboard" />
 
-```
   <main className="page">
     {/* Profile introduction */}
     <section className="card mt-md">
