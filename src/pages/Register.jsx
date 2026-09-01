@@ -103,12 +103,12 @@ export default function Register() {
             <h2>Check Your Email</h2>
 
             <p>
-              We have sent a verification word to <strong>{form.email}</strong>.
+              We have sent a verification email to <strong>{form.email}</strong>.
             </p>
 
             <p>
-              Please check your email and either click the link or enter the
-              6-letter word on the verification page.
+              Please check your email and click the verification link to
+complete your registration.
             </p>
 
             <div className="alert alert--info mt-md">
