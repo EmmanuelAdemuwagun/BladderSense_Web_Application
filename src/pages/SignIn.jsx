@@ -18,6 +18,39 @@ export default function SignIn() {
   const [apiError, setApiError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const [resendLoading, setResendLoading] = useState(false)
+  const [resendSuccess, setResendSuccess] = useState(false)
+  const [resendError, setResendError] = useState('')
+
+  async function handleResendVerification() {
+  setResendError('')
+  setResendSuccess(false)
+
+  const normalizedEmail = email.trim().toLowerCase()
+
+  if (!normalizedEmail) {
+    setResendError('Please enter your email address.')
+    return
+  }
+
+  setResendLoading(true)
+
+  try {
+    await api.resendVerification({
+      email: normalizedEmail,
+    })
+
+    setResendSuccess(true)
+  } catch (err) {
+    setResendError(
+      err?.message ||
+        'Unable to resend the verification email. Please try again.'
+    )
+  } finally {
+    setResendLoading(false)
+  }
+}
+
   async function handleEmailSubmit(e) {
     e.preventDefault()
 
@@ -212,10 +245,53 @@ export default function SignIn() {
               </div>
 
               {apiError && (
-                <div className="alert alert--error" role="alert">
-                  {apiError}
-                </div>
-              )}
+  <div className="alert alert--error" role="alert">
+    {apiError}
+  </div>
+)}
+
+{apiError?.toLowerCase().includes('not been verified') && (
+  <div className="card card--compact mt-md">
+    <h3 className="mb-sm">
+      Email not verified?
+    </h3>
+
+    <p className="text-muted">
+      If you did not receive your verification email, we can
+      send you a new verification link.
+    </p>
+
+    {resendSuccess && (
+      <div
+        className="alert alert--success"
+        role="alert"
+      >
+        A new verification email has been sent. Please check
+        your inbox.
+      </div>
+    )}
+
+    {resendError && (
+      <div
+        className="alert alert--error"
+        role="alert"
+      >
+        {resendError}
+      </div>
+    )}
+
+    <button
+      type="button"
+      className="btn btn--secondary"
+      onClick={handleResendVerification}
+      disabled={resendLoading || loading}
+    >
+      {resendLoading
+        ? 'Sending…'
+        : 'Resend Verification Email'}
+    </button>
+  </div>
+)}
 
               <form onSubmit={handleTokenSubmit} noValidate>
                 <FormField
