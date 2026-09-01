@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import FormField from '../components/FormField'
 import { api } from '../utils/api'
+import { clearSession } from '../utils/auth'
 
 export default function Profile() {
   const navigate = useNavigate()
@@ -93,15 +94,16 @@ export default function Profile() {
     }
   }
 
-  async function handleLogout() {
-    try {
-      await api.logout()
-    } catch (err) {
-      console.error('Logout error:', err)
-    } finally {
-      navigate('/', { replace: true })
-    }
+async function handleLogout() {
+  try {
+    await api.logout()
+  } catch (err) {
+    console.error('Logout error:', err)
+  } finally {
+    clearSession()
+    navigate('/', { replace: true })
   }
+}
 
   return (
     <>
