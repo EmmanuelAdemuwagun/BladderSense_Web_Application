@@ -70,7 +70,7 @@ export default function Landing() {
           <div className="landing-nav__actions">
             {isLoggedIn ? (
               <button className="btn btn--primary landing-nav__btn" onClick={() => navigate('/dashboard')}>
-                Go to My Guide
+                Go to Dashboard
               </button>
             ) : (
               <>
@@ -113,7 +113,7 @@ export default function Landing() {
           <div className="landing-hero__cta">
             {isLoggedIn ? (
               <button className="btn btn--primary landing-cta-btn" onClick={() => navigate('/dashboard')}>
-                Go to My Guide
+                Go to Dashboard
               </button>
             ) : (
               <>
@@ -248,7 +248,7 @@ export default function Landing() {
           </p>
           {isLoggedIn ? (
             <button className="btn btn--primary landing-cta-btn" onClick={() => navigate('/dashboard')}>
-              Go to My Guide
+              Go to Dashboard
             </button>
           ) : (
             <div className="btn-stack" style={{ maxWidth: 400, margin: '0 auto' }}>
