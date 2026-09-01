@@ -172,9 +172,9 @@ export default function Profile() {
                   {user.email}
                 </strong>
 
-                <span className="profile-info-note">
+                {/* <span className="profile-info-note">
                   Used for signing in to BladderSense
-                </span>
+                </span> */}
               </div>
             </div>
           </div>
