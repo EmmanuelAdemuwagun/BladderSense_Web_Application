@@ -1,78 +1,82 @@
-// import { useNavigate } from 'react-router-dom'
-
-// export default function Header({ title, showBack = true, backTo, onBack, showProfile = true }) {
-//   const navigate = useNavigate()
-
-//   function handleBack() {
-//     if (onBack) return onBack()
-//     if (backTo) return navigate(backTo)
-//     navigate(-1)
-//   }
-
-//   return (
-//     <header className="header">
-//       {showBack ? (
-//         <button className="header__back" onClick={handleBack} aria-label="Go back">
-//           ← Back
-//         </button>
-//       ) : (
-//         <button className="header__back" onClick={() => navigate('/')} aria-label="Go to home">
-//           🏠 Home
-//         </button>
-//       )}
-
-//       <h1 className="header__title">{title}</h1>
-
-//       {showProfile && (
-//         <button
-//           className="header__back"
-//           onClick={() => navigate('/profile')}
-//           aria-label="My Profile"
-//         >
-//           Profile
-//         </button>
-//       )}
-//     </header>
-//   )
-// }
-
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { getSessionUser } from '../utils/auth'
 
-export default function Header({ title, showBack = true, backTo, onBack, showProfile = true }) {
+export default function Header({
+  title,
+  showBack = true,
+  backTo,
+  onBack,
+  showProfile = true,
+}) {
   const navigate = useNavigate()
+  const location = useLocation()
   const user = getSessionUser()
 
+  const isDashboard = location.pathname === '/dashboard'
+
   function handleBack() {
-    if (onBack) return onBack()
-    if (backTo) return navigate(backTo)
+    if (onBack) {
+      return onBack()
+    }
+
+    if (backTo) {
+      return navigate(backTo)
+    }
+
     navigate(-1)
+  }
+
+  function handleRightAction() {
+    if (isDashboard) {
+      navigate('/profile')
+    } else {
+      navigate('/dashboard')
+    }
   }
 
   return (
     <header className="header">
+      {/* Left navigation */}
       {showBack ? (
-        <button className="header__back" onClick={handleBack} aria-label="Go back">
+        <button
+          type="button"
+          className="header__back"
+          onClick={handleBack}
+          aria-label="Go back"
+        >
           ← Back
         </button>
       ) : (
-        <button className="header__back" onClick={() => navigate('/')} aria-label="Go to home">
+        <button
+          type="button"
+          className="header__back"
+          onClick={() => navigate('/')}
+          aria-label="Go to home"
+        >
           🏠 Home
         </button>
       )}
 
-      <h1 className="header__title">{title}</h1>
+      {/* Page title */}
+      <h1 className="header__title">
+        {title}
+      </h1>
 
+      {/* Authenticated navigation */}
       {showProfile && user && (
         <button
+          type="button"
           className="header__back"
-          onClick={() => navigate('/profile')}
-          aria-label="My Profile"
+          onClick={handleRightAction}
+          aria-label={
+            isDashboard
+              ? 'Go to My Profile'
+              : 'Go to Dashboard'
+          }
         >
-          Profile
+          {isDashboard ? 'Profile' : 'Dashboard'}
         </button>
       )}
     </header>
   )
 }
-
