@@ -61,6 +61,12 @@ export const api = {
       method: "POST",
     }),
 
+  resendVerification: (body) =>
+  request("/auth/resend-verification", {
+    method: "POST",
+    body: JSON.stringify(body),
+  }),
+
   // ============================
   // PROFILE
   // ============================
