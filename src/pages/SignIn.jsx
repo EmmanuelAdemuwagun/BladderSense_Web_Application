@@ -153,7 +153,7 @@ export default function SignIn() {
 
   return (
     <>
-      <Header title="Sign In" backTo="/" />
+      <Header title="Sign In" backTo="/" showProfile={false} />
 
       <main className="page">
         <div className="card mt-md">
