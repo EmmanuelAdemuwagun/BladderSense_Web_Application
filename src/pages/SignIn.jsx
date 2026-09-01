@@ -170,11 +170,49 @@ export default function SignIn() {
                 No password is needed.
               </p>
 
-              {apiError && (
-                <div className="alert alert--error" role="alert">
-                  {apiError}
-                </div>
-              )}
+              {apiError?.toLowerCase().includes('not been verified') && (
+  <div className="card card--compact mt-md">
+    <h3 className="mb-sm">
+      Email not verified?
+    </h3>
+
+    <p className="text-muted">
+      Your account has not been verified yet. If you did not
+      receive the verification email, we can send you a new
+      verification link.
+    </p>
+
+    {resendSuccess && (
+      <div
+        className="alert alert--success"
+        role="alert"
+      >
+        A new verification email has been sent.
+        Please check your inbox.
+      </div>
+    )}
+
+    {resendError && (
+      <div
+        className="alert alert--error"
+        role="alert"
+      >
+        {resendError}
+      </div>
+    )}
+
+    <button
+      type="button"
+      className="btn btn--secondary"
+      onClick={handleResendVerification}
+      disabled={resendLoading || loading}
+    >
+      {resendLoading
+        ? 'Sending…'
+        : 'Resend Verification Email'}
+    </button>
+  </div>
+)}
 
               <form onSubmit={handleEmailSubmit} noValidate>
                 <FormField
@@ -250,7 +288,6 @@ export default function SignIn() {
   </div>
 )}
 
-{apiError?.toLowerCase().includes('not been verified') && (
   <div className="card card--compact mt-md">
     <h3 className="mb-sm">
       Email not verified?
@@ -291,7 +328,7 @@ export default function SignIn() {
         : 'Resend Verification Email'}
     </button>
   </div>
-)}
+
 
               <form onSubmit={handleTokenSubmit} noValidate>
                 <FormField
