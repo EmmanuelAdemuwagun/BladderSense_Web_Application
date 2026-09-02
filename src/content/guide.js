@@ -629,4 +629,36 @@ export const guideSections = [
       ],
     },
   },
+  {
+    id: 'final-message',
+    icon: '🌿',
+    title: 'Final Message',
+    shortDesc: 'Small, connected changes over time',
+    content: {
+      keyMessage: 'Managing urinary symptoms often involves several small, connected changes over time. You do not need to do everything at once.',
+      body: [
+        {
+          type: 'heading',
+          text: 'As you continue, remember:',
+        },
+        {
+          type: 'checklist',
+          items: [
+            'Focus on what feels manageable',
+            'Build changes gradually',
+            'Notice patterns over time',
+            'Adjust your approach as needed',
+          ],
+        },
+        {
+          type: 'paragraph',
+          text: 'Not every strategy will suit everyone, and progress is often gradual rather than constant. What matters is finding the changes that work for you and returning to this guide whenever you need it.',
+        },
+        {
+          type: 'tip',
+          text: 'Small, consistent changes can improve comfort, confidence, and quality of life.',
+        },
+      ],
+    },
+  },
 ]
