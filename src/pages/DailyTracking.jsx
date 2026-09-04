@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import Header from '../components/Header'
 import { api } from '../utils/api'
+import { CategoryKey } from '../content/categoryKey'
 
 const TODAY = new Date().toISOString().split('T')[0]
 
@@ -38,79 +39,6 @@ const FIELDS = [
     options: ['Poor', 'Fair', 'Good'],
   },
 ]
-
-function ReferenceKey() {
-  const [open, setOpen] = useState(false)
-
-  return (
-    <div className="ref-key mb-md">
-      <button
-        type="button"
-        className="ref-key__toggle"
-        onClick={() => setOpen((o) => !o)}
-        aria-expanded={open}
-      >
-        <span>📖 Guide to categories</span>
-        <span className="ref-key__arrow">
-          {open ? '▲' : '▼'}
-        </span>
-      </button>
-
-      {open && (
-        <div className="ref-key__body">
-          <div className="ref-key__group">
-            <p className="ref-key__heading">
-              🌙 Night-time urination
-            </p>
-            <p>The number of times you got up to pass urine.</p>
-            <p><strong>0</strong> = did not get up</p>
-            <p><strong>1 / 2</strong> = got up once or twice</p>
-            <p><strong>3+</strong> = got up three or more times</p>
-          </div>
-
-          <div className="ref-key__group">
-            <p className="ref-key__heading">
-              🥤 Evening fluid intake
-            </p>
-            <p>Roughly how much you drank in the evening.</p>
-            <p><strong>Small</strong> = about 150–250 mL (½–1 cup)</p>
-            <p><strong>Moderate</strong> = about 300–500 mL (1–2 cups)</p>
-            <p><strong>Large</strong> = more than 500 mL (more than 2 cups)</p>
-          </div>
-
-          <div className="ref-key__group">
-            <p className="ref-key__heading">
-              🚶 Activity level
-            </p>
-            <p><strong>None</strong> = little or no movement</p>
-            <p><strong>Light</strong> = short walks or light movement</p>
-            <p><strong>Moderate</strong> = regular walking or active movement</p>
-            <p><strong>High</strong> = longer periods of movement or exercise</p>
-          </div>
-
-          <div className="ref-key__group">
-            <p className="ref-key__heading">
-              🧠 Stress level
-            </p>
-            <p>How stressed you felt today, from 1 to 5.</p>
-            <p><strong>1</strong> = very calm and relaxed</p>
-            <p><strong>3</strong> = moderately stressed</p>
-            <p><strong>5</strong> = very stressed</p>
-          </div>
-
-          <div className="ref-key__group">
-            <p className="ref-key__heading">
-              😴 Sleep quality
-            </p>
-            <p><strong>Poor</strong> = very disrupted sleep</p>
-            <p><strong>Fair</strong> = some disruption but manageable</p>
-            <p><strong>Good</strong> = mostly restful sleep</p>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
 
 function OptionGroup({
   fieldId,
@@ -357,8 +285,6 @@ export default function DailyTracking() {
         )}
 
         <form onSubmit={handleSubmit}>
-          <ReferenceKey />
-
           {FIELDS.map((field) => (
             <div
               key={field.id}
@@ -382,6 +308,9 @@ export default function DailyTracking() {
                 onChange={handleChange}
                 disabled={isReadOnly || loading}
               />
+
+              {/* Objective category key — shown under every section */}
+              <CategoryKey fieldId={field.id} />
             </div>
           ))}
 
