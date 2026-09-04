@@ -1053,6 +1053,48 @@ li {
   margin-bottom: 4px !important;
 }
 
+/* ---- 7-Day Progress: category key under each section ---- */
+.progress-key {
+  margin-top: var(--space-md);
+  padding: var(--space-md);
+  background: var(--color-sky);
+  border: 2px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.progress-key__title {
+  margin: 0 0 8px;
+  font-size: var(--font-size-base);
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1.3;
+}
+
+.progress-key__intro {
+  margin: 0 0 8px;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.4;
+}
+
+.progress-key__item {
+  margin: 0 0 6px;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.45;
+}
+
+.progress-key__item:last-child {
+  margin-bottom: 0;
+}
+
+.progress-key__term {
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
 /* ---- Loading spinner ---- */
 .spinner {
   width: 36px;

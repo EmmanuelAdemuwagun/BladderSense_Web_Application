@@ -43,6 +43,83 @@ const FIELDS = [
 ]
 
 /*
+ * Objective "Simple guide to categories" key, shown under every metric so
+ * users mean the same thing whenever they pick a qualifier.
+ *
+ * Fluid / activity / sleep use the owner's wording (fluid = the latest
+ * quantified volumes). Night-time urination and stress follow the guidebook's
+ * own scales (0–3+, and 1 low – 5 high) in the same plain-language style.
+ */
+const CATEGORY_KEY = {
+  nightTimeUrination: {
+    intro: 'The number of times you got up to pass urine.',
+    items: [
+      ['0', 'did not get up'],
+      ['1–2', 'got up once or twice'],
+      ['3+', 'got up three or more times'],
+    ],
+  },
+  eveningFluids: {
+    intro: 'Roughly how much you drank in the evening.',
+    items: [
+      ['Small', 'about 150–250 mL (½–1 cup)'],
+      ['Moderate', 'about 300–500 mL (1–2 cups)'],
+      ['Large', 'more than 500 mL (more than 2 cups)'],
+    ],
+  },
+  activityLevel: {
+    intro: null,
+    items: [
+      ['Light', 'short walks or light movement'],
+      ['Moderate', 'regular walking or active movement'],
+      ['High', 'longer periods of movement or exercise'],
+    ],
+  },
+  stressLevel: {
+    intro: 'How stressed you felt today, from 1 to 5.',
+    items: [
+      ['1', 'very calm and relaxed'],
+      ['2–3', 'mild to moderate stress'],
+      ['4–5', 'high or very stressed'],
+    ],
+  },
+  sleepQuality: {
+    intro: null,
+    items: [
+      ['Poor', 'very disrupted sleep'],
+      ['Fair', 'some disruption but manageable'],
+      ['Good', 'mostly restful sleep'],
+    ],
+  },
+}
+
+function CategoryKey({ fieldId }) {
+  const key = CATEGORY_KEY[fieldId]
+
+  if (!key) {
+    return null
+  }
+
+  return (
+    <div className="progress-key">
+      <p className="progress-key__title">What the options mean</p>
+
+      {key.intro && (
+        <p className="progress-key__intro">{key.intro}</p>
+      )}
+
+      {key.items.map(([term, desc]) => (
+        <p key={term} className="progress-key__item">
+          <span className="progress-key__term">{term}</span>
+          {' = '}
+          {desc}
+        </p>
+      ))}
+    </div>
+  )
+}
+
+/*
  * Return today's date using the user's local timezone.
  *
  * We deliberately do NOT use:
@@ -583,6 +660,9 @@ export default function Progress() {
                       {' '}Not recorded
                     </span>
                   </div>
+
+                  {/* Objective category key — shown under every section */}
+                  <CategoryKey fieldId={field.id} />
                 </div>
               )
             )}
