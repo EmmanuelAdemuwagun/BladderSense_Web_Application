@@ -92,7 +92,7 @@ export default function Landing() {
           <img src="/homepage-logo.png" alt="Bladder Sense" className="landing-hero__logo" />
 
           <p className="landing-hero__tagline-main">
-            Small Steps. Better Control. Greater Confidence.
+            Large Steps. Better Control. Greater Confidence.
           </p>
 
           <div className="landing-hero__trust">
