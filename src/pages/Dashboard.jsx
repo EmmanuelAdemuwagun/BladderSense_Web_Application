@@ -195,6 +195,12 @@ export default function Dashboard() {
     } catch (error) {
       console.error('Logout error:', error)
     } finally {
+      /*
+       * Clear the locally saved session too. Without this the app still finds
+       * the user in localStorage and treats them as signed in, so "Sign Out"
+       * appears to do nothing but return to the home page.
+       */
+      clearSession()
       navigate('/', { replace: true })
     }
   }
