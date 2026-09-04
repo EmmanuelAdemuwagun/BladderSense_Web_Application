@@ -440,15 +440,15 @@ export default function Progress() {
                               }
                               style={{
                                 width:
-                                  36,
+                                  40,
                                 height:
-                                  36,
+                                  40,
                                 borderRadius:
                                   '50%',
                                 background:
                                   color,
                                 margin:
-                                  '0 auto 4px',
+                                  '0 auto 5px',
                                 display:
                                   'flex',
                                 alignItems:
@@ -463,9 +463,9 @@ export default function Progress() {
                                 <span
                                   style={{
                                     fontSize:
-                                      11,
+                                      14,
                                     fontWeight:
-                                      700,
+                                      800,
                                     color:
                                       '#fff',
                                     lineHeight:
@@ -489,9 +489,11 @@ export default function Progress() {
                             <span
                               style={{
                                 fontSize:
-                                  11,
+                                  16,
+                                fontWeight:
+                                  800,
                                 color:
-                                  'var(--color-text-muted)',
+                                  'var(--color-text)',
                                 display:
                                   'block',
                               }}
@@ -514,9 +516,10 @@ export default function Progress() {
                       display:
                         'flex',
                       gap: 16,
-                      fontSize: 13,
+                      fontSize: 17,
+                      fontWeight: 700,
                       color:
-                        'var(--color-text-muted)',
+                        'var(--color-text)',
                       flexWrap:
                         'wrap',
                     }}
@@ -576,8 +579,8 @@ export default function Progress() {
                             '50%',
                           display:
                             'inline-block',
-                          width: 12,
-                          height: 12,
+                          width: 16,
+                          height: 16,
                         }}
                       />
 
