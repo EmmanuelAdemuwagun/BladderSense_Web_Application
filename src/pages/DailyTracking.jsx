@@ -60,24 +60,42 @@ function ReferenceKey() {
         <div className="ref-key__body">
           <div className="ref-key__group">
             <p className="ref-key__heading">
-              🥤 Evening fluid intake
+              🌙 Night-time urination
             </p>
-            <p><strong>Small</strong> = 1 small drink</p>
-            <p><strong>Moderate</strong> = 2–3 drinks</p>
-            <p>
-              <strong>Large</strong> = several drinks or larger amounts in the evening
-            </p>
+            <p>The number of times you got up to pass urine.</p>
+            <p><strong>0</strong> = did not get up</p>
+            <p><strong>1 / 2</strong> = got up once or twice</p>
+            <p><strong>3+</strong> = got up three or more times</p>
           </div>
 
           <div className="ref-key__group">
             <p className="ref-key__heading">
-              🚶 Physical activity
+              🥤 Evening fluid intake
             </p>
+            <p>Roughly how much you drank in the evening.</p>
+            <p><strong>Small</strong> = about 150–250 mL (½–1 cup)</p>
+            <p><strong>Moderate</strong> = about 300–500 mL (1–2 cups)</p>
+            <p><strong>Large</strong> = more than 500 mL (more than 2 cups)</p>
+          </div>
+
+          <div className="ref-key__group">
+            <p className="ref-key__heading">
+              🚶 Activity level
+            </p>
+            <p><strong>None</strong> = little or no movement</p>
             <p><strong>Light</strong> = short walks or light movement</p>
             <p><strong>Moderate</strong> = regular walking or active movement</p>
-            <p>
-              <strong>High</strong> = longer periods of movement or exercise
+            <p><strong>High</strong> = longer periods of movement or exercise</p>
+          </div>
+
+          <div className="ref-key__group">
+            <p className="ref-key__heading">
+              🧠 Stress level
             </p>
+            <p>How stressed you felt today, from 1 to 5.</p>
+            <p><strong>1</strong> = very calm and relaxed</p>
+            <p><strong>3</strong> = moderately stressed</p>
+            <p><strong>5</strong> = very stressed</p>
           </div>
 
           <div className="ref-key__group">

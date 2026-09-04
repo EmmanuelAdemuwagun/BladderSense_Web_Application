@@ -7,11 +7,11 @@ export const guideSections = [
     title: 'Welcome',
     shortDesc: 'You are not alone',
     content: {
-      keyMessage: 'Many older men experience urinary incontinence. Small, practical changes can make a real difference.',
+      keyMessage: 'Many older men experience urinary incontinence — also called bladder control problems. Small, practical changes can make a real difference.',
       body: [
         {
           type: 'paragraph',
-          text: 'You are not alone. Many older men experience urinary incontinence — difficulty controlling urine. While causes vary, it is a very common condition.',
+          text: 'You are not alone. Many older men experience bladder control problems — difficulty controlling urine. While causes vary, it is a very common condition.',
         },
         {
           type: 'heading',
@@ -50,7 +50,7 @@ export const guideSections = [
         {
           type: 'checklist',
           items: [
-            'Understand factors that may influence urinary incontinence',
+            'Understand factors that may influence bladder control problems',
             'Recognise which factors may apply to you',
             'Try practical self-management strategies',
             'Track changes and progress over time',
@@ -70,7 +70,7 @@ export const guideSections = [
       body: [
         {
           type: 'paragraph',
-          text: 'This guide focuses on four key areas because they are common concerns in older men, are often linked with urinary incontinence, and may be improved through self-management.',
+          text: 'This guide focuses on four key areas because they are common concerns in older men, are often linked with bladder control problems, and may be improved through self-management.',
         },
         {
           type: 'heading',
@@ -290,6 +290,8 @@ export const guideSections = [
             'Break up long periods of sitting — stand or move briefly every 30–60 minutes',
             'Gradually increase activity over time',
             'Choose activities that feel safe and comfortable',
+            'Build movement into daily life — take the stairs for one floor, park a little further away, or get off the bus a stop earlier',
+            'Stand or move during phone calls',
             'Use continence products if this helps your confidence going out',
           ],
         },
@@ -301,8 +303,8 @@ export const guideSections = [
           type: 'list',
           items: [
             'Meat, fish, or poultry: roughly the size of a deck of cards',
-            'Cheese: roughly the size of a matchbox',
-            'Cooked rice or pasta: roughly the size of a clenched fist',
+            'Cheese: roughly the size of a small dice',
+            'Pasta, rice, or potatoes: roughly the size of a cupped handful',
           ],
         },
         {
@@ -353,6 +355,7 @@ export const guideSections = [
         {
           type: 'checklist',
           items: [
+            'Slow breathing for a few minutes each day (sit quietly and focus on slow breaths in and out)',
             'Short relaxation or grounding exercises (notice sounds around you, feel your feet on the ground)',
             'Gentle stretching or movement',
             'Listening to calming music or guided relaxation',
@@ -428,10 +431,11 @@ export const guideSections = [
         {
           type: 'checklist',
           items: [
-            'Squeeze and lift: hold for 3–5 seconds, then fully relax',
-            'Repeat 8–10 times',
-            'Aim for 3 sets per day',
-            'Gradually increase hold time as you get stronger',
+            'Squeeze and lift the pelvic floor muscles',
+            'Hold for 3–5 seconds, then fully relax for the same length of time',
+            'Repeat 5–10 times',
+            'Gradually increase the holding time as your strength improves',
+            'Try quick squeezes before coughing, standing, or lifting',
           ],
         },
         {

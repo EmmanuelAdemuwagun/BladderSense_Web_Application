@@ -74,10 +74,10 @@ export default function Landing() {
               </button>
             ) : (
               <>
-                <button className="btn btn--secondary landing-nav__btn" onClick={() => navigate('/signin')}>
+                <button className="btn landing-nav__btn landing-nav__btn--signin" onClick={() => navigate('/signin')}>
                   Sign In
                 </button>
-                <button className="btn btn--primary landing-nav__btn" onClick={() => navigate('/register')}>
+                <button className="btn landing-nav__btn landing-nav__btn--register" onClick={() => navigate('/register')}>
                   Register
                 </button>
               </>
@@ -92,7 +92,7 @@ export default function Landing() {
           <img src="/homepage-logo.png" alt="Bladder Sense" className="landing-hero__logo" />
 
           <p className="landing-hero__tagline-main">
-            Large Steps. Better Control. Greater Confidence.
+            Small Steps. Better Control. Greater Confidence.
           </p>
 
           <div className="landing-hero__trust">
@@ -120,7 +120,7 @@ export default function Landing() {
                 <button className="btn btn--primary landing-cta-btn" onClick={() => navigate('/register')}>
                   Register — It's Free
                 </button>
-                <button className="btn btn--ghost-light landing-cta-btn" onClick={() => navigate('/signin')}>
+                <button className="btn landing-cta-btn landing-cta-btn--signin" onClick={() => navigate('/signin')}>
                   Already registered? Sign In
                 </button>
               </>

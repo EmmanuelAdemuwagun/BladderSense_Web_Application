@@ -124,13 +124,20 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { api } from '../utils/api'
+import { getSessionUser, saveSession, clearSession } from '../utils/auth'
 import { guideSections } from '../content/guide'
 
 export default function Dashboard() {
   const navigate = useNavigate()
 
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+  /*
+   * Seed from the locally saved user so a returning, signed-in user sees their
+   * dashboard immediately — no spinner, no flash of the sign-in page.
+   */
+  const localUser = getSessionUser()
+
+  const [user, setUser] = useState(localUser)
+  const [loading, setLoading] = useState(!localUser)
 
   useEffect(() => {
     let mounted = true
@@ -138,12 +145,21 @@ export default function Dashboard() {
     async function loadProfile() {
       try {
         const data = await api.getProfile()
+        const freshUser = data.user || data
 
-        if (mounted) {
-          setUser(data.user || data)
+        if (mounted && freshUser) {
+          setUser(freshUser)
+          saveSession(null, freshUser)
         }
       } catch {
-        if (mounted) {
+        /*
+         * Only send the user to sign-in if we have no local session at all.
+         * If a local session exists, keep them on the dashboard: the API may
+         * be temporarily unreachable, and ejecting a signed-in senior back to
+         * the login screen is exactly the behaviour we want to avoid.
+         */
+        if (mounted && !getSessionUser()) {
+          clearSession()
           navigate('/signin', { replace: true })
         }
       } finally {

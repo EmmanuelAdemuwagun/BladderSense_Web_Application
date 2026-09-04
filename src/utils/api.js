@@ -1,4 +1,14 @@
-const BASE = "https://bladdersense-582048c5cf7e.herokuapp.com/api";
+/*
+ * API base URL.
+ *
+ * We call the API through a SAME-ORIGIN path ("/api") which Netlify proxies to
+ * the backend (see netlify.toml). This keeps the session cookie first-party so
+ * it persists on iOS Safari / Chrome, where third-party cookies are blocked.
+ *
+ * Can be overridden at build time with VITE_API_BASE if the API ever needs to
+ * be called directly again.
+ */
+const BASE = import.meta.env.VITE_API_BASE || "/api";
 
 async function request(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, {

@@ -1,6 +1,12 @@
 /* =============================================
    GLOBAL STYLES — Bladder Health Guide App
-   Senior-friendly: large text, high contrast
+
+   MOBILE-FIRST. The primary design viewport is a phone —
+   iPhone 14 Pro Max (430 × 932). All base styles below target the
+   phone; @media (min-width: …) blocks progressively enhance for
+   tablet and desktop.
+
+   Senior-friendly: large text, high contrast, big tap targets.
    ============================================= */
 
 :root {
@@ -23,13 +29,14 @@
   --color-warning: #b07d10;
   --radius: 12px;
   --shadow: 0 2px 8px rgba(0,0,0,0.10);
-  --font-size-base: 20px;
-  --font-size-sm: 18px;
-  --font-size-lg: 22px;
-  --font-size-xl: 26px;
-  --font-size-2xl: 32px;
+  /* Larger, senior-friendly type scale (phone-first) */
+  --font-size-base: 21px;
+  --font-size-sm: 19px;
+  --font-size-lg: 23px;
+  --font-size-xl: 27px;
+  --font-size-2xl: 33px;
   --font-size-3xl: 40px;
-  --tap-min: 52px;
+  --tap-min: 54px;
   --space-xs: 8px;
   --space-sm: 12px;
   --space-md: 20px;
@@ -55,7 +62,11 @@ body {
   color: var(--color-text);
   line-height: 1.6;
   min-height: 100dvh;
+  /* The page must never scroll sideways on a phone. */
+  overflow-x: hidden;
 }
+
+img { max-width: 100%; }
 
 #root {
   min-height: 100dvh;
@@ -67,6 +78,8 @@ body {
 .page {
   flex: 1;
   padding: var(--space-md);
+  /* Keep the last button clear of the iPhone home indicator. */
+  padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom));
   max-width: var(--max-width);
   margin: 0 auto;
   width: 100%;
@@ -85,6 +98,9 @@ body {
   background: var(--color-primary);
   color: #fff;
   padding: var(--space-md);
+  padding-top: calc(var(--space-md) + env(safe-area-inset-top));
+  padding-left: calc(var(--space-md) + env(safe-area-inset-left));
+  padding-right: calc(var(--space-md) + env(safe-area-inset-right));
   display: flex;
   align-items: center;
   gap: var(--space-md);
@@ -445,15 +461,17 @@ li {
 }
 
 .option-btn {
+  /* Stretch to share the row evenly so options are big, tappable targets */
+  flex: 1 1 auto;
   padding: var(--space-sm) var(--space-md);
   border: 2px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 10px;
   background: #fff;
   font-size: var(--font-size-base);
   cursor: pointer;
   min-height: var(--tap-min);
-  min-width: 70px;
-  font-weight: 600;
+  min-width: 68px;
+  font-weight: 700;
   transition: all 0.15s;
   color: var(--color-text);
 }
@@ -543,6 +561,9 @@ li {
 .landing-nav {
   background: var(--color-primary);
   padding: var(--space-md);
+  padding-top: calc(var(--space-md) + env(safe-area-inset-top));
+  padding-left: calc(var(--space-md) + env(safe-area-inset-left));
+  padding-right: calc(var(--space-md) + env(safe-area-inset-right));
   position: sticky;
   top: 0;
   z-index: 100;
@@ -598,13 +619,30 @@ li {
 
 .landing-nav__btn {
   width: auto;
-  min-height: 44px;
-  padding: 10px 14px;
-  font-size: 16px;
+  min-height: 48px;
+  padding: 10px 18px;
+  font-size: 17px;
+  font-weight: 800;
 }
 
+/* Sign In — solid white so returning users spot it instantly on the dark nav */
+.landing-nav__btn--signin {
+  background: #fff;
+  color: var(--color-primary);
+  border: 2px solid #fff;
+}
+.landing-nav__btn--signin:hover { background: #eef6fc; }
+
+/* Register — gold accent, clearly the "new user" action */
+.landing-nav__btn--register {
+  background: var(--color-gold);
+  color: #1F4E79;
+  border: 2px solid var(--color-gold);
+}
+.landing-nav__btn--register:hover { background: #e9ab2e; }
+
 @media (min-width: 480px) {
-  .landing-nav__btn { padding: 10px 20px; font-size: var(--font-size-sm); }
+  .landing-nav__btn { padding: 12px 22px; font-size: var(--font-size-sm); }
 }
 
 /* Hero */
@@ -709,6 +747,15 @@ li {
   font-weight: 600;
 }
 .btn--ghost-light:hover { background: rgba(255,255,255,0.1); }
+
+/* Returning-user Sign In on the dark hero — solid white for high contrast */
+.landing-cta-btn--signin {
+  background: #fff;
+  color: var(--color-primary);
+  border: 2px solid #fff;
+  font-weight: 800;
+}
+.landing-cta-btn--signin:hover { background: #eef6fc; }
 
 /* Sections */
 .landing-container {

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import { guideSections } from '../content/guide'
 import { api } from '../utils/api'
+import { getSessionUser } from '../utils/auth'
 
 function renderBlock(block, i) {
   switch (block.type) {
@@ -50,8 +51,16 @@ export default function GuideSection() {
   const { sectionId } = useParams()
   const navigate = useNavigate()
 
-  const [authenticated, setAuthenticated] = useState(false)
-  const [loading, setLoading] = useState(true)
+  /*
+   * Trust the locally saved session for access so a signed-in reader is never
+   * bounced out of the guide by a transient API/cookie hiccup. We still verify
+   * with the backend in the background, and only redirect home if there is no
+   * local session at all.
+   */
+  const localUser = getSessionUser()
+
+  const [authenticated, setAuthenticated] = useState(!!localUser)
+  const [loading, setLoading] = useState(!localUser)
 
   useEffect(() => {
     let mounted = true
@@ -63,7 +72,7 @@ export default function GuideSection() {
         }
       })
       .catch(() => {
-        if (mounted) {
+        if (mounted && !getSessionUser()) {
           navigate('/', { replace: true })
         }
       })

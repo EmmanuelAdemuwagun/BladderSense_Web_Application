@@ -3,6 +3,33 @@
   publish = "dist"
   functions = "netlify/functions"
 
+# ---------------------------------------------------------------------------
+# API reverse proxy
+#
+# The backend API is hosted on a separate origin (Heroku). When the browser
+# talks to it directly (cross-site), the session cookie it sets is a
+# THIRD-PARTY cookie. iOS Safari / Chrome (all iOS browsers use WebKit +
+# Intelligent Tracking Prevention) block third-party cookies by default, so
+# the session cookie is never stored and the user is bounced back to the
+# sign-in page after logging in.
+#
+# Proxying the API through this site makes those requests SAME-ORIGIN, so the
+# session cookie is stored as a FIRST-PARTY cookie and persists on iOS.
+#
+# NOTE: this relies on the backend NOT pinning the cookie to its own domain
+# (i.e. Set-Cookie must not include `Domain=...herokuapp.com`). A host-only
+# cookie (no Domain attribute) is re-attributed to this site by the proxy,
+# which is what we want.
+#
+# This rule MUST appear before the SPA catch-all below (first match wins).
+# ---------------------------------------------------------------------------
+[[redirects]]
+  from = "/api/*"
+  to = "https://bladdersense-582048c5cf7e.herokuapp.com/api/:splat"
+  status = 200
+  force = true
+
+# SPA fallback — every other path serves the client-side app.
 [[redirects]]
   from = "/*"
   to = "/index.html"
