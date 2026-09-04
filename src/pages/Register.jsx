@@ -103,7 +103,8 @@ export default function Register() {
             <h2>Check Your Email</h2>
 
             <p>
-              We have sent a verification email to <strong>{form.email}</strong>.
+              We have sent a verification email to:
+              <strong className="email-inline">{form.email}</strong>
             </p>
 
             <p>

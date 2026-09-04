@@ -260,6 +260,24 @@ img { max-width: 100%; }
   font-weight: 600;
   margin-bottom: var(--space-md);
   line-height: 1.5;
+  /* Long, unbroken strings (like email addresses) must wrap inside the box */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/*
+ * Email addresses shown in text. Rendered on their own line and allowed to
+ * wrap at any point so a long address never overflows its container. The
+ * color/decoration reset neutralises iOS Safari/Chrome auto-linking, which
+ * otherwise turns the address into an underlined blue link.
+ */
+.email-inline {
+  display: block;
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  color: inherit;
+  text-decoration: none;
 }
 
 .alert--success {

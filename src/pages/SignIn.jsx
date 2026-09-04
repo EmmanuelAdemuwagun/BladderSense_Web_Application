@@ -277,8 +277,8 @@ export default function SignIn() {
               <h2 className="mb-md">Enter Your Sign-In Code</h2>
 
               <div className="alert alert--info mb-md">
-                We sent a 6-character code to{' '}
-                <strong>{email}</strong>.
+                We sent a 6-character code to:
+                <strong className="email-inline">{email}</strong>
                 Please check your email.
               </div>
 
