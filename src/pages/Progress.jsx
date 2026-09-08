@@ -649,58 +649,76 @@ export default function Progress() {
                     <span>
                       <span
                         style={{
-                          color:
+                          background:
                             '#1a7a3c',
-                          fontWeight:
-                            700,
-                        }}
-                      >
-                        ●
-                      </span>{' '}
-                      Good
-                    </span>
-
-                    <span>
-                      <span
-                        style={{
-                          color:
-                            '#d4ac0d',
-                          fontWeight:
-                            700,
-                        }}
-                      >
-                        ●
-                      </span>{' '}
-                      Fair
-                    </span>
-
-                    <span>
-                      <span
-                        style={{
-                          color:
-                            '#922b21',
-                          fontWeight:
-                            700,
-                        }}
-                      >
-                        ●
-                      </span>{' '}
-                      Needs work
-                    </span>
-
-                    <span>
-                      <span
-                        style={{
-                          color:
-                            '#e8edf2',
-                          fontWeight:
-                            700,
                           border:
                             '1px solid #ccc',
                           borderRadius:
                             '50%',
                           display:
                             'inline-block',
+                          verticalAlign:
+                            'middle',
+                          width: 16,
+                          height: 16,
+                        }}
+                      />{' '}
+                      Good
+                    </span>
+
+                    <span>
+                      <span
+                        style={{
+                          background:
+                            '#d4ac0d',
+                          border:
+                            '1px solid #ccc',
+                          borderRadius:
+                            '50%',
+                          display:
+                            'inline-block',
+                          verticalAlign:
+                            'middle',
+                          width: 16,
+                          height: 16,
+                        }}
+                      />{' '}
+                      Fair
+                    </span>
+
+                    <span>
+                      <span
+                        style={{
+                          background:
+                            '#922b21',
+                          border:
+                            '1px solid #ccc',
+                          borderRadius:
+                            '50%',
+                          display:
+                            'inline-block',
+                          verticalAlign:
+                            'middle',
+                          width: 16,
+                          height: 16,
+                        }}
+                      />{' '}
+                      Needs work
+                    </span>
+
+                    <span>
+                      <span
+                        style={{
+                          background:
+                            '#e8edf2',
+                          border:
+                            '1px solid #ccc',
+                          borderRadius:
+                            '50%',
+                          display:
+                            'inline-block',
+                          verticalAlign:
+                            'middle',
                           width: 16,
                           height: 16,
                         }}
