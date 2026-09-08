@@ -64,18 +64,30 @@ function getLocalDateString(date = new Date()) {
   return `${year}-${month}-${day}`
 }
 
-function getLast7Days() {
+/*
+ * Return the 7 calendar dates for a given week.
+ *
+ * weekOffset 0 = the current week (ending today)
+ * weekOffset 1 = the previous week (ending 7 days ago)
+ * weekOffset 2 = two weeks ago, and so on.
+ *
+ * This lets the user step back through earlier weeks while the
+ * on-screen layout stays exactly the same (always 7 days).
+ */
+function getWeekDays(weekOffset = 0) {
   const days = []
 
   const today = new Date()
 
   today.setHours(12, 0, 0, 0)
 
+  const anchor = 7 * weekOffset
+
   for (let i = 6; i >= 0; i--) {
     const d = new Date(today)
 
     d.setDate(
-      today.getDate() - i
+      today.getDate() - anchor - i
     )
 
     days.push(
@@ -121,6 +133,24 @@ function shortDate(dateStr) {
     {
       weekday: 'short',
       day: 'numeric',
+    }
+  )
+}
+
+/*
+ * "12 May" style label used for the week range caption, so the
+ * user always knows exactly which dates they are looking at.
+ */
+function longDate(dateStr) {
+  const d = new Date(
+    `${dateStr}T12:00:00`
+  )
+
+  return d.toLocaleDateString(
+    'en-GB',
+    {
+      day: 'numeric',
+      month: 'long',
     }
   )
 }
@@ -180,6 +210,10 @@ export default function Progress() {
   const [error, setError] =
     useState('')
 
+  // 0 = current week; each increment steps one week further back.
+  const [weekOffset, setWeekOffset] =
+    useState(0)
+
   useEffect(() => {
     let mounted = true
 
@@ -224,7 +258,7 @@ export default function Progress() {
   }, [])
 
   const last7 =
-    getLast7Days()
+    getWeekDays(weekOffset)
 
   /*
    * Create a lookup table:
@@ -258,6 +292,40 @@ export default function Progress() {
           entryMap[date]
         )
     ).length
+
+  const isCurrentWeek =
+    weekOffset === 0
+
+  const windowStart =
+    last7[0]
+
+  const windowEnd =
+    last7[last7.length - 1]
+
+  // Enable "Previous week" only while there is still older data to show.
+  const hasOlderData =
+    entries.some(
+      (entry) =>
+        normalizeDate(
+          entry.entryDate
+        ) < windowStart
+    )
+
+  const rangeLabel =
+    `${longDate(windowStart)} – ${longDate(windowEnd)}`
+
+  function goPreviousWeek() {
+    setWeekOffset(
+      (offset) => offset + 1
+    )
+  }
+
+  function goNextWeek() {
+    setWeekOffset(
+      (offset) =>
+        Math.max(0, offset - 1)
+    )
+  }
 
   return (
     <>
@@ -319,13 +387,27 @@ export default function Progress() {
                   margin: 0,
                 }}
               >
-                Last 7 Days
+                {isCurrentWeek
+                  ? 'Last 7 Days'
+                  : 'Earlier Week'}
               </p>
 
               <p
                 style={{
                   margin:
                     '6px 0 0',
+                  fontSize:
+                    'var(--font-size-base)',
+                  fontWeight: 600,
+                }}
+              >
+                {rangeLabel}
+              </p>
+
+              <p
+                style={{
+                  margin:
+                    '4px 0 0',
                   opacity: 0.88,
                   fontSize:
                     'var(--font-size-sm)',
@@ -335,13 +417,53 @@ export default function Progress() {
               </p>
             </div>
 
+            {/* Week navigation — step back through earlier weeks */}
+            <div
+              style={{
+                display: 'flex',
+                gap: 10,
+                marginBottom:
+                  'var(--space-md, 16px)',
+              }}
+            >
+              <button
+                type="button"
+                className="btn btn--secondary"
+                onClick={goPreviousWeek}
+                disabled={!hasOlderData}
+                aria-label="Show the previous week"
+                style={{
+                  flex: 1,
+                  minHeight: 54,
+                  fontSize:
+                    'var(--font-size-base)',
+                }}
+              >
+                ◀ Previous week
+              </button>
+
+              <button
+                type="button"
+                className="btn btn--secondary"
+                onClick={goNextWeek}
+                disabled={isCurrentWeek}
+                aria-label="Show the next week"
+                style={{
+                  flex: 1,
+                  minHeight: 54,
+                  fontSize:
+                    'var(--font-size-base)',
+                }}
+              >
+                Next week ▶
+              </button>
+            </div>
+
             {trackedCount === 0 && (
               <div className="alert alert--info mb-md">
-                No entries yet for
-                the last 7 days.
-                Start tracking today
-                to see your progress
-                here.
+                {isCurrentWeek
+                  ? 'No entries yet for the last 7 days. Start tracking today to see your progress here.'
+                  : 'No entries were recorded during this week.'}
               </div>
             )}
 
