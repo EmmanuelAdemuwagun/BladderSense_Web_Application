@@ -177,9 +177,9 @@ export default function SignIn() {
     </h3>
 
     <p className="text-muted">
-      Your account has not been verified yet. If you did not
-      receive the verification email, we can send you a new
-      verification link.
+      Your account has not been verified yet. If you already have
+      the 6-character code from your email, enter it now. If not,
+      we can send you a new one.
     </p>
 
     {resendSuccess && (
@@ -187,8 +187,8 @@ export default function SignIn() {
         className="alert alert--success"
         role="alert"
       >
-        A new verification email has been sent.
-        Please check your inbox.
+        A new verification code has been sent.
+        Please check your inbox, then enter it below.
       </div>
     )}
 
@@ -203,13 +203,28 @@ export default function SignIn() {
 
     <button
       type="button"
-      className="btn btn--secondary"
+      className="btn btn--primary"
+      onClick={() =>
+        navigate(
+          `/verify-registration?email=${encodeURIComponent(
+            email.trim().toLowerCase()
+          )}`
+        )
+      }
+      disabled={loading}
+    >
+      Enter Verification Code
+    </button>
+
+    <button
+      type="button"
+      className="btn btn--secondary mt-sm"
       onClick={handleResendVerification}
       disabled={resendLoading || loading}
     >
       {resendLoading
         ? 'Sending…'
-        : 'Resend Verification Email'}
+        : 'Resend Verification Code'}
     </button>
   </div>
 )}
@@ -294,8 +309,9 @@ export default function SignIn() {
     </h3>
 
     <p className="text-muted">
-      If you did not receive your verification email, we can
-      send you a new verification link.
+      Note: the code above signs you in only if your email is
+      already verified. If you just registered, enter your
+      registration code on the verification screen first.
     </p>
 
     {resendSuccess && (
@@ -303,7 +319,7 @@ export default function SignIn() {
         className="alert alert--success"
         role="alert"
       >
-        A new verification email has been sent. Please check
+        A new verification code has been sent. Please check
         your inbox.
       </div>
     )}
@@ -320,12 +336,27 @@ export default function SignIn() {
     <button
       type="button"
       className="btn btn--secondary"
+      onClick={() =>
+        navigate(
+          `/verify-registration?email=${encodeURIComponent(
+            email.trim().toLowerCase()
+          )}`
+        )
+      }
+      disabled={loading}
+    >
+      Verify My Email
+    </button>
+
+    <button
+      type="button"
+      className="btn btn--ghost mt-sm"
       onClick={handleResendVerification}
       disabled={resendLoading || loading}
     >
       {resendLoading
         ? 'Sending…'
-        : 'Resend Verification Email'}
+        : 'Resend Verification Code'}
     </button>
   </div>
 
