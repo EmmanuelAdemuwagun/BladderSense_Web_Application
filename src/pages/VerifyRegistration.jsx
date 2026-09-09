@@ -5,228 +5,324 @@ import FormField from '../components/FormField'
 import { api } from '../utils/api'
 
 export default function VerifyRegistration() {
-const [params] = useSearchParams()
-const navigate = useNavigate()
+  const [params] = useSearchParams()
+  const navigate = useNavigate()
 
-const emailFromLink = params.get('email') || ''
+  const emailFromLink = params.get('email') || ''
+  const tokenFromLink = params.get('token') || ''
 
-const [status, setStatus] = useState('loading')
-const [message, setMessage] = useState('')
-const [email, setEmail] = useState(emailFromLink)
+  /*
+   * status:
+   *   'form'    — waiting for the user to type their 6-character code
+   *   'loading' — auto-verifying a code that arrived in the URL (email link)
+   *   'success' — email verified
+   */
+  const [status, setStatus] = useState(tokenFromLink ? 'loading' : 'form')
+  const [message, setMessage] = useState('')
 
-const [resendLoading, setResendLoading] = useState(false)
-const [resendSuccess, setResendSuccess] = useState(false)
-const [resendError, setResendError] = useState('')
+  const [email, setEmail] = useState(emailFromLink)
+  const [token, setToken] = useState('')
+  const [emailError, setEmailError] = useState('')
+  const [tokenError, setTokenError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-useEffect(() => {
-const emailFromUrl = params.get('email')
-const token = params.get('token')
+  const [resendLoading, setResendLoading] = useState(false)
+  const [resendSuccess, setResendSuccess] = useState(false)
+  const [resendError, setResendError] = useState('')
 
-  
-if (!emailFromUrl || !token) {
-  setStatus('error')
-  setMessage(
-    'This verification link is missing information. Please request a new verification email.'
-  )
-  return
-}
+  /*
+   * Backward compatibility: if a code arrives in the URL (e.g. an emailed
+   * link with ?email=&token=), verify it automatically. Normal registration
+   * emails now send a 6-character code the user types in below instead.
+   */
+  useEffect(() => {
+    if (!tokenFromLink) return
 
-setEmail(emailFromUrl)
+    if (!emailFromLink) {
+      setStatus('form')
+      setMessage(
+        'This verification link is missing your email address. Please enter your email and code below.'
+      )
+      return
+    }
 
-api.verifyRegistration({
-  email: emailFromUrl,
-  token,
-})
-  .then(() => {
-    setStatus('success')
-  })
-  .catch((err) => {
-    setStatus('error')
-    setMessage(
-      err?.message ||
-        'This verification link may have expired or already been used.'
-    )
-  })
+    api
+      .verifyRegistration({
+        email: emailFromLink.trim().toLowerCase(),
+        token: tokenFromLink.trim().toUpperCase(),
+      })
+      .then(() => {
+        setStatus('success')
+      })
+      .catch((err) => {
+        setStatus('form')
+        setMessage(
+          err?.message ||
+            'This verification code is incorrect or has expired. Please enter it again below or request a new one.'
+        )
+      })
+  }, [emailFromLink, tokenFromLink])
 
-}, [params])
+  async function handleVerify(e) {
+    e.preventDefault()
 
-async function handleResend() {
-setResendError('')
-setResendSuccess(false)
+    setEmailError('')
+    setTokenError('')
+    setMessage('')
 
+    const normalizedEmail = email.trim().toLowerCase()
 
-const normalizedEmail = email.trim().toLowerCase()
+    if (!normalizedEmail) {
+      setEmailError('Please enter your email address.')
+      return
+    }
 
-if (!normalizedEmail) {
-  setResendError('Please enter your email address.')
-  return
-}
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      setEmailError('Please enter a valid email address.')
+      return
+    }
 
-if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
-  setResendError('Please enter a valid email address.')
-  return
-}
+    /*
+     * The verification code is 6 characters. Remove accidental spaces and
+     * uppercase any letters so it matches the code in the email.
+     */
+    const cleanedToken = token.trim().replace(/\s/g, '').toUpperCase()
 
-setResendLoading(true)
+    if (!cleanedToken) {
+      setTokenError('Please enter the 6-character verification code.')
+      return
+    }
 
-try {
-  await api.resendVerification({
-    email: normalizedEmail,
-  })
+    if (!/^[A-Z0-9]{6}$/.test(cleanedToken)) {
+      setTokenError('The verification code must be exactly 6 characters.')
+      return
+    }
 
-  setResendSuccess(true)
-} catch (err) {
-  setResendError(
-    err?.message ||
-      'Unable to send a new verification email. Please try again.'
-  )
-} finally {
-  setResendLoading(false)
-}
+    setLoading(true)
 
-}
+    try {
+      await api.verifyRegistration({
+        email: normalizedEmail,
+        token: cleanedToken,
+      })
 
-return (
-<> <Header title="Email Verification" backTo="/" />
+      setStatus('success')
+    } catch (err) {
+      setMessage(
+        err?.message ||
+          'This verification code is incorrect or has expired. Please try again or request a new one.'
+      )
+    } finally {
+      setLoading(false)
+    }
+  }
 
-  <main className="page">
-    <div className="card mt-lg text-center">
+  async function handleResend() {
+    setResendError('')
+    setResendSuccess(false)
+    setMessage('')
 
-      {status === 'loading' && (
-        <>
-          <div className="spinner" />
-          <p className="loading-text">
-            Verifying your email…
-          </p>
-        </>
-      )}
+    const normalizedEmail = email.trim().toLowerCase()
 
-      {status === 'success' && (
-        <>
-          <div
-            style={{
-              fontSize: 64,
-              marginBottom: 16,
-            }}
-          >
-            ✅
-          </div>
+    if (!normalizedEmail) {
+      setResendError('Please enter your email address first.')
+      return
+    }
 
-          <h2>Email Verified!</h2>
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      setResendError('Please enter a valid email address.')
+      return
+    }
 
-          <p>
-            Your email address has been verified successfully.
-            You can now sign in to your BladderSense account.
-          </p>
+    setResendLoading(true)
 
-          <button
-            type="button"
-            className="btn btn--primary mt-md"
-            onClick={() => navigate('/signin')}
-          >
-            Go to Sign In
-          </button>
-        </>
-      )}
+    try {
+      await api.resendVerification({
+        email: normalizedEmail,
+      })
 
-      {status === 'error' && (
-        <>
-          <div
-            style={{
-              fontSize: 64,
-              marginBottom: 16,
-            }}
-          >
-            ⚠️
-          </div>
+      setResendSuccess(true)
+    } catch (err) {
+      setResendError(
+        err?.message ||
+          'Unable to send a new verification code. Please try again.'
+      )
+    } finally {
+      setResendLoading(false)
+    }
+  }
 
-          <h2>Verification Link Unavailable</h2>
+  return (
+    <>
+      <Header title="Verify Your Email" backTo="/" />
 
-          <div className="alert alert--error">
-            {message ||
-              'This verification link may have expired or already been used.'}
-          </div>
+      <main className="page">
+        <div className="card mt-lg text-center">
+          {status === 'loading' && (
+            <>
+              <div className="spinner" />
+              <p className="loading-text">Verifying your email…</p>
+            </>
+          )}
 
-          <p>
-            Verification links expire after 15 minutes. If you did
-            not receive the original email or the link has expired,
-            you can request a new one below.
-          </p>
+          {status === 'success' && (
+            <>
+              <div style={{ fontSize: 64, marginBottom: 16 }}>✅</div>
 
-          <div className="card card--compact mt-md">
-            <h3 className="mb-md">
-              Send a New Verification Email
-            </h3>
+              <h2>Email Verified!</h2>
 
-            <FormField
-              label="Email Address"
-              id="resend-email"
-              required
-              error={resendError}
-            >
-              <input
-                id="resend-email"
-                className={`form-input${
-                  resendError ? ' form-input--error' : ''
-                }`}
-                type="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value)
-                  setResendError('')
-                  setResendSuccess(false)
-                }}
-                autoComplete="email"
-                inputMode="email"
-                disabled={resendLoading}
-              />
-            </FormField>
+              <p>
+                Your email address has been verified successfully. You can now
+                sign in to your BladderSense account.
+              </p>
 
-            {resendSuccess && (
-              <div
-                className="alert alert--success"
-                role="alert"
+              <button
+                type="button"
+                className="btn btn--primary mt-md"
+                onClick={() => navigate('/signin')}
               >
-                A new verification email has been sent. Please
-                check your inbox and use the new verification link.
+                Go to Sign In
+              </button>
+            </>
+          )}
+
+          {status === 'form' && (
+            <>
+              <div style={{ fontSize: 64, marginBottom: 16 }}>📧</div>
+
+              <h2>Enter Your Verification Code</h2>
+
+              <p>
+                We emailed a 6-character verification code to your inbox. Enter
+                it below to finish creating your account.
+              </p>
+
+              {message && (
+                <div className="alert alert--error" role="alert">
+                  {message}
+                </div>
+              )}
+
+              <form onSubmit={handleVerify} noValidate>
+                <FormField
+                  label="Email Address"
+                  id="verify-email"
+                  required
+                  error={emailError}
+                >
+                  <input
+                    id="verify-email"
+                    className={`form-input${
+                      emailError ? ' form-input--error' : ''
+                    }`}
+                    type="email"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value)
+                      if (emailError) setEmailError('')
+                      if (message) setMessage('')
+                    }}
+                    autoComplete="email"
+                    inputMode="email"
+                    disabled={loading}
+                  />
+                </FormField>
+
+                <FormField
+                  label="6-Character Verification Code"
+                  id="verify-token"
+                  hint="Enter the code exactly as shown in the email."
+                  error={tokenError}
+                >
+                  <input
+                    id="verify-token"
+                    className={`form-input${
+                      tokenError ? ' form-input--error' : ''
+                    }`}
+                    type="text"
+                    value={token}
+                    onChange={(e) => {
+                      const cleaned = e.target.value
+                        .replace(/[^a-zA-Z0-9]/g, '')
+                        .slice(0, 6)
+                        .toUpperCase()
+
+                      setToken(cleaned)
+                      if (tokenError) setTokenError('')
+                      if (message) setMessage('')
+                    }}
+                    maxLength={6}
+                    minLength={6}
+                    autoComplete="one-time-code"
+                    autoCapitalize="characters"
+                    spellCheck={false}
+                    inputMode="text"
+                    style={{
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.25em',
+                      fontSize: 28,
+                      fontWeight: 700,
+                      textAlign: 'center',
+                    }}
+                    disabled={loading}
+                    autoFocus
+                  />
+                </FormField>
+
+                <button
+                  type="submit"
+                  className="btn btn--primary"
+                  disabled={loading || token.length !== 6}
+                >
+                  {loading ? 'Verifying…' : 'Verify My Email'}
+                </button>
+              </form>
+
+              <div className="card card--compact mt-md">
+                <h3 className="mb-sm">Did not receive the code?</h3>
+
+                <p className="text-muted">
+                  Check your spam folder, or send yourself a new code. Codes
+                  expire after 15 minutes.
+                </p>
+
+                {resendSuccess && (
+                  <div className="alert alert--success" role="alert">
+                    A new verification code has been sent. Please check your
+                    inbox.
+                  </div>
+                )}
+
+                {resendError && (
+                  <div className="alert alert--error" role="alert">
+                    {resendError}
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  onClick={handleResend}
+                  disabled={resendLoading || loading}
+                >
+                  {resendLoading ? 'Sending…' : 'Resend Verification Code'}
+                </button>
               </div>
-            )}
 
-            <button
-              type="button"
-              className="btn btn--primary"
-              onClick={handleResend}
-              disabled={resendLoading}
-            >
-              {resendLoading
-                ? 'Sending…'
-                : 'Resend Verification Email'}
-            </button>
-          </div>
-
-          <div className="btn-stack mt-md">
-            <button
-              type="button"
-              className="btn btn--secondary"
-              onClick={() => navigate('/signin')}
-            >
-              Go to Sign In
-            </button>
-
-            <button
-              type="button"
-              className="btn btn--ghost"
-              onClick={() => navigate('/register')}
-            >
-              Register Again
-            </button>
-          </div>
-        </>
-      )}
-    </div>
-  </main>
-</>
-
-
-)
+              <div className="btn-stack mt-md">
+                <button
+                  type="button"
+                  className="btn btn--ghost"
+                  onClick={() => navigate('/signin')}
+                  disabled={loading}
+                >
+                  Go to Sign In
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </main>
+    </>
+  )
 }

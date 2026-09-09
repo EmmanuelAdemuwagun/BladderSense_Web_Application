@@ -94,7 +94,7 @@ export default function Register() {
   if (submitted) {
     return (
       <>
-        <Header title="Registration Sent" backTo="/" />
+        <Header title="Check Your Email" backTo="/" />
 
         <main className="page">
           <div className="card text-center mt-lg">
@@ -103,21 +103,32 @@ export default function Register() {
             <h2>Check Your Email</h2>
 
             <p>
-              We have sent a verification email to:
+              We have emailed a 6-character verification code to:
               <strong className="email-inline">{form.email}</strong>
             </p>
 
             <p>
-              Please check your email and click the verification link to
-complete your registration.
+              Open the email, then enter the code on the next screen to
+              finish creating your account.
             </p>
 
             <div className="alert alert--info mt-md">
-              The word expires in <strong>15 minutes</strong>.
+              The code expires in <strong>15 minutes</strong>.
             </div>
 
             <button
               className="btn btn--primary mt-md"
+              onClick={() =>
+                navigate(
+                  `/verify-registration?email=${encodeURIComponent(form.email)}`
+                )
+              }
+            >
+              Enter Verification Code
+            </button>
+
+            <button
+              className="btn btn--ghost mt-md"
               onClick={() => navigate('/signin')}
             >
               Go to Sign In
