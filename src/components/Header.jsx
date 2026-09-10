@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import { getSessionUser, clearSession } from '../utils/auth'
-import { api } from '../utils/api'
+import { getSessionUser } from '../utils/auth'
 
 export default function Header({
   title,
@@ -13,7 +12,11 @@ export default function Header({
   const location = useLocation()
   const user = getSessionUser()
 
-  const isDashboard = location.pathname === '/dashboard'
+  const onProfile = location.pathname === '/profile'
+
+  const initials = `${user?.firstName?.charAt(0) || ''}${
+    user?.lastName?.charAt(0) || ''
+  }`.toUpperCase()
 
   function handleBack() {
     if (onBack) {
@@ -27,78 +30,39 @@ export default function Header({
     navigate(-1)
   }
 
-  function handleRightAction() {
-    if (isDashboard) {
-      navigate('/profile')
-    } else {
-      navigate('/dashboard')
-    }
-  }
-
-  async function handleSignOut() {
-    try {
-      await api.logout()
-    } catch (err) {
-      console.error('Logout error:', err)
-    } finally {
-      clearSession()
-      navigate('/', { replace: true })
-    }
-  }
-
   return (
     <header className="header">
-      {/* Top row: navigation controls */}
-      <div className="header__bar">
-        {showBack ? (
-          <button
-            type="button"
-            className="header__btn"
-            onClick={handleBack}
-            aria-label="Go back"
-          >
-            ← Back
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="header__btn"
-            onClick={() => navigate('/')}
-            aria-label="Go to home"
-          >
-            🏠 Home
-          </button>
-        )}
+      {/* Left: back control (omitted on root screens via showBack={false}) */}
+      {showBack ? (
+        <button
+          type="button"
+          className="header__back"
+          onClick={handleBack}
+          aria-label="Go back"
+        >
+          <span aria-hidden="true">←</span> Back
+        </button>
+      ) : (
+        <span className="header__spacer" aria-hidden="true" />
+      )}
 
-        {showProfile && user && (
-          <div className="header__actions">
-            <button
-              type="button"
-              className="header__btn"
-              onClick={handleRightAction}
-              aria-label={
-                isDashboard
-                  ? 'Go to My Profile'
-                  : 'Go to Dashboard'
-              }
-            >
-              {isDashboard ? 'Profile' : 'Dashboard'}
-            </button>
+      {/* Title */}
+      <h1 className="header__title">{title}</h1>
 
-            <button
-              type="button"
-              className="header__btn header__signout"
-              onClick={handleSignOut}
-              aria-label="Sign out of your account"
-            >
-              Sign Out
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Page title on its own line so it never gets crushed by the buttons */}
-      {title && <h1 className="header__title">{title}</h1>}
+      {/* Right: single account entry point (avatar → profile) */}
+      {showProfile && user && !onProfile ? (
+        <button
+          type="button"
+          className="header__avatar"
+          onClick={() => navigate('/profile')}
+          aria-label="Your profile and account"
+          title="Profile & account"
+        >
+          {initials || 'U'}
+        </button>
+      ) : (
+        <span className="header__spacer" aria-hidden="true" />
+      )}
     </header>
   )
 }

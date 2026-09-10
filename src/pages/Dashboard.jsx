@@ -190,22 +190,6 @@ export default function Dashboard() {
 
   const displayName = user.preferredName || user.firstName
 
-  async function handleLogout() {
-    try {
-      await api.logout()
-    } catch (error) {
-      console.error('Logout error:', error)
-    } finally {
-      /*
-       * Clear the locally saved session too. Without this the app still finds
-       * the user in localStorage and treats them as signed in, so "Sign Out"
-       * appears to do nothing but return to the home page.
-       */
-      clearSession()
-      navigate('/', { replace: true })
-    }
-  }
-
   return (
     <>
       <Header title="Bladder Health Guide" showBack={false} />
@@ -319,19 +303,6 @@ export default function Dashboard() {
             </Link>
           ))}
         </nav>
-
-        <hr className="divider" />
-
-        <button
-          className="btn btn--secondary"
-          onClick={handleLogout}
-        >
-          Sign Out
-        </button>
-
-        <p className="text-muted text-center mt-sm">
-          Signed in as {user.email}
-        </p>
       </main>
     </>
   )
