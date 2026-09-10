@@ -170,6 +170,27 @@ export default function SignIn() {
                 No password is needed.
               </p>
 
+              {apiError &&
+                !apiError.toLowerCase().includes('not been verified') && (
+                  <div className="alert alert--error" role="alert">
+                    {apiError}
+
+                    {apiError.toLowerCase().includes('no account') && (
+                      <>
+                        {' '}
+                        <button
+                          type="button"
+                          className="btn btn--ghost"
+                          onClick={() => navigate('/register')}
+                          disabled={loading}
+                        >
+                          Register here
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+
               {apiError?.toLowerCase().includes('not been verified') && (
   <div className="card card--compact mt-md">
     <h3 className="mb-sm">

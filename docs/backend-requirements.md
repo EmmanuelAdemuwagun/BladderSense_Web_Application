@@ -105,6 +105,21 @@ Body: `{ "email": "jane@example.com" }`
 - If the account is not verified, return an error whose message contains the
   phrase **"not been verified"** — the frontend keys off that to show the
   "verify your email" helper. (e.g. `{ "error": "This email has not been verified yet." }`)
+- ⚠️ **Unknown / deleted email:** decide and implement one of these — the
+  current behaviour is confusing (a deleted account gets no email and no
+  message):
+  - **Recommended for this app (clear UX):** return
+    `404 { "error": "No account found for this email. Please register." }`.
+    The frontend now displays this, and if the message contains the phrase
+    **"no account"** it also shows an inline **Register here** button.
+  - **If you prefer to prevent account enumeration:** return `200` with **no
+    email sent** for unknown addresses (identical response to the known case).
+    If you choose this, tell the frontend team — the sign-in screen should then
+    show a neutral "If an account exists, we've sent a code" note instead of
+    advancing straight to the code-entry step, so the user isn't left waiting
+    for an email that will never arrive.
+  - Pick one and keep it consistent. For a small clinical app, the first option
+    is friendlier; the enumeration risk is low.
 
 ### 5.5 ✅ Verify sign-in code (log in)
 **`POST /auth/verify-login`**
