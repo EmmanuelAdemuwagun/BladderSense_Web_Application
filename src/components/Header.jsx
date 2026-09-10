@@ -48,58 +48,57 @@ export default function Header({
 
   return (
     <header className="header">
-      {/* Left navigation */}
-      {showBack ? (
-        <button
-          type="button"
-          className="header__back"
-          onClick={handleBack}
-          aria-label="Go back"
-        >
-          ← Back
-        </button>
-      ) : (
-        <button
-          type="button"
-          className="header__back"
-          onClick={() => navigate('/')}
-          aria-label="Go to home"
-        >
-          🏠 Home
-        </button>
-      )}
-
-      {/* Page title */}
-      <h1 className="header__title">
-        {title}
-      </h1>
-
-      {/* Authenticated navigation */}
-      {showProfile && user && (
-        <div className="header__actions">
+      {/* Top row: navigation controls */}
+      <div className="header__bar">
+        {showBack ? (
           <button
             type="button"
-            className="header__back"
-            onClick={handleRightAction}
-            aria-label={
-              isDashboard
-                ? 'Go to My Profile'
-                : 'Go to Dashboard'
-            }
+            className="header__btn"
+            onClick={handleBack}
+            aria-label="Go back"
           >
-            {isDashboard ? 'Profile' : 'Dashboard'}
+            ← Back
           </button>
-
+        ) : (
           <button
             type="button"
-            className="header__back header__signout"
-            onClick={handleSignOut}
-            aria-label="Sign out of your account"
+            className="header__btn"
+            onClick={() => navigate('/')}
+            aria-label="Go to home"
           >
-            Sign Out
+            🏠 Home
           </button>
-        </div>
-      )}
+        )}
+
+        {showProfile && user && (
+          <div className="header__actions">
+            <button
+              type="button"
+              className="header__btn"
+              onClick={handleRightAction}
+              aria-label={
+                isDashboard
+                  ? 'Go to My Profile'
+                  : 'Go to Dashboard'
+              }
+            >
+              {isDashboard ? 'Profile' : 'Dashboard'}
+            </button>
+
+            <button
+              type="button"
+              className="header__btn header__signout"
+              onClick={handleSignOut}
+              aria-label="Sign out of your account"
+            >
+              Sign Out
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Page title on its own line so it never gets crushed by the buttons */}
+      {title && <h1 className="header__title">{title}</h1>}
     </header>
   )
 }

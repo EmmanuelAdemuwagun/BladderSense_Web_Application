@@ -123,6 +123,7 @@
 
 import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import Header from '../components/Header'
 import { api } from '../utils/api'
 import { getSessionUser, saveSession, clearSession } from '../utils/auth'
 import { guideSections } from '../content/guide'
@@ -207,25 +208,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <header className="header">
-        <button
-          className="header__back"
-          onClick={() => navigate('/')}
-          aria-label="Home"
-        >
-          🏠 Home
-        </button>
-
-        <h1 className="header__title">Bladder Health Guide</h1>
-
-        <button
-          className="header__back"
-          onClick={() => navigate('/profile')}
-          aria-label="My Profile"
-        >
-          Profile
-        </button>
-      </header>
+      <Header title="Bladder Health Guide" showBack={false} />
 
       <main className="page">
         {/* Welcome banner */}
