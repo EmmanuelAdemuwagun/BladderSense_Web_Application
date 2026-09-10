@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import { getSessionUser } from '../utils/auth'
+import { getSessionUser, clearSession } from '../utils/auth'
+import { api } from '../utils/api'
 
 export default function Header({
   title,
@@ -34,6 +35,17 @@ export default function Header({
     }
   }
 
+  async function handleSignOut() {
+    try {
+      await api.logout()
+    } catch (err) {
+      console.error('Logout error:', err)
+    } finally {
+      clearSession()
+      navigate('/', { replace: true })
+    }
+  }
+
   return (
     <header className="header">
       {/* Left navigation */}
@@ -64,18 +76,29 @@ export default function Header({
 
       {/* Authenticated navigation */}
       {showProfile && user && (
-        <button
-          type="button"
-          className="header__back"
-          onClick={handleRightAction}
-          aria-label={
-            isDashboard
-              ? 'Go to My Profile'
-              : 'Go to Dashboard'
-          }
-        >
-          {isDashboard ? 'Profile' : 'Dashboard'}
-        </button>
+        <div className="header__actions">
+          <button
+            type="button"
+            className="header__back"
+            onClick={handleRightAction}
+            aria-label={
+              isDashboard
+                ? 'Go to My Profile'
+                : 'Go to Dashboard'
+            }
+          >
+            {isDashboard ? 'Profile' : 'Dashboard'}
+          </button>
+
+          <button
+            type="button"
+            className="header__back header__signout"
+            onClick={handleSignOut}
+            aria-label="Sign out of your account"
+          >
+            Sign Out
+          </button>
+        </div>
       )}
     </header>
   )

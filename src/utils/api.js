@@ -71,6 +71,11 @@ export const api = {
       method: "POST",
     }),
 
+  deleteAccount: () =>
+    request("/profile", {
+      method: "DELETE",
+    }),
+
   resendVerification: (body) =>
   request("/auth/resend-verification", {
     method: "POST",

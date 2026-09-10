@@ -15,6 +15,10 @@ export default function Profile() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
 
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
+
   useEffect(() => {
     let mounted = true
 
@@ -102,6 +106,24 @@ async function handleLogout() {
   } finally {
     clearSession()
     navigate('/', { replace: true })
+  }
+}
+
+async function handleDeleteAccount() {
+  setDeleteError('')
+  setDeleting(true)
+
+  try {
+    await api.deleteAccount()
+
+    clearSession()
+    navigate('/', { replace: true })
+  } catch (err) {
+    setDeleteError(
+      err?.message ||
+        'We could not delete your account. Please try again.'
+    )
+    setDeleting(false)
   }
 }
 
@@ -263,6 +285,64 @@ async function handleLogout() {
           >
             Sign Out
           </button>
+
+          <hr className="divider" />
+
+          {/* Delete account */}
+          <h3 className="danger-zone__title">Delete account</h3>
+
+          <p className="profile-section__description">
+            This permanently deletes your BladderSense account and all of
+            your tracking data. This cannot be undone.
+          </p>
+
+          {deleteError && (
+            <div className="alert alert--error mb-md" role="alert">
+              {deleteError}
+            </div>
+          )}
+
+          {!confirmingDelete ? (
+            <button
+              type="button"
+              className="btn btn--danger"
+              onClick={() => {
+                setDeleteError('')
+                setConfirmingDelete(true)
+              }}
+            >
+              Delete My Account
+            </button>
+          ) : (
+            <div className="danger-zone__confirm">
+              <p className="danger-zone__warning">
+                Are you sure? This will erase your account and every
+                tracking entry for good.
+              </p>
+
+              <div className="btn-stack">
+                <button
+                  type="button"
+                  className="btn btn--danger"
+                  onClick={handleDeleteAccount}
+                  disabled={deleting}
+                >
+                  {deleting
+                    ? 'Deleting…'
+                    : 'Yes, permanently delete everything'}
+                </button>
+
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  onClick={() => setConfirmingDelete(false)}
+                  disabled={deleting}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
         </section>
 
         <p className="profile-footer">
