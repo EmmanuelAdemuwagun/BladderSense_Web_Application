@@ -11,6 +11,8 @@ Disallow: /profile
 Disallow: /daily-tracking
 Disallow: /progress
 Disallow: /verify-registration
+# Guide pages require a signed-in session, so they are not publicly readable
+Disallow: /guide/
 # Never index the API proxy
 Disallow: /api/
 
