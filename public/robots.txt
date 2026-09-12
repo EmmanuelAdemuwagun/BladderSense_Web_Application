@@ -1,0 +1,25 @@
+# robots.txt for BladderSense (https://bladdersense.com)
+
+# Allow all well-behaved crawlers by default
+User-agent: *
+Allow: /
+
+# Keep private / authenticated app screens out of search results.
+# These require a signed-in session and hold no useful public content.
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /daily-tracking
+Disallow: /progress
+Disallow: /verify-registration
+# Never index the API proxy
+Disallow: /api/
+
+# Google
+User-agent: Googlebot
+Allow: /
+
+# Bing
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://bladdersense.com/sitemap.xml

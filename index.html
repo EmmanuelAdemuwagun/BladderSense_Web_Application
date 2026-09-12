@@ -10,13 +10,130 @@
     <meta name="theme-color" content="#1a5276" />
     <!-- Stop iOS from auto-linking emails / phone numbers into blue underlined links -->
     <meta name="format-detection" content="telephone=no, email=no, address=no" />
-    <title>Bladder Health Guide for Men</title>
-    <meta name="description" content="A practical guide to improving bladder control through small daily changes." />
+
+    <!-- ===================== SEO: primary tags ===================== -->
+    <title>BladderSense — Bladder Health Guide for Men | Better Days, Better Nights</title>
+    <meta
+      name="description"
+      content="BladderSense is a practical, self-paced bladder health guide for older men — improve night-time urination, sleep, and bladder control through small daily changes. Free, private, and easy to follow."
+    />
+    <meta
+      name="keywords"
+      content="bladder health, bladder control, men's health, night-time urination, nocturia, overactive bladder, pelvic floor exercises, urinary urgency, prostate, self-management, older men, sleep"
+    />
+    <meta name="author" content="BladderSense" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="bingbot" content="index, follow" />
+    <link rel="canonical" href="https://bladdersense.com/" />
+
+    <!-- ===================== Open Graph (Facebook / LinkedIn / etc.) ===================== -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="BladderSense" />
+    <meta property="og:title" content="BladderSense — Bladder Health Guide for Men" />
+    <meta
+      property="og:description"
+      content="A practical, self-paced guide for older men to improve bladder control, night-time urination, and sleep through small daily changes. Free and private."
+    />
+    <meta property="og:url" content="https://bladdersense.com/" />
+    <meta property="og:image" content="https://bladdersense.com/homepage-logo.png" />
+    <meta property="og:image:alt" content="BladderSense — Better Days. Better Nights." />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- ===================== Twitter / X card ===================== -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="BladderSense — Bladder Health Guide for Men" />
+    <meta
+      name="twitter:description"
+      content="A practical, self-paced guide for older men to improve bladder control, night-time urination, and sleep through small daily changes."
+    />
+    <meta name="twitter:image" content="https://bladdersense.com/homepage-logo.png" />
+    <meta name="twitter:image:alt" content="BladderSense — Better Days. Better Nights." />
+
     <link rel="icon" type="image/png" href="/logo-icon.png" />
+    <link rel="apple-touch-icon" href="/logo-icon.png" />
+
+    <!-- ===================== Structured data (JSON-LD) ===================== -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://bladdersense.com/#organization",
+            "name": "BladderSense",
+            "url": "https://bladdersense.com/",
+            "logo": "https://bladdersense.com/logo-full.png",
+            "slogan": "Better Days. Better Nights."
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://bladdersense.com/#website",
+            "url": "https://bladdersense.com/",
+            "name": "BladderSense",
+            "description": "A practical, self-paced bladder health guide for older men.",
+            "publisher": { "@id": "https://bladdersense.com/#organization" },
+            "inLanguage": "en"
+          },
+          {
+            "@type": "MedicalWebPage",
+            "@id": "https://bladdersense.com/#webpage",
+            "url": "https://bladdersense.com/",
+            "name": "BladderSense — Bladder Health Guide for Men",
+            "isPartOf": { "@id": "https://bladdersense.com/#website" },
+            "about": {
+              "@type": "MedicalCondition",
+              "name": "Bladder control problems in men (including nocturia and urinary urgency)"
+            },
+            "audience": {
+              "@type": "PeopleAudience",
+              "suggestedGender": "male",
+              "suggestedMinAge": 50
+            },
+            "description": "Practical, self-paced guidance to help older men improve bladder control, night-time urination, sleep, and daily wellbeing through small changes.",
+            "inLanguage": "en"
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div></div>
     <div id="root"></div>
+
+    <!-- No-JavaScript fallback: gives search engines (especially those that do
+         not run JavaScript well) real, crawlable content and internal links.
+         Replaced by the React app the moment JavaScript runs. -->
+    <noscript>
+      <main style="max-width: 720px; margin: 0 auto; padding: 24px; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; line-height: 1.6; color: #1a1a1a;">
+        <h1>BladderSense — Bladder Health Guide for Men</h1>
+        <p><strong>Better Days. Better Nights.</strong></p>
+        <p>
+          BladderSense is a practical, self-paced guide that helps older men
+          improve bladder control, reduce night-time urination, sleep better,
+          and feel more confident through small, realistic daily changes. It is
+          free, private, and easy to follow.
+        </p>
+        <h2>What the guide covers</h2>
+        <ul>
+          <li><a href="/guide/night-time">Night-time Urination &amp; Fluid Balance</a></li>
+          <li><a href="/guide/sleep">Sleep &amp; Rest</a></li>
+          <li><a href="/guide/movement">Movement, Activity &amp; Healthy Weight</a></li>
+          <li><a href="/guide/stress">Stress, Worry &amp; Emotional Wellbeing</a></li>
+          <li><a href="/guide/pelvic-floor">Pelvic Floor Exercises</a></li>
+          <li><a href="/guide/practical-support">Practical Support &amp; Products</a></li>
+          <li><a href="/guide/personal-plan">My Personal Plan</a></li>
+          <li><a href="/guide/tips">Tips for Success</a></li>
+          <li><a href="/guide/seek-help">When to Seek Medical Help</a></li>
+        </ul>
+        <p>
+          <a href="/register">Create your free account</a> or
+          <a href="/signin">sign in</a> to get started. You will need
+          JavaScript enabled to use the full BladderSense app.
+        </p>
+      </main>
+    </noscript>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
