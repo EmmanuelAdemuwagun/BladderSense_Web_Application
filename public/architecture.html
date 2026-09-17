@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="High-level and low-level architecture of the BladderSense web application.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.svg">
+<title>BladderSense Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#eef2f6;
+    --surface:#ffffff;
+    --surface-2:#f6f9fb;
+    --ink:#12222e;
+    --ink-soft:#42596a;
+    --ink-faint:#708997;
+    --line:#d3dee6;
+    --line-strong:#b3c4d0;
+    --brand:#1a5276;
+    --brand-2:#2e86c1;
+    --brand-wash:#e6f0f8;
+    --data:#1f7a5a;
+    --data-wash:#e0f1ea;
+    --legacy:#9a6a12;
+    --legacy-wash:#f6edda;
+    --danger:#a5382b;
+    --shadow:0 1px 2px rgba(18,34,46,.06),0 6px 18px rgba(18,34,46,.07);
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#0c151c;
+      --surface:#12202b;
+      --surface-2:#152431;
+      --ink:#e7eef3;
+      --ink-soft:#a7bcca;
+      --ink-faint:#6d8595;
+      --line:#263947;
+      --line-strong:#375062;
+      --brand:#5aa9dd;
+      --brand-2:#7cc0ec;
+      --brand-wash:#132c3f;
+      --data:#4cc191;
+      --data-wash:#122e26;
+      --legacy:#d6a94e;
+      --legacy-wash:#2c2413;
+      --danger:#e0776b;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0c151c;
+    --surface:#12202b;
+    --surface-2:#152431;
+    --ink:#e7eef3;
+    --ink-soft:#a7bcca;
+    --ink-faint:#6d8595;
+    --line:#263947;
+    --line-strong:#375062;
+    --brand:#5aa9dd;
+    --brand-2:#7cc0ec;
+    --brand-wash:#132c3f;
+    --data:#4cc191;
+    --data-wash:#122e26;
+    --legacy:#d6a94e;
+    --legacy-wash:#2c2413;
+    --danger:#e0776b;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--ground);color:var(--ink);
+    font-family:var(--sans);line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding-inline:20px;padding-block:44px 72px}
+
+  /* ---- masthead ---- */
+  .eyebrow{
+    font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--brand);margin:0 0 12px
+  }
+  h1{
+    font-size:clamp(30px,5.4vw,46px);line-height:1.05;font-weight:700;
+    letter-spacing:-.02em;margin:0;text-wrap:balance
+  }
+  .lede{
+    font-size:clamp(16px,2.2vw,18px);color:var(--ink-soft);
+    max-width:64ch;margin:16px 0 0
+  }
+  .masthead{border-bottom:1px solid var(--line);padding-bottom:34px;margin-bottom:14px}
+
+  /* ---- section ---- */
+  section{margin-top:52px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{
+    font-family:var(--mono);font-size:13px;font-weight:600;color:var(--brand-2);
+    border:1px solid var(--line-strong);border-radius:6px;padding:3px 8px;line-height:1
+  }
+  h2{font-size:clamp(21px,3vw,27px);font-weight:700;letter-spacing:-.015em;margin:0}
+  .sec-sub{color:var(--ink-soft);font-size:15px;margin:6px 0 26px;max-width:70ch}
+
+  /* ---- diagram frame ---- */
+  .diagram{
+    background:var(--surface);border:1px solid var(--line);border-radius:16px;
+    box-shadow:var(--shadow);padding:10px;overflow-x:auto
+  }
+  .diagram svg{display:block;width:100%;height:auto;min-width:640px}
+
+  /* SVG shared node styling via classes */
+  .n-box{fill:var(--surface-2);stroke:var(--line-strong);stroke-width:1.5}
+  .n-brand{fill:var(--brand-wash);stroke:var(--brand);stroke-width:1.8}
+  .n-data{fill:var(--data-wash);stroke:var(--data);stroke-width:1.6}
+  .n-legacy{fill:var(--legacy-wash);stroke:var(--legacy);stroke-width:1.5;stroke-dasharray:6 4}
+  .t-title{fill:var(--ink);font-family:var(--sans);font-weight:700}
+  .t-sub{fill:var(--ink-soft);font-family:var(--mono);font-weight:400}
+  .t-body{fill:var(--ink-soft);font-family:var(--sans)}
+  .t-brand{fill:var(--brand);font-family:var(--mono);font-weight:600}
+  .t-data{fill:var(--data);font-family:var(--mono);font-weight:600}
+  .t-legacy{fill:var(--legacy);font-family:var(--mono);font-weight:600}
+  .edge{stroke:var(--line-strong);stroke-width:2;fill:none}
+  .edge-brand{stroke:var(--brand);stroke-width:2.4;fill:none}
+  .edge-data{stroke:var(--data);stroke-width:2;fill:none}
+  .edge-legacy{stroke:var(--legacy);stroke-width:1.8;fill:none;stroke-dasharray:6 4}
+  .edge-lbl{fill:var(--ink);font-family:var(--mono);font-weight:500}
+  .edge-lbl-bg{fill:var(--surface)}
+
+  /* ---- legend ---- */
+  .legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:16px;font-size:13px;color:var(--ink-soft)}
+  .legend span{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono)}
+  .sw{width:26px;height:14px;border-radius:4px;border:1.5px solid;display:inline-block}
+  .sw-brand{background:var(--brand-wash);border-color:var(--brand)}
+  .sw-data{background:var(--data-wash);border-color:var(--data)}
+  .sw-base{background:var(--surface-2);border-color:var(--line-strong)}
+  .sw-legacy{background:var(--legacy-wash);border-color:var(--legacy);border-style:dashed}
+
+  /* ---- callout ---- */
+  .callout{
+    display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;
+    background:var(--brand-wash);border:1px solid var(--brand);border-left-width:4px;
+    border-radius:12px;padding:16px 18px;margin-top:22px
+  }
+  .callout.amber{background:var(--legacy-wash);border-color:var(--legacy)}
+  .callout .tag{
+    font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--brand);white-space:nowrap;padding-top:2px
+  }
+  .callout.amber .tag{color:var(--legacy)}
+  .callout p{margin:0;font-size:14.5px;color:var(--ink)}
+  .callout code{font-family:var(--mono);font-size:.9em;background:var(--surface);padding:1px 5px;border-radius:4px;border:1px solid var(--line)}
+
+  /* ---- module grid ---- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:8px}
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:13px;
+    padding:16px 17px;box-shadow:var(--shadow)
+  }
+  .card h3{
+    margin:0 0 4px;font-size:13px;font-family:var(--mono);font-weight:600;
+    letter-spacing:.04em;text-transform:uppercase;color:var(--brand)
+  }
+  .card .file{font-family:var(--mono);font-size:12.5px;color:var(--ink-faint);margin:0 0 10px}
+  .card ul{margin:0;padding-left:16px;font-size:13.5px;color:var(--ink-soft)}
+  .card li{margin:3px 0}
+  .card li b{color:var(--ink);font-weight:600}
+
+  /* ---- table ---- */
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow);margin-top:8px}
+  table{border-collapse:collapse;width:100%;min-width:560px;font-size:13.5px;background:var(--surface)}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line)}
+  thead th{
+    background:var(--surface-2);font-family:var(--mono);font-size:11.5px;font-weight:600;
+    letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);position:sticky;top:0
+  }
+  tbody tr:last-child td{border-bottom:none}
+  td code,th code{font-family:var(--mono);font-size:12.5px;color:var(--brand)}
+  .pill{
+    font-family:var(--mono);font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px;
+    border:1px solid;display:inline-block;white-space:nowrap
+  }
+  .pill.get{color:var(--data);border-color:var(--data);background:var(--data-wash)}
+  .pill.post{color:var(--brand);border-color:var(--brand);background:var(--brand-wash)}
+  .pill.put{color:var(--legacy);border-color:var(--legacy);background:var(--legacy-wash)}
+  .pill.del{color:var(--danger);border-color:var(--danger)}
+
+  /* ---- flow steps ---- */
+  .flow{display:grid;gap:10px;margin-top:8px}
+  .step{
+    display:grid;grid-template-columns:32px 1fr;gap:14px;align-items:start;
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)
+  }
+  .step .idx{
+    width:32px;height:32px;border-radius:9px;display:grid;place-items:center;
+    font-family:var(--mono);font-weight:600;font-size:14px;
+    background:var(--brand-wash);color:var(--brand);border:1px solid var(--brand)
+  }
+  .step h4{margin:2px 0 3px;font-size:15px;font-weight:600}
+  .step p{margin:0;font-size:13.5px;color:var(--ink-soft)}
+  .step code{font-family:var(--mono);font-size:12.5px;color:var(--brand-2)}
+
+  footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);color:var(--ink-faint);font-size:12.5px;font-family:var(--mono)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">System Architecture · Proof of Concept</p>
+    <h1>BladderSense Web Application</h1>
+    <p class="lede">A mobile-first, senior-friendly React SPA delivering a bladder-health guide for older men — passwordless email auth, a 12-section guidebook, a daily symptom diary, and a 30-day progress view. Static front end on Netlify, stateful API on Heroku, joined by a cookie-preserving reverse proxy.</p>
+  </header>
+
+  <!-- ================= HIGH LEVEL ================= -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>High-Level Architecture</h2>
+    </div>
+    <p class="sec-sub">The browser talks only to <code>bladdersense.com</code>. Netlify serves the static app and reverse-proxies <code>/api/*</code> to the Heroku backend — the one move that keeps the session cookie first-party so it survives iOS Safari's tracking protection.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 900 700" role="img" aria-label="High-level system topology diagram">
+        <defs>
+          <marker id="ah" markerWidth="10" markerHeight="10" refX="7.5" refY="3.2" orient="auto">
+            <path d="M0,0 L8,3.2 L0,6.4 Z" fill="var(--line-strong)"/>
+          </marker>
+          <marker id="ah-b" markerWidth="10" markerHeight="10" refX="7.5" refY="3.2" orient="auto">
+            <path d="M0,0 L8,3.2 L0,6.4 Z" fill="var(--brand)"/>
+          </marker>
+          <marker id="ah-d" markerWidth="10" markerHeight="10" refX="7.5" refY="3.2" orient="auto">
+            <path d="M0,0 L8,3.2 L0,6.4 Z" fill="var(--data)"/>
+          </marker>
+          <marker id="ah-l" markerWidth="10" markerHeight="10" refX="7.5" refY="3.2" orient="auto">
+            <path d="M0,0 L8,3.2 L0,6.4 Z" fill="var(--legacy)"/>
+          </marker>
+        </defs>
+
+        <!-- Browser -->
+        <g>
+          <rect class="n-box" x="200" y="24" width="360" height="112" rx="14"/>
+          <text class="t-title" x="380" y="54" text-anchor="middle" font-size="18">User's Browser</text>
+          <text class="t-sub" x="380" y="75" text-anchor="middle" font-size="12">iPhone Safari (primary target)</text>
+          <text class="t-body" x="380" y="98" text-anchor="middle" font-size="12.5">React 18 SPA · react-router v6 · Vite build</text>
+          <text class="t-body" x="380" y="116" text-anchor="middle" font-size="12.5">localStorage = display hint only (no auth secret)</text>
+        </g>
+
+        <!-- edge browser -> netlify -->
+        <path class="edge-brand" d="M380,136 L380,196" marker-end="url(#ah-b)"/>
+        <rect class="edge-lbl-bg" x="250" y="156" width="260" height="20" rx="4"/>
+        <text class="edge-lbl t-brand" x="380" y="170" text-anchor="middle" font-size="11.5">HTTPS · fetch(credentials:"include")</text>
+
+        <!-- Netlify -->
+        <g>
+          <rect class="n-brand" x="200" y="200" width="360" height="118" rx="14"/>
+          <text class="t-title" x="380" y="230" text-anchor="middle" font-size="18">Netlify · bladdersense.com</text>
+          <text class="t-body" x="380" y="253" text-anchor="middle" font-size="12.5">Static hosting of dist/ (SPA + prerendered SEO)</text>
+          <text class="t-brand" x="380" y="278" text-anchor="middle" font-size="12">netlify.toml redirects:</text>
+          <text class="t-body" x="380" y="296" text-anchor="middle" font-size="12">/api/* → Heroku (proxy) · /* → index.html</text>
+        </g>
+
+        <!-- edge netlify -> legacy -->
+        <path class="edge-legacy" d="M560,238 L648,238" marker-end="url(#ah-l)"/>
+        <text class="t-legacy" x="604" y="228" text-anchor="middle" font-size="10.5">not wired</text>
+
+        <!-- Legacy box -->
+        <g>
+          <rect class="n-legacy" x="652" y="200" width="236" height="118" rx="14"/>
+          <text class="t-legacy" x="770" y="228" text-anchor="middle" font-size="12">LEGACY · superseded</text>
+          <text class="t-body" x="770" y="250" text-anchor="middle" font-size="11.5">netlify/functions/*</text>
+          <text class="t-body" x="770" y="268" text-anchor="middle" font-size="11.5">Bearer-token auth</text>
+          <text class="t-body" x="770" y="286" text-anchor="middle" font-size="11.5">JSONBin.io / local db.json</text>
+          <text class="t-body" x="770" y="304" text-anchor="middle" font-size="11.5">nodemailer · not on live path</text>
+        </g>
+
+        <!-- edge netlify -> heroku -->
+        <path class="edge-brand" d="M380,318 L380,384" marker-end="url(#ah-b)"/>
+        <rect class="edge-lbl-bg" x="236" y="340" width="288" height="20" rx="4"/>
+        <text class="edge-lbl t-brand" x="380" y="354" text-anchor="middle" font-size="11.5">proxied · cookie stays FIRST-PARTY</text>
+
+        <!-- Heroku -->
+        <g>
+          <rect class="n-brand" x="200" y="388" width="360" height="126" rx="14"/>
+          <text class="t-title" x="380" y="418" text-anchor="middle" font-size="18">Backend API · Heroku (Node)</text>
+          <text class="t-sub" x="380" y="438" text-anchor="middle" font-size="11">bladdersense-582048c5cf7e.herokuapp.com/api</text>
+          <text class="t-body" x="380" y="461" text-anchor="middle" font-size="12.5">Auth = HttpOnly cookie <tspan font-family="var(--mono)">bladdersense_session</tspan></text>
+          <text class="t-body" x="380" y="480" text-anchor="middle" font-size="12.5">/auth/* · /profile · /tracking · /tracking/summary</text>
+          <text class="t-body" x="380" y="499" text-anchor="middle" font-size="12.5">6-char email OTP · weekly email reminders</text>
+        </g>
+
+        <!-- edges heroku -> db / smtp -->
+        <path class="edge-data" d="M300,514 L268,566" marker-end="url(#ah-d)"/>
+        <path class="edge" d="M460,514 L492,566" marker-end="url(#ah)"/>
+
+        <!-- DB -->
+        <g>
+          <rect class="n-data" x="120" y="570" width="290" height="98" rx="14"/>
+          <text class="t-title" x="265" y="600" text-anchor="middle" font-size="16">Persistent Database</text>
+          <text class="t-body" x="265" y="622" text-anchor="middle" font-size="12">Server-side, on Heroku</text>
+          <text class="t-body" x="265" y="641" text-anchor="middle" font-size="12">Users · session tokens · tracking</text>
+        </g>
+
+        <!-- SMTP -->
+        <g>
+          <rect class="n-box" x="490" y="570" width="290" height="98" rx="14"/>
+          <text class="t-title" x="635" y="600" text-anchor="middle" font-size="16">SMTP Email Provider</text>
+          <text class="t-body" x="635" y="622" text-anchor="middle" font-size="12">Verification &amp; sign-in codes</text>
+          <text class="t-body" x="635" y="641" text-anchor="middle" font-size="12">30-day reminder nudges</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="legend">
+      <span><i class="sw sw-brand"></i>Active request path &amp; auth</span>
+      <span><i class="sw sw-data"></i>Persistent data</span>
+      <span><i class="sw sw-base"></i>Infrastructure</span>
+      <span><i class="sw sw-legacy"></i>Legacy / not on live path</span>
+    </div>
+
+    <div class="callout">
+      <span class="tag">Key decision</span>
+      <p>The backend lives on a <b>different origin</b> (Heroku). A direct browser→Heroku call would set a <b>third-party</b> cookie, which iOS WebKit + Intelligent Tracking Prevention silently drop — bouncing users back to sign-in. Routing every call through Netlify's <code>/api/*</code> proxy makes them <b>same-origin</b>, so the cookie persists first-party. This requires the backend to set a <b>host-only</b> cookie (no <code>Domain=…herokuapp.com</code>) so the proxy can re-attribute it.</p>
+    </div>
+
+    <div class="callout amber">
+      <span class="tag">Two backends</span>
+      <p>The repo carries <b>two</b> backend implementations. The <b>live</b> one is the Heroku API above (cookie sessions, documented in <code>docs/backend-requirements.md</code>). The <code>netlify/functions/*</code> serverless set is an <b>earlier PoC iteration</b> — Bearer tokens + JSONBin/JSON files — that the current front end no longer calls. The <code>README.md</code> still describes that older model.</p>
+    </div>
+  </section>
+
+  <!-- ================= LOW LEVEL ================= -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>Low-Level Architecture — Front End</h2>
+    </div>
+    <p class="sec-sub">Boot path and module dependencies. <code>content/</code> is pure data feeding the pages; <code>utils/</code> is the seam to the network and the local display hint; <code>seo.mjs</code> is a single source of truth shared by the runtime and the build-time prerender.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 900 560" role="img" aria-label="Front-end module dependency diagram">
+        <defs>
+          <marker id="bh" markerWidth="10" markerHeight="10" refX="7.5" refY="3.2" orient="auto"><path d="M0,0 L8,3.2 L0,6.4 Z" fill="var(--line-strong)"/></marker>
+          <marker id="bh-b" markerWidth="10" markerHeight="10" refX="7.5" refY="3.2" orient="auto"><path d="M0,0 L8,3.2 L0,6.4 Z" fill="var(--brand)"/></marker>
+        </defs>
+
+        <!-- main.jsx -->
+        <rect class="n-box" x="30" y="40" width="170" height="66" rx="11"/>
+        <text class="t-title" x="115" y="68" text-anchor="middle" font-size="14">main.jsx</text>
+        <text class="t-sub" x="115" y="87" text-anchor="middle" font-size="10.5">ReactDOM root</text>
+
+        <path class="edge" d="M200,73 L246,73" marker-end="url(#bh)"/>
+
+        <!-- BrowserRouter/App -->
+        <rect class="n-brand" x="250" y="30" width="200" height="86" rx="11"/>
+        <text class="t-title" x="350" y="58" text-anchor="middle" font-size="14">App.jsx</text>
+        <text class="t-body" x="350" y="78" text-anchor="middle" font-size="11">&lt;BrowserRouter&gt;</text>
+        <text class="t-body" x="350" y="95" text-anchor="middle" font-size="11">&lt;Seo/&gt; + &lt;Routes&gt;</text>
+
+        <!-- Seo -->
+        <path class="edge" d="M450,52 L520,52" marker-end="url(#bh)"/>
+        <rect class="n-box" x="524" y="26" width="176" height="56" rx="11"/>
+        <text class="t-title" x="612" y="49" text-anchor="middle" font-size="13">Seo.jsx</text>
+        <text class="t-sub" x="612" y="68" text-anchor="middle" font-size="10">runtime &lt;head&gt; sync</text>
+
+        <!-- seo.mjs (shared) -->
+        <rect class="n-data" x="724" y="20" width="150" height="150" rx="11"/>
+        <text class="t-title" x="799" y="46" text-anchor="middle" font-size="13">seo.mjs</text>
+        <text class="t-body" x="799" y="66" text-anchor="middle" font-size="10.5">SITE + PAGES</text>
+        <text class="t-body" x="799" y="82" text-anchor="middle" font-size="10.5">single source</text>
+        <text class="t-body" x="799" y="98" text-anchor="middle" font-size="10.5">of truth for SEO</text>
+        <line class="edge-data" x1="799" y1="112" x2="799" y2="126"/>
+        <text class="t-data" x="799" y="142" text-anchor="middle" font-size="10">used by Seo.jsx</text>
+        <text class="t-data" x="799" y="158" text-anchor="middle" font-size="10">+ prerender.mjs</text>
+        <path class="edge-data" d="M700,54 L724,54" marker-end="url(#bh)"/>
+
+        <!-- Routes -> pages -->
+        <path class="edge-brand" d="M350,116 L350,150" marker-end="url(#bh-b)"/>
+        <rect class="n-brand" x="150" y="154" width="400" height="120" rx="12"/>
+        <text class="t-brand" x="350" y="176" text-anchor="middle" font-size="11">9 ROUTES → pages/*</text>
+        <text class="t-body" x="350" y="198" text-anchor="middle" font-size="11.5">Landing · Register · VerifyRegistration · SignIn</text>
+        <text class="t-body" x="350" y="217" text-anchor="middle" font-size="11.5">Dashboard · Profile · GuideSection · DailyTracking</text>
+        <text class="t-body" x="350" y="236" text-anchor="middle" font-size="11.5">Progress · (* → redirect to Landing)</text>
+        <text class="t-sub" x="350" y="260" text-anchor="middle" font-size="10.5">gated pages render from hint, then verify via API</text>
+
+        <!-- shared components -->
+        <rect class="n-box" x="600" y="154" width="270" height="120" rx="12"/>
+        <text class="t-brand" x="735" y="176" text-anchor="middle" font-size="11">components/</text>
+        <text class="t-body" x="735" y="199" text-anchor="middle" font-size="11.5">Header.jsx — back · title · avatar</text>
+        <text class="t-body" x="735" y="219" text-anchor="middle" font-size="11.5">FormField.jsx — labeled input</text>
+        <text class="t-body" x="735" y="239" text-anchor="middle" font-size="11.5">Seo.jsx</text>
+        <text class="t-sub" x="735" y="261" text-anchor="middle" font-size="10.5">large text · 52px tap targets</text>
+        <path class="edge" d="M550,214 L596,214" marker-end="url(#bh)"/>
+
+        <!-- content -->
+        <rect class="n-data" x="30" y="310" width="240" height="100" rx="12"/>
+        <text class="t-data" x="150" y="334" text-anchor="middle" font-size="11">content/ (static data)</text>
+        <text class="t-body" x="150" y="356" text-anchor="middle" font-size="11.5">guide.js — 12 sections</text>
+        <text class="t-body" x="150" y="375" text-anchor="middle" font-size="11.5">categoryKey.jsx — tracking key</text>
+        <text class="t-body" x="150" y="394" text-anchor="middle" font-size="11.5">seo.mjs</text>
+        <path class="edge-data" d="M225,310 L280,278" marker-end="url(#bh)"/>
+
+        <!-- utils -->
+        <rect class="n-box" x="330" y="310" width="250" height="100" rx="12"/>
+        <text class="t-brand" x="455" y="334" text-anchor="middle" font-size="11">utils/ (the network seam)</text>
+        <text class="t-body" x="455" y="356" text-anchor="middle" font-size="11.5">api.js — fetch wrapper, base /api</text>
+        <text class="t-body" x="455" y="375" text-anchor="middle" font-size="11.5">auth.js — localStorage user hint</text>
+        <text class="t-sub" x="455" y="395" text-anchor="middle" font-size="10.5">getSessionToken() → null (no secret)</text>
+        <path class="edge-brand" d="M420,274 L440,306" marker-end="url(#bh-b)"/>
+
+        <!-- to /api -->
+        <rect class="n-brand" x="640" y="322" width="230" height="76" rx="12"/>
+        <text class="t-title" x="755" y="350" text-anchor="middle" font-size="14">→ /api/*</text>
+        <text class="t-body" x="755" y="372" text-anchor="middle" font-size="11.5">same-origin · credentials included</text>
+        <text class="t-sub" x="755" y="389" text-anchor="middle" font-size="10.5">Netlify proxy → Heroku</text>
+        <path class="edge-brand" d="M580,360 L636,360" marker-end="url(#bh-b)"/>
+
+        <!-- build pipeline strip -->
+        <rect class="n-box" x="30" y="450" width="840" height="80" rx="12" fill="var(--surface-2)"/>
+        <text class="t-brand" x="52" y="478" font-size="11" text-anchor="start">BUILD · npm run build</text>
+        <text class="t-body" x="52" y="500" font-size="12" text-anchor="start">vite build → single dist/index.html,  then  scripts/prerender.mjs → static per-route HTML (title/meta/OG + crawlable &lt;noscript&gt;) + sitemap.xml</text>
+        <text class="t-sub" x="52" y="518" font-size="10.5" text-anchor="start">Private/guide routes forced noindex and excluded from the sitemap.</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============ AUTH MODEL ============ -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>The Auth Model</h2>
+    </div>
+    <p class="sec-sub">Authentication is entirely server-side. The browser holds no token; client-side "gating" is optimistic and self-healing.</p>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Source of truth</h3>
+        <p class="file">Heroku API</p>
+        <ul>
+          <li>HttpOnly cookie <b>bladdersense_session</b></li>
+          <li><b>Secure</b>, <b>SameSite=Lax</b>, <b>host-only</b></li>
+          <li>Sent automatically via <b>credentials:"include"</b></li>
+          <li>The client can't read or forge it</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Local display hint</h3>
+        <p class="file">utils/auth.js · localStorage["gbapp_user"]</p>
+        <ul>
+          <li>Stores only <b>{id, name, email}</b></li>
+          <li>Used for instant greeting / initials</li>
+          <li><b>Not</b> an auth secret — old token code is disabled</li>
+          <li>Cleared whenever the server returns 401</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Optimistic gating</h3>
+        <p class="file">Dashboard.jsx · GuideSection.jsx</p>
+        <ul>
+          <li>Paint from hint (fast first frame)</li>
+          <li>Then call <b>api.getProfile()</b> as the probe</li>
+          <li><b>200</b> → stay · refresh hint</li>
+          <li><b>401</b> → clearSession() → /signin</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SIGN-IN FLOW ============ -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>Passwordless Sign-In Flow</h2>
+    </div>
+    <p class="sec-sub">Registration mirrors this with a link + <code>emailVerified</code> flag. The login-request response is intentionally neutral to resist account enumeration.</p>
+
+    <div class="flow">
+      <div class="step"><span class="idx">1</span><div><h4>Request a code</h4><p>User enters email → <code>api.requestLoginToken</code> → <code>POST /auth/request-login</code>. Backend emails a 6-char code (<code>[A-Z0-9]{6}</code>, expires in minutes) — only if the account exists and is verified. Response is neutral either way.</p></div></div>
+      <div class="step"><span class="idx">2</span><div><h4>Verify the code</h4><p>User enters code → <code>api.verifyLoginToken</code> → <code>POST /auth/verify-login</code>. Backend validates and issues <code>Set-Cookie: bladdersense_session</code> (HttpOnly · Secure · host-only).</p></div></div>
+      <div class="step"><span class="idx">3</span><div><h4>Land signed in</h4><p>Response returns the safe user object → <code>saveSession()</code> writes the local display hint → <code>navigate("/dashboard")</code>. Every later request carries the cookie automatically.</p></div></div>
+      <div class="step"><span class="idx">4</span><div><h4>Stay verified</h4><p>Each gated page re-probes with <code>api.getProfile()</code>. A 401 anywhere clears the hint and bounces to sign-in — so an expired cookie can never leave a stale session on screen.</p></div></div>
+    </div>
+  </section>
+
+  <!-- ============ API SURFACE ============ -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>API Surface</h2>
+    </div>
+    <p class="sec-sub">Every method in <code>src/utils/api.js</code>, base path <code>/api</code>, all through one <code>request()</code> wrapper (JSON · credentials included · throws the server's <code>{error}</code> text).</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Method</th><th>Endpoint</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="pill post">POST</span></td><td><code>/auth/register</code></td><td>Create account, email verification code</td></tr>
+          <tr><td><span class="pill post">POST</span></td><td><code>/auth/verify-email</code></td><td>Confirm email with code</td></tr>
+          <tr><td><span class="pill post">POST</span></td><td><code>/auth/resend-verification</code></td><td>Re-send verification code</td></tr>
+          <tr><td><span class="pill post">POST</span></td><td><code>/auth/request-login</code></td><td>Email a 6-char sign-in code</td></tr>
+          <tr><td><span class="pill post">POST</span></td><td><code>/auth/verify-login</code></td><td>Exchange code → <b>sets session cookie</b></td></tr>
+          <tr><td><span class="pill post">POST</span></td><td><code>/auth/logout</code></td><td>Clear the session cookie</td></tr>
+          <tr><td><span class="pill get">GET</span></td><td><code>/profile</code></td><td>Current user — also the auth probe</td></tr>
+          <tr><td><span class="pill put">PUT</span></td><td><code>/profile</code></td><td>Update preferred name</td></tr>
+          <tr><td><span class="pill del">DELETE</span></td><td><code>/profile</code></td><td>Delete account</td></tr>
+          <tr><td><span class="pill get">GET</span></td><td><code>/tracking</code></td><td>List entries (newest first, 30-day window)</td></tr>
+          <tr><td><span class="pill post">POST</span></td><td><code>/tracking</code></td><td>Create one entry (one per day; 409 if exists)</td></tr>
+          <tr><td><span class="pill put">PUT</span></td><td><code>/tracking/:id</code></td><td>Edit an existing entry</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <span class="tag">Data contract</span>
+      <p>Tracking fields are string enums the backend validates case-sensitively: <code>nightTimeUrination</code> (0·1·2·3+), <code>eveningFluids</code> (None·Small·Moderate·Large), <code>activityLevel</code> (None·Light·Moderate·High), <code>stressLevel</code> (1–5), <code>sleepQuality</code> (Poor·Fair·Good), plus optional <code>notes</code> and an <code>entryDate</code>. A <code>/tracking/summary</code> endpoint powers the monthly progress view; reminders are delivered by <b>email</b>, not native push.</p>
+    </div>
+  </section>
+
+  <footer>
+    BladderSense · React 18 + Vite SPA on Netlify · Node API on Heroku · derived from repository source (src/, netlify/, docs/, netlify.toml) · proof-of-concept
+  </footer>
+
+</div>
+</body>
+</html>

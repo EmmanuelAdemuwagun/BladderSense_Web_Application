@@ -29,6 +29,19 @@
   status = 200
   force = true
 
+# ---------------------------------------------------------------------------
+# Static architecture page
+#
+# public/architecture.html is copied verbatim into dist/ by the Vite build.
+# This rule serves the extensionless URL /architecture from that file, and
+# MUST appear before the SPA catch-all below (first match wins) so the
+# catch-all does not hand /architecture to the client-side app instead.
+# ---------------------------------------------------------------------------
+[[redirects]]
+  from = "/architecture"
+  to = "/architecture.html"
+  status = 200
+
 # SPA fallback — every other path serves the client-side app.
 [[redirects]]
   from = "/*"
