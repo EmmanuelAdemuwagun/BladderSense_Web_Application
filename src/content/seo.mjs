@@ -65,6 +65,7 @@ export const PRIVATE_PATHS = [
   '/daily-tracking',
   '/progress',
   '/verify-registration',
+  '/admin',
 ]
 
 // The guide is login-gated too. Titles here are only for the browser tab (UX)

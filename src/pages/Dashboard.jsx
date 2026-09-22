@@ -273,6 +273,26 @@ export default function Dashboard() {
           <span className="nav-card__arrow">›</span>
         </Link>
 
+        {/* Admin (UI hint only — the server enforces access on every admin call) */}
+        {user.isAdmin === true && (
+          <Link
+            to="/admin"
+            className="nav-card mb-md"
+            style={{ borderColor: 'var(--color-gold)', background: 'var(--color-warning-bg)' }}
+          >
+            <span className="nav-card__icon" aria-hidden="true">🛠️</span>
+
+            <span className="nav-card__text">
+              <span className="nav-card__title">Admin</span>
+              <span className="nav-card__desc">
+                Platform stats and user management
+              </span>
+            </span>
+
+            <span className="nav-card__arrow" aria-hidden="true">›</span>
+          </Link>
+        )}
+
         {/* Guide sections */}
         <h2 className="mt-md mb-md">Your Guide</h2>
 

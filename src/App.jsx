@@ -9,6 +9,8 @@ import Profile from './pages/Profile'
 import GuideSection from './pages/GuideSection'
 import DailyTracking from './pages/DailyTracking'
 import Progress from './pages/Progress'
+import Admin from './pages/Admin'
+import AdminUser from './pages/AdminUser'
 
 export default function App() {
   return (
@@ -24,6 +26,8 @@ export default function App() {
       <Route path="/guide/:sectionId" element={<GuideSection />} />
       <Route path="/daily-tracking" element={<DailyTracking />} />
       <Route path="/progress" element={<Progress />} />
+      <Route path="/admin" element={<Admin />} />
+      <Route path="/admin/users/:id" element={<AdminUser />} />
       <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

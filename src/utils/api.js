@@ -25,13 +25,18 @@ async function request(path, options = {}) {
   try {
     data = await res.json();
   } catch {
-    throw new Error("Server returned an invalid response.");
+    const err = new Error("Server returned an invalid response.");
+    err.status = res.status;
+    throw err;
   }
 
   if (!res.ok) {
-    throw new Error(
+    const err = new Error(
       data.error || "Something went wrong. Please try again."
     );
+    // Callers can branch on this (e.g. 401 → sign in, 403 → no access).
+    err.status = res.status;
+    throw err;
   }
 
   return data;
@@ -113,5 +118,39 @@ updateTracking: (id, data) =>
     method: "PUT",
     body: JSON.stringify(data),
   }),
-};
 
+  // ============================
+  // ADMIN (server enforces admin access on every call)
+  // ============================
+
+  adminGetStats: () =>
+    request("/admin/stats"),
+
+  // params: { page, limit, search, status } — empty values are dropped.
+  adminListUsers: (params = {}) => {
+    const query = new URLSearchParams(
+      Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== "")
+    ).toString();
+    return request(`/admin/users${query ? `?${query}` : ""}`);
+  },
+
+  adminGetUser: (id) =>
+    request(`/admin/users/${encodeURIComponent(id)}`),
+
+  // body: { isAdmin?, emailVerified? } — send only what changes.
+  adminUpdateUser: (id, body) =>
+    request(`/admin/users/${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+
+  adminLogoutUser: (id) =>
+    request(`/admin/users/${encodeURIComponent(id)}/logout`, {
+      method: "POST",
+    }),
+
+  adminDeleteUser: (id) =>
+    request(`/admin/users/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    }),
+};
