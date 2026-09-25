@@ -266,6 +266,12 @@ export default function Landing() {
       {/* ── Footer ── */}
       <footer className="landing-footer">
         <p>© 2026 Bladder Sense &nbsp;·&nbsp; Private &amp; Secure &nbsp;·&nbsp; Designed for older men</p>
+        <p className="landing-footer__credit">
+          Built by{' '}
+          <a href="https://www.emmanuelademuwagun.org/company/" target="_blank" rel="noopener noreferrer">
+            Jidoka Technologies
+          </a>
+        </p>
       </footer>
 
     </div>

@@ -347,6 +347,11 @@ async function handleDeleteAccount() {
 
         <p className="profile-footer">
           BladderSense · Your personal tracking space
+          <br />
+          Built by{' '}
+          <a href="https://www.emmanuelademuwagun.org/company/" target="_blank" rel="noopener noreferrer">
+            Jidoka Technologies
+          </a>
         </p>
       </main>
     </>
