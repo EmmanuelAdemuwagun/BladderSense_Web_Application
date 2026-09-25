@@ -121,7 +121,7 @@ export default function Landing() {
                   Register — It's Free
                 </button>
                 <button className="btn landing-cta-btn landing-cta-btn--signin" onClick={() => navigate('/signin')}>
-                  Already registered? Sign In
+                  <span>Already registered?{' '}<span className="landing-cta-btn__nowrap">Sign In</span></span>
                 </button>
               </>
             )}
@@ -256,7 +256,7 @@ export default function Landing() {
                 Register — It's Free
               </button>
               <button className="btn btn--ghost-light landing-cta-btn" onClick={() => navigate('/signin')}>
-                Already registered? Sign In
+                <span>Already registered?{' '}<span className="landing-cta-btn__nowrap">Sign In</span></span>
               </button>
             </div>
           )}
