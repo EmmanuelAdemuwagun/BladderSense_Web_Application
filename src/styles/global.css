@@ -21,12 +21,15 @@
   --color-text: #1a1a1a;
   --color-text-muted: #4a5568;
   --color-border: #b8d4e8;
+  /* Outline for things you can tap or type in — darker than
+     --color-border so they stand out as controls (3:1 on white) */
+  --color-control-border: #6a8fb0;
   --color-success: #2A9D8F;
   --color-success-bg: #d0f0ed;
   --color-error: #922b21;
   --color-error-bg: #fde8e8;
   --color-warning-bg: #fef6e4;
-  --color-warning: #b07d10;
+  --color-warning: #7a5300;
   --radius: 12px;
   --shadow: 0 2px 8px rgba(0,0,0,0.10);
   /* Larger, senior-friendly type scale (phone-first) */
@@ -49,6 +52,12 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+/* Buttons and form fields default to the browser's own font (a
+   typewriter face in textareas); use the app font everywhere. */
+button, input, select, textarea {
+  font-family: inherit;
 }
 
 html {
@@ -282,7 +291,7 @@ img { max-width: 100%; }
   width: 100%;
   min-height: var(--tap-min);
   padding: var(--space-sm) var(--space-md);
-  border: 2px solid var(--color-border);
+  border: 2px solid var(--color-control-border);
   border-radius: var(--radius);
   font-size: var(--font-size-base);
   color: var(--color-text);
@@ -459,10 +468,47 @@ li {
   display: block;
 }
 
+/* Small status label inside a nav card, e.g. "Done today" */
+.status-pill {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.status-pill--done {
+  background: #1a7a3c;
+  color: #fff;
+}
+
+.status-pill--todo {
+  background: #fff;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+}
+
 .nav-card__arrow {
-  font-size: 24px;
-  color: var(--color-border);
+  font-size: 28px;
+  color: var(--color-primary);
   flex-shrink: 0;
+}
+
+/* Progress page: explains the letters shown inside the day dots */
+.progress-letter-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0 0 12px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* Keep "M = Moderate" together on one line */
+.progress-letter-key span {
+  white-space: nowrap;
 }
 
 /* ---- Guide Section Content ---- */
@@ -528,17 +574,40 @@ li {
   display: block;
 }
 
+/* A question left unanswered when the user tried to save */
+.card--missing {
+  outline: 3px solid var(--color-error);
+  outline-offset: -3px;
+}
+
+.tracking-missing {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-error);
+}
+
 .option-group {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
 }
 
+.option-group--row {
+  display: grid;
+}
+
+.option-group--row .option-btn {
+  min-width: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
 .option-btn {
   /* Stretch to share the row evenly so options are big, tappable targets */
   flex: 1 1 auto;
   padding: var(--space-sm) var(--space-md);
-  border: 2px solid var(--color-border);
+  border: 2px solid var(--color-control-border);
   border-radius: 10px;
   background: #fff;
   font-size: var(--font-size-base);
@@ -598,6 +667,7 @@ li {
 .mt-sm { margin-top: var(--space-sm); }
 .mt-md { margin-top: var(--space-md); }
 .mt-lg { margin-top: var(--space-lg); }
+.mb-sm { margin-bottom: var(--space-sm); }
 .mb-md { margin-bottom: var(--space-md); }
 .mb-lg { margin-bottom: var(--space-lg); }
 
@@ -1323,7 +1393,7 @@ li {
 .profile-footer {
   text-align: center;
   margin: 20px 0;
-  font-size: 12px;
+  font-size: 15px;
   line-height: 1.5;
   color: var(--color-text-muted);
 }

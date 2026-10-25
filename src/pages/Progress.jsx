@@ -585,11 +585,14 @@ export default function Progress() {
                                 <span
                                   style={{
                                     fontSize:
-                                      14,
+                                      16,
                                     fontWeight:
                                       800,
+                                    // White is unreadable on the yellow "Fair" dot
                                     color:
-                                      '#fff',
+                                      color === '#d4ac0d'
+                                        ? '#1a1a1a'
+                                        : '#fff',
                                     lineHeight:
                                       1,
                                   }}
@@ -631,6 +634,17 @@ export default function Progress() {
                       }
                     )}
                   </div>
+
+                  {/* Word answers show as their first letter — spell them out */}
+                  {field.options.some((option) => option.length > 2) && (
+                    <p className="progress-letter-key">
+                      {field.options.map((option) => (
+                        <span key={option}>
+                          {option.charAt(0)} = {option}
+                        </span>
+                      ))}
+                    </p>
+                  )}
 
                   {/* Legend */}
                   <div

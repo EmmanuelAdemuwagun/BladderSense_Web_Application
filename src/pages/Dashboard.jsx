@@ -127,6 +127,7 @@ import Header from '../components/Header'
 import { api } from '../utils/api'
 import { getSessionUser, saveSession, clearSession } from '../utils/auth'
 import { guideSections } from '../content/guide'
+import { localDateString } from '../utils/date'
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -139,6 +140,8 @@ export default function Dashboard() {
 
   const [user, setUser] = useState(localUser)
   const [loading, setLoading] = useState(!localUser)
+  // null = not known yet; true/false once today's entries have loaded
+  const [trackedToday, setTrackedToday] = useState(null)
 
   useEffect(() => {
     let mounted = true
@@ -171,6 +174,22 @@ export default function Dashboard() {
     }
 
     loadProfile()
+
+    api
+      .getTracking()
+      .then((data) => {
+        const today = localDateString()
+        if (mounted) {
+          setTrackedToday(
+            (data.entries || []).some(
+              (entry) => String(entry.entryDate).slice(0, 10) === today
+            )
+          )
+        }
+      })
+      .catch(() => {
+        // Leave the status unknown; the card still works without it.
+      })
 
     return () => {
       mounted = false
@@ -234,13 +253,24 @@ export default function Dashboard() {
             background: '#eaf3fb',
           }}
         >
-          <span className="nav-card__icon">📊</span>
+          <span className="nav-card__icon" aria-hidden="true">📝</span>
 
           <span className="nav-card__text">
             <span className="nav-card__title">Daily Tracking</span>
             <span className="nav-card__desc">
-              Record today's symptoms and progress
+              {trackedToday === true
+                ? "Today's record is saved. Tap to view or change it."
+                : "Record today's symptoms. It takes about a minute."}
             </span>
+            {trackedToday !== null && (
+              <span
+                className={`status-pill ${
+                  trackedToday ? 'status-pill--done' : 'status-pill--todo'
+                }`}
+              >
+                {trackedToday ? '✓ Done today' : 'Not done yet today'}
+              </span>
+            )}
           </span>
 
           <span className="nav-card__arrow">›</span>
@@ -255,7 +285,7 @@ export default function Dashboard() {
             background: '#d4edda',
           }}
         >
-          <span className="nav-card__icon">📊</span>
+          <span className="nav-card__icon" aria-hidden="true">📈</span>
 
           <span className="nav-card__text">
             <span

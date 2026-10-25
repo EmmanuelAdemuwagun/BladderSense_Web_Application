@@ -148,7 +148,16 @@ export default function Register() {
 
       <main className="page">
         <div className="card mt-md">
-          <h2 className="mb-md">Create Your Account</h2>
+          <h2 className="mb-sm">Create Your Account</h2>
+
+          <p className="mb-md">
+            There is no password to remember. We will email you a short
+            code to confirm it is you.
+          </p>
+
+          <p className="form-hint mb-md">
+            Boxes marked * must be filled in.
+          </p>
 
           {apiError && (
             <div className="alert alert--error" role="alert">

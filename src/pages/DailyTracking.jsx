@@ -4,8 +4,9 @@ import { useNavigate, Link } from 'react-router-dom'
 import Header from '../components/Header'
 import { api } from '../utils/api'
 import { CategoryKey } from '../content/categoryKey'
+import { localDateString } from '../utils/date'
 
-const TODAY = new Date().toISOString().split('T')[0]
+const TODAY = localDateString()
 
 const FIELDS = [
   {
@@ -47,8 +48,19 @@ function OptionGroup({
   onChange,
   disabled,
 }) {
+  // Number answers (0–3+, 1–5) always sit on a single row
+  const numeric = options.every((opt) => opt.length <= 2)
+
   return (
-    <div className="option-group" role="group">
+    <div
+      className={`option-group${numeric ? ' option-group--row' : ''}`}
+      style={
+        numeric
+          ? { gridTemplateColumns: `repeat(${options.length}, 1fr)` }
+          : undefined
+      }
+      role="group"
+    >
       {options.map((opt) => (
         <button
           key={opt}
@@ -83,6 +95,8 @@ export default function DailyTracking() {
 
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
+  // The question the user skipped when they last pressed Save
+  const [missingId, setMissingId] = useState('')
 
   const [alreadyTracked, setAlreadyTracked] = useState(false)
   const [editing, setEditing] = useState(false)
@@ -142,6 +156,10 @@ export default function DailyTracking() {
 
     setSuccess(false)
     setError('')
+
+    if (fieldId === missingId) {
+      setMissingId('')
+    }
   }
 
   async function handleSubmit(e) {
@@ -155,9 +173,12 @@ export default function DailyTracking() {
     )
 
     if (missingField) {
-      setError(
-        `Please select an option for "${missingField.label}".`
-      )
+      // Take the user to the question they missed rather than
+      // showing an error at the top of the page, out of sight.
+      setMissingId(missingField.id)
+      document
+        .getElementById(`question-${missingField.id}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       return
     }
 
@@ -294,11 +315,20 @@ export default function DailyTracking() {
           {FIELDS.map((field) => (
             <div
               key={field.id}
-              className="card card--compact mb-md"
+              id={`question-${field.id}`}
+              className={`card card--compact mb-md${
+                missingId === field.id ? ' card--missing' : ''
+              }`}
             >
               <label className="tracking-label">
                 {field.label}
               </label>
+
+              {missingId === field.id && (
+                <p className="tracking-missing" role="alert">
+                  Please choose an answer for this question.
+                </p>
+              )}
 
               <p
                 className="form-hint"
@@ -372,6 +402,7 @@ export default function DailyTracking() {
               className="btn btn--secondary mt-md"
               onClick={() => {
                 setEditing(false)
+                setMissingId('')
                 setError('')
               }}
             >
@@ -386,7 +417,7 @@ export default function DailyTracking() {
           to="/progress"
           className="btn btn--secondary"
         >
-          📊 View My 7-Day Progress
+          📈 View My 7-Day Progress
         </Link>
       </main>
     </>

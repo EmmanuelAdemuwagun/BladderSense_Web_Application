@@ -274,7 +274,7 @@ export default function VerifyRegistration() {
                 <button
                   type="submit"
                   className="btn btn--primary"
-                  disabled={loading || token.length !== 6}
+                  disabled={loading}
                 >
                   {loading ? 'Verifying…' : 'Verify My Email'}
                 </button>

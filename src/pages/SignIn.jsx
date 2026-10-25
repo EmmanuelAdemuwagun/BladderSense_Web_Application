@@ -328,64 +328,6 @@ export default function SignIn() {
   </div>
 )}
 
-  <div className="card card--compact mt-md">
-    <h3 className="mb-sm">
-      Email not verified?
-    </h3>
-
-    <p className="text-muted">
-      Note: the code above signs you in only if your email is
-      already verified. If you just registered, enter your
-      registration code on the verification screen first.
-    </p>
-
-    {resendSuccess && (
-      <div
-        className="alert alert--success"
-        role="alert"
-      >
-        A new verification code has been sent. Please check
-        your inbox.
-      </div>
-    )}
-
-    {resendError && (
-      <div
-        className="alert alert--error"
-        role="alert"
-      >
-        {resendError}
-      </div>
-    )}
-
-    <button
-      type="button"
-      className="btn btn--secondary"
-      onClick={() =>
-        navigate(
-          `/verify-registration?email=${encodeURIComponent(
-            email.trim().toLowerCase()
-          )}`
-        )
-      }
-      disabled={loading}
-    >
-      Verify My Email
-    </button>
-
-    <button
-      type="button"
-      className="btn btn--ghost mt-sm"
-      onClick={handleResendVerification}
-      disabled={resendLoading || loading}
-    >
-      {resendLoading
-        ? 'Sending…'
-        : 'Resend Verification Code'}
-    </button>
-  </div>
-
-
               <form onSubmit={handleTokenSubmit} noValidate>
                 <FormField
                   label="6-Character Sign-In Code"
@@ -440,7 +382,7 @@ export default function SignIn() {
                 <button
                   type="submit"
                   className="btn btn--primary"
-                  disabled={loading || token.length !== 6}
+                  disabled={loading}
                 >
                   {loading ? 'Signing in…' : 'Sign In'}
                 </button>
@@ -466,6 +408,63 @@ export default function SignIn() {
                   Try again
                 </button>
               </p>
+
+  <div className="card card--compact mt-md">
+    <h3 className="mb-sm">
+      Just registered?
+    </h3>
+
+    <p className="text-muted">
+      If you have only just created your account, you need to
+      verify your email first, using the code from your
+      registration email.
+    </p>
+
+    {resendSuccess && (
+      <div
+        className="alert alert--success"
+        role="alert"
+      >
+        A new verification code has been sent. Please check
+        your inbox.
+      </div>
+    )}
+
+    {resendError && (
+      <div
+        className="alert alert--error"
+        role="alert"
+      >
+        {resendError}
+      </div>
+    )}
+
+    <button
+      type="button"
+      className="btn btn--secondary"
+      onClick={() =>
+        navigate(
+          `/verify-registration?email=${encodeURIComponent(
+            email.trim().toLowerCase()
+          )}`
+        )
+      }
+      disabled={loading}
+    >
+      Verify My Email
+    </button>
+
+    <button
+      type="button"
+      className="btn btn--ghost mt-sm"
+      onClick={handleResendVerification}
+      disabled={resendLoading || loading}
+    >
+      {resendLoading
+        ? 'Sending…'
+        : 'Resend Verification Code'}
+    </button>
+  </div>
             </>
           )}
 
