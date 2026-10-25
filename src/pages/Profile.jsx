@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import FormField from '../components/FormField'
+import Email from '../components/Email'
 import { api } from '../utils/api'
 import { clearSession } from '../utils/auth'
 
@@ -152,7 +153,7 @@ async function handleDeleteAccount() {
               </h2>
 
               <p className="profile-intro__email">
-                {user.email}
+                <Email>{user.email}</Email>
               </p>
             </div>
           </div>
@@ -166,41 +167,24 @@ async function handleDeleteAccount() {
               BladderSense account.
             </p>
 
-            <div className="profile-info-grid">
-              <div className="profile-info-card">
-                <span className="form-label">
-                  First Name
-                </span>
-
-                <strong className="profile-info-value">
-                  {user.firstName}
-                </strong>
+            <dl className="info-list">
+              <div className="info-list__row">
+                <dt className="info-list__label">First name</dt>
+                <dd className="info-list__value">{user.firstName}</dd>
               </div>
 
-              <div className="profile-info-card">
-                <span className="form-label">
-                  Last Name
-                </span>
-
-                <strong className="profile-info-value">
-                  {user.lastName}
-                </strong>
+              <div className="info-list__row">
+                <dt className="info-list__label">Last name</dt>
+                <dd className="info-list__value">{user.lastName}</dd>
               </div>
 
-              <div className="profile-info-card profile-info-card--email">
-                <span className="form-label">
-                  Email Address
-                </span>
-
-                <strong className="profile-info-value profile-info-value--email">
-                  {user.email}
-                </strong>
-
-                {/* <span className="profile-info-note">
-                  Used for signing in to BladderSense
-                </span> */}
+              <div className="info-list__row">
+                <dt className="info-list__label">Email address</dt>
+                <dd className="info-list__value">
+                  <Email>{user.email}</Email>
+                </dd>
               </div>
-            </div>
+            </dl>
           </div>
 
           <hr className="divider" />

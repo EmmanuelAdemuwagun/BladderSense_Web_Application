@@ -4,6 +4,7 @@ import Header from '../components/Header'
 import AdminNoAccess from '../components/AdminNoAccess'
 import { api } from '../utils/api'
 import { formatDay, formatShortDay, formatDateTime, fullName, handleAuthError } from '../utils/admin'
+import Email from '../components/Email'
 
 const STATUS_OPTIONS = [
   { value: '', label: 'All users' },
@@ -105,7 +106,7 @@ function UserRow({ user }) {
               <span className="admin-user__preferred"> ({user.preferredName})</span>
             )}
           </span>
-          <span className="admin-user__email">{user.email}</span>
+          <span className="admin-user__email"><Email>{user.email}</Email></span>
 
           <span className="admin-badges">
             {user.isAdmin && <span className="admin-badge admin-badge--admin">Admin</span>}

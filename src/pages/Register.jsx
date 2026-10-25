@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import FormField from '../components/FormField'
 import { api } from '../utils/api'
+import Email from '../components/Email'
 
 export default function Register() {
   const navigate = useNavigate()
@@ -106,7 +107,7 @@ export default function Register() {
 
             <p>
               We have emailed a 6-character verification code to:
-              <strong className="email-inline">{form.email}</strong>
+              <strong className="email-inline"><Email>{form.email}</Email></strong>
             </p>
 
             <p>

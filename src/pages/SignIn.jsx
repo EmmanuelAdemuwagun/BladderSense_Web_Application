@@ -5,6 +5,7 @@ import Header from '../components/Header'
 import FormField from '../components/FormField'
 import { api } from '../utils/api'
 import { saveSession } from '../utils/auth'
+import Email from '../components/Email'
 
 export default function SignIn() {
   const navigate = useNavigate()
@@ -317,7 +318,7 @@ export default function SignIn() {
 
               <div className="alert alert--info mb-md">
                 We sent a 6-character code to:
-                <strong className="email-inline">{email}</strong>
+                <strong className="email-inline"><Email>{email}</Email></strong>
                 Please check your email.
               </div>
 

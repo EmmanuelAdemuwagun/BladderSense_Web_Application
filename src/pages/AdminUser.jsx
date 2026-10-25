@@ -5,6 +5,7 @@ import AdminNoAccess from '../components/AdminNoAccess'
 import { api } from '../utils/api'
 import { getSessionUser } from '../utils/auth'
 import { formatDay, formatDateTime, fullName, handleAuthError } from '../utils/admin'
+import Email from '../components/Email'
 
 const TREND_LABELS = {
   improving: { text: '▲ Improving', className: 'admin-trend--up' },
@@ -22,9 +23,9 @@ function Trend({ direction }) {
 
 function InfoItem({ label, children }) {
   return (
-    <div className="admin-info">
-      <span className="admin-info__label">{label}</span>
-      <span className="admin-info__value">{children}</span>
+    <div className="info-list__row">
+      <dt className="info-list__label">{label}</dt>
+      <dd className="info-list__value">{children}</dd>
     </div>
   )
 }
@@ -269,7 +270,7 @@ export default function AdminUser() {
         {/* Account */}
         <section className="card card--compact mt-md">
           <h2 className="admin-detail__name">{fullName(user)}</h2>
-          <p className="admin-user__email">{user.email}</p>
+          <p className="admin-user__email"><Email>{user.email}</Email></p>
 
           <div className="admin-badges mb-md">
             {user.isAdmin && <span className="admin-badge admin-badge--admin">Admin</span>}
@@ -281,26 +282,26 @@ export default function AdminUser() {
             {isSelf && <span className="admin-badge">You</span>}
           </div>
 
-          <div className="admin-info-grid">
+          <dl className="info-list">
             <InfoItem label="Preferred name">{user.preferredName || '—'}</InfoItem>
             <InfoItem label="Joined">{formatDateTime(user.createdAt)}</InfoItem>
             <InfoItem label="Last sign-in">{formatDateTime(user.lastLoginAt, 'Never')}</InfoItem>
             <InfoItem label="Active sessions">{user.activeSessions ?? 0}</InfoItem>
             <InfoItem label="Entries">{user.entryCount}</InfoItem>
             <InfoItem label="Last entry">{formatDay(user.lastEntryDate)}</InfoItem>
-          </div>
+          </dl>
         </section>
 
         {/* Reminders */}
         <section className="card card--compact">
           <h3 className="mb-md">Reminders</h3>
-          <div className="admin-info-grid">
+          <dl className="info-list">
             <InfoItem label="Email reminders">{reminders?.remindersEnabled ? 'On' : 'Off'}</InfoItem>
             <InfoItem label="Frequency">
               {reminders?.frequency === 'weekly' ? 'Weekly' : 'Daily'}
             </InfoItem>
             <InfoItem label="Last reminded">{formatDateTime(reminders?.lastRemindedAt, 'Never')}</InfoItem>
-          </div>
+          </dl>
         </section>
 
         {/* 30-day summary */}
