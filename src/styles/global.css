@@ -1201,8 +1201,9 @@ li {
 
 .profile-intro {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-md);
+  gap: var(--space-sm) var(--space-md);
   padding-bottom: var(--space-md);
   border-bottom: 1px solid var(--color-border);
 }
@@ -1241,7 +1242,8 @@ li {
 }
 
 .profile-intro__email {
-  margin: 5px 0 0;
+  flex-basis: 100%;
+  margin: 0;
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
 
@@ -1347,7 +1349,6 @@ li {
   }
 
   .profile-intro {
-    align-items: flex-start;
     gap: 12px;
   }
 

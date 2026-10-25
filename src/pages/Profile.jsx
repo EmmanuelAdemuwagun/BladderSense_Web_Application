@@ -151,11 +151,12 @@ async function handleDeleteAccount() {
               <h2 className="profile-intro__name">
                 {displayName}
               </h2>
-
-              <p className="profile-intro__email">
-                <Email>{user.email}</Email>
-              </p>
             </div>
+
+            {/* Full width under the avatar so a long address has room */}
+            <p className="profile-intro__email">
+              <Email>{user.email}</Email>
+            </p>
           </div>
 
           {/* Personal information */}
