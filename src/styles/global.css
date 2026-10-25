@@ -101,6 +101,8 @@ img { max-width: 100%; }
   padding-top: calc(var(--space-sm) + env(safe-area-inset-top));
   padding-left: calc(var(--space-md) + env(safe-area-inset-left));
   padding-right: calc(var(--space-md) + env(safe-area-inset-right));
+  /* Same height on every page, with or without a back button */
+  min-height: calc(var(--tap-min) + 2 * var(--space-sm) + env(safe-area-inset-top));
   display: flex;
   align-items: center;
   gap: var(--space-sm);
@@ -149,8 +151,8 @@ img { max-width: 100%; }
 /* Account entry point — a compact avatar with the user's initials */
 .header__avatar {
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: rgba(255,255,255,0.18);
   border: 2px solid rgba(255,255,255,0.55);
@@ -168,7 +170,7 @@ img { max-width: 100%; }
 /* Keeps the title centred when one side has no control */
 .header__spacer {
   flex-shrink: 0;
-  width: 40px;
+  width: 44px;
 }
 
 /* ---- Cards ---- */
