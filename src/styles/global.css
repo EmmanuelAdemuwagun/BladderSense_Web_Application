@@ -112,7 +112,10 @@ img { max-width: 100%; }
   padding-right: calc(var(--space-md) + env(safe-area-inset-right));
   /* Same height on every page, with or without a back button */
   min-height: calc(var(--tap-min) + 2 * var(--space-sm) + env(safe-area-inset-top));
-  display: flex;
+  /* Equal side columns keep the title truly centred, whether the left
+     holds "Back" and the right an avatar, or either side is empty */
+  display: grid;
+  grid-template-columns: 1fr minmax(0, max-content) 1fr;
   align-items: center;
   gap: var(--space-sm);
   position: sticky;
@@ -140,6 +143,7 @@ img { max-width: 100%; }
 
 /* Back control — quiet, text link style so it doesn't compete with content */
 .header__back {
+  justify-self: start;
   background: transparent;
   border: none;
   color: #fff;
@@ -159,6 +163,7 @@ img { max-width: 100%; }
 
 /* Account entry point — a compact avatar with the user's initials */
 .header__avatar {
+  justify-self: end;
   flex-shrink: 0;
   width: 44px;
   height: 44px;
@@ -471,6 +476,7 @@ li {
 /* Small status label inside a nav card, e.g. "Done today" */
 .status-pill {
   display: inline-block;
+  white-space: nowrap;
   margin-top: 8px;
   padding: 4px 12px;
   border-radius: 999px;
@@ -487,6 +493,19 @@ li {
   background: #fff;
   color: var(--color-primary);
   border: 2px solid var(--color-primary);
+}
+
+/* Very small phones: give the card text more room */
+@media (max-width: 359px) {
+  .nav-card {
+    gap: var(--space-sm);
+    padding: 14px;
+  }
+
+  .nav-card__icon {
+    font-size: 28px;
+    width: 34px;
+  }
 }
 
 .nav-card__arrow {
@@ -792,6 +811,8 @@ li {
   width: auto;
   min-height: 48px;
   padding: 10px 18px;
+  /* "Sign In" must never break onto two lines */
+  white-space: nowrap;
   font-size: 17px;
   font-weight: 800;
 }
@@ -812,6 +833,10 @@ li {
 }
 .landing-nav__btn--register:hover { background: #e9ab2e; }
 
+@media (max-width: 359px) {
+  .landing-nav__btn { padding: 10px 14px; }
+}
+
 @media (min-width: 480px) {
   .landing-nav__btn { padding: 12px 22px; font-size: var(--font-size-sm); }
 }
@@ -819,14 +844,15 @@ li {
 /* Hero */
 .landing-hero {
   background: linear-gradient(135deg, #1F4E79 0%, #163a5a 60%, #0f2840 100%);
-  padding: 40px var(--space-md) 56px;
+  padding: 28px var(--space-md) 48px;
   text-align: center;
   color: #fff;
 }
 
 .landing-hero__logo {
-  width: min(280px, 78%);
-  margin: 0 auto var(--space-lg);
+  /* Smaller on phones so the Register button is reached sooner */
+  width: clamp(170px, 50vw, 280px);
+  margin: 0 auto var(--space-md);
   display: block;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
@@ -835,7 +861,7 @@ li {
 }
 
 .landing-hero__tagline-main {
-  font-size: 28px;
+  font-size: clamp(21px, 5.6vw, 28px);
   color: var(--color-gold);
   font-weight: 800;
   margin-bottom: var(--space-sm);
@@ -844,15 +870,23 @@ li {
 }
 
 .landing-hero__trust {
-  display: inline-block;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  list-style: none;
+  margin: var(--space-md) 0;
+  padding: 0;
+}
+
+.landing-hero__trust li {
   background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.25);
+  border: 1px solid rgba(255,255,255,0.3);
   border-radius: 99px;
-  padding: 6px 18px;
-  font-size: var(--font-size-sm);
-  color: rgba(255,255,255,0.85);
-  margin-bottom: var(--space-md);
-  font-weight: 500;
+  padding: 6px 14px;
+  font-size: 17px;
+  color: #fff;
+  font-weight: 600;
 }
 
 .landing-list {
@@ -883,7 +917,7 @@ li {
 }
 
 .landing-hero__title {
-  font-size: 36px;
+  font-size: clamp(28px, 8vw, 36px);
   font-weight: 900;
   line-height: 1.15;
   color: #fff;
@@ -891,7 +925,7 @@ li {
 }
 
 .landing-hero__subtitle {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   color: rgba(255,255,255,0.88);
   max-width: 600px;
   margin: 0 auto var(--space-md);
@@ -1139,7 +1173,9 @@ li {
   .landing-hero { padding: 56px var(--space-lg) 72px; }
   .landing-hero__title { font-size: 48px; }
   .landing-hero__tagline-main { font-size: 34px; }
-  .landing-hero__cta { flex-direction: row; justify-content: center; }
+  /* Side by side when they fit on one line each, otherwise stacked */
+  .landing-hero__cta { flex-direction: row; flex-wrap: wrap; justify-content: center; max-width: 640px; }
+  .landing-hero__cta .landing-cta-btn { flex: 1 1 auto; width: auto; white-space: nowrap; padding-left: 24px; padding-right: 24px; }
   .landing-section { padding: 56px var(--space-lg); }
   .landing-container { padding: 0 var(--space-lg); }
 }

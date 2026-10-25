@@ -95,21 +95,12 @@ export default function Landing() {
             Small Steps. Better Control. Greater Confidence.
           </p>
 
-          <div className="landing-hero__trust">
-            For Men &nbsp;•&nbsp; Developed With Clinical Expertise &nbsp;•&nbsp; Free to Use
-          </div>
-
           <h1 className="landing-hero__title">Managing Bladder Control Made Simpler</h1>
 
           <p className="landing-hero__subtitle">
             A practical, private self-management guide designed to help older men improve bladder control,
             sleep, confidence, and daily wellbeing through small, manageable changes.
           </p>
-          <p className="landing-hero__subtitle" style={{ marginTop: 12 }}>
-            Learn what may be affecting your symptoms, choose strategies that fit your lifestyle,
-            and track your progress over time.
-          </p>
-
           <div className="landing-hero__cta">
             {isLoggedIn ? (
               <button className="btn btn--primary landing-cta-btn" onClick={() => navigate('/dashboard')}>
@@ -126,6 +117,18 @@ export default function Landing() {
               </>
             )}
           </div>
+
+          {/* Separate tags wrap cleanly on a phone; one long pill did not */}
+          <ul className="landing-hero__trust" aria-label="About Bladder Sense">
+            <li>For Men</li>
+            <li>Developed With Clinical Expertise</li>
+            <li>Free to Use</li>
+          </ul>
+
+          <p className="landing-hero__subtitle landing-hero__subtitle--more">
+            Learn what may be affecting your symptoms, choose strategies that fit your lifestyle,
+            and track your progress over time.
+          </p>
         </div>
       </section>
 
