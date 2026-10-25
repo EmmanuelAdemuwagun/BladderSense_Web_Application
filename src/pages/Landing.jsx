@@ -121,9 +121,10 @@ export default function Landing() {
 
           {/* Separate tags wrap cleanly on a phone; one long pill did not */}
           <ul className="landing-hero__trust" aria-label="About Bladder Sense">
+            {/* Two short tags first so they share a row on phones */}
             <li>For Men</li>
-            <li>Developed With Clinical Expertise</li>
             <li>Free to Use</li>
+            <li>Developed With Clinical Expertise</li>
           </ul>
 
           <p className="landing-hero__subtitle landing-hero__subtitle--more">
@@ -174,7 +175,7 @@ export default function Landing() {
       <section className="landing-section">
         <div className="landing-container">
           <h2 className="landing-section__title text-center">Four Areas That Can Make a Difference</h2>
-          <p className="landing-section__text text-center" style={{ marginBottom: 32 }}>
+          <p className="landing-section__text">
             These four areas were selected because they are common concerns in older men,
             are often linked to urinary symptoms, and are areas many people feel willing and able to work on.
           </p>
@@ -216,14 +217,14 @@ export default function Landing() {
       <section className="landing-section">
         <div className="landing-container">
           <h2 className="landing-section__title text-center">Who Is Bladder Sense For?</h2>
-          <div className="landing-whofor">
+          <ul className="landing-whofor">
             {whoFor.map((item) => (
-              <div key={item} className="landing-whofor__item">
+              <li key={item} className="landing-whofor__item">
                 <span className="landing-whofor__check" aria-hidden="true">✔</span>
                 <span>{item}</span>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
@@ -231,14 +232,14 @@ export default function Landing() {
       <section className="landing-section landing-section--light">
         <div className="landing-container">
           <h2 className="landing-section__title text-center">Why Use Bladder Sense?</h2>
-          <div className="landing-whofor">
+          <ul className="landing-whofor">
             {whyUse.map((item) => (
-              <div key={item} className="landing-whofor__item">
+              <li key={item} className="landing-whofor__item">
                 <span className="landing-whofor__check" aria-hidden="true">✔</span>
                 <span>{item}</span>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
