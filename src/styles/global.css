@@ -516,6 +516,33 @@ li {
   padding-bottom: var(--space-xl);
 }
 
+/* Full section name at the top of a guide page */
+.guide-title {
+  margin: var(--space-sm) 0 var(--space-md);
+}
+
+.guide-title__count {
+  margin: 0 0 4px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.guide-title__heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0;
+  font-size: var(--font-size-2xl);
+  line-height: 1.2;
+  color: var(--color-primary);
+}
+
+.guide-title__icon {
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+
 .guide-key-message {
   background: #eaf3fb;
   border-left: 5px solid var(--color-primary);

@@ -125,9 +125,23 @@ export default function GuideSection() {
 
   return (
     <>
-      <Header title={section.title} backTo="/dashboard" />
+      {/* The bar only has room for a short label; the full section
+          name is the page heading below, where it can wrap freely. */}
+      <Header title="Your Guide" backTo="/dashboard" />
 
       <main className="page guide-section">
+        <header className="guide-title">
+          <p className="guide-title__count">
+            Part {currentIndex + 1} of {guideSections.length}
+          </p>
+          <h1 className="guide-title__heading">
+            <span className="guide-title__icon" aria-hidden="true">
+              {section.icon}
+            </span>
+            {section.title}
+          </h1>
+        </header>
+
         <div className="guide-key-message">
           <p>{section.content.keyMessage}</p>
         </div>
