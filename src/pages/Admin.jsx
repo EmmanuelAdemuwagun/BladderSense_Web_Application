@@ -155,6 +155,12 @@ function Users({ onForbidden }) {
     setParams(next, { replace: true })
   }
 
+  // The pager sits below the list, so start the new page from the top.
+  function goToPage(nextPage) {
+    updateParams({ page: nextPage })
+    window.scrollTo(0, 0)
+  }
+
   // Keep the box in sync when the URL changes (e.g. browser back).
   useEffect(() => {
     setSearchInput((current) => (current.trim() === search ? current : search))
@@ -258,7 +264,7 @@ function Users({ onForbidden }) {
               <button
                 type="button"
                 className="btn btn--secondary"
-                onClick={() => updateParams({ page: page - 1 })}
+                onClick={() => goToPage(page - 1)}
                 disabled={loading || page <= 1}
               >
                 ‹ Previous
@@ -269,7 +275,7 @@ function Users({ onForbidden }) {
               <button
                 type="button"
                 className="btn btn--secondary"
-                onClick={() => updateParams({ page: page + 1 })}
+                onClick={() => goToPage(page + 1)}
                 disabled={loading || page >= pagination.totalPages}
               >
                 Next ›

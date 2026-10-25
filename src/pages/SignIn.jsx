@@ -82,6 +82,8 @@ export default function SignIn() {
         err?.message || 'Unable to send your sign-in code. Please try again.'
       )
     } finally {
+      // Step 2 and the error message both start at the top of the page.
+      window.scrollTo(0, 0)
       setLoading(false)
     }
   }
@@ -146,6 +148,7 @@ export default function SignIn() {
       setApiError(
         err?.message || 'Unable to sign you in. Please check your code and try again.'
       )
+      window.scrollTo(0, 0)
     } finally {
       setLoading(false)
     }
@@ -452,6 +455,7 @@ export default function SignIn() {
                   className="btn btn--ghost"
                   onClick={() => {
                     setStep(1)
+                    window.scrollTo(0, 0)
                     setToken('')
                     setApiError('')
                     setTokenError('')

@@ -197,6 +197,12 @@ export default function DailyTracking() {
       setError(
         err.message || 'Unable to save your tracking entry.'
       )
+
+      // The error appears above the form, out of view of the Save button.
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      })
     } finally {
       setLoading(false)
     }

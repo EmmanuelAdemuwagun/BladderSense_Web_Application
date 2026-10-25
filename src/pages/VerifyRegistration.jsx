@@ -113,6 +113,8 @@ export default function VerifyRegistration() {
           'This verification code is incorrect or has expired. Please try again or request a new one.'
       )
     } finally {
+      // The success screen and the error message both start at the top.
+      window.scrollTo(0, 0)
       setLoading(false)
     }
   }
