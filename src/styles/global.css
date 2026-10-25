@@ -1132,7 +1132,7 @@ li {
 .landing-section {
   /* Side gutter comes from .landing-container; doubling it here made
      the phone text column needlessly narrow */
-  padding: 56px 0;
+  padding: 40px 0;
   /* White, alternating with the light blue --light sections, so each
      section reads as its own band */
   background: #fff;
@@ -1146,7 +1146,7 @@ li {
   color: var(--color-primary);
   line-height: 1.2;
   text-align: center;
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
 }
 
 /* Justified reading text. Hyphenation keeps the gaps between words
@@ -1360,7 +1360,7 @@ li {
   /* Side by side when they fit on one line each, otherwise stacked */
   .landing-hero__cta { flex-direction: row; flex-wrap: wrap; justify-content: center; max-width: 640px; }
   .landing-hero__cta .landing-cta-btn { flex: 1 1 auto; width: auto; white-space: nowrap; padding-left: 24px; padding-right: 24px; }
-  .landing-section { padding: 72px 0; }
+  .landing-section { padding: 48px 0; }
   .landing-container { padding: 0 var(--space-lg); }
 }
 
@@ -1369,7 +1369,7 @@ li {
   .landing-hero { padding: 72px var(--space-xl) 88px; }
   .landing-hero__tagline-main { font-size: 38px; }
   .landing-hero__title { font-size: 56px; }
-  .landing-section { padding: 88px 0; }
+  .landing-section { padding: 56px 0; }
 }
 
 @media (min-width: 768px) {
