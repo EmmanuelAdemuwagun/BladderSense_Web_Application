@@ -7,6 +7,8 @@ export default function Header({
   backTo,
   onBack,
   showProfile = true,
+  // Root screens (the dashboard) show a Home button where Back would be
+  showHome = false,
 }) {
   const navigate = useNavigate()
   const location = useLocation()
@@ -41,6 +43,28 @@ export default function Header({
           aria-label="Go back"
         >
           <span aria-hidden="true">←</span> Back
+        </button>
+      ) : showHome ? (
+        <button
+          type="button"
+          className="header__back header__back--home"
+          onClick={() => navigate('/')}
+          aria-label="Go to the Bladder Sense home page"
+        >
+          <svg
+            className="header__home-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M3 11l9-7 9 7" />
+            <path d="M5 10v10h14V10" />
+          </svg>
+          Home
         </button>
       ) : (
         <span className="header__spacer" aria-hidden="true" />

@@ -193,7 +193,7 @@ export default function GuideSection() {
             className="btn btn--ghost"
             onClick={() => navigate('/dashboard')}
           >
-            Back to Home
+            Back to Dashboard
           </button>
         </nav>
       </main>

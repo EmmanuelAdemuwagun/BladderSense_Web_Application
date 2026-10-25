@@ -185,6 +185,38 @@ img { max-width: 100%; }
 }
 .header__back:hover { background: rgba(255,255,255,0.15); }
 
+.header__home-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Smallest phones: a little more room for the title between the
+   side buttons, keeping their words visible */
+@media (max-width: 359px) {
+  .header {
+    padding-left: calc(12px + env(safe-area-inset-left));
+    padding-right: calc(12px + env(safe-area-inset-right));
+  }
+
+  .header__back {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  /* Icon above a small "Home" label, like a phone's tab bar */
+  .header__back--home {
+    flex-direction: column;
+    gap: 0;
+    font-size: 15px;
+    line-height: 1.1;
+  }
+
+  .header__title {
+    font-size: 20px;
+  }
+}
+
 /* Account entry point — a compact avatar with the user's initials */
 .header__avatar {
   justify-self: end;

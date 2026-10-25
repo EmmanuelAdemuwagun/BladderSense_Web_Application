@@ -217,7 +217,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <Header title="Bladder Health Guide" showBack={false} />
+      <Header title="My Dashboard" showBack={false} showHome />
 
       <main className="page">
         {/* Welcome banner */}
