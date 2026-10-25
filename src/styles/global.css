@@ -288,6 +288,15 @@ img { max-width: 100%; }
   color: var(--color-error);
   font-weight: 700;
   margin-bottom: var(--space-sm);
+  /* Never let a long word or address spill out of the box */
+  overflow-wrap: anywhere;
+}
+
+/* The account's email, on its own line inside a confirmation */
+.danger-zone__email {
+  display: block;
+  margin: 6px 0;
+  color: var(--color-text);
 }
 
 .btn:disabled {

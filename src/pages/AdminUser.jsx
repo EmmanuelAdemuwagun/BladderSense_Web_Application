@@ -339,10 +339,12 @@ export default function AdminUser() {
             {!(isSelf && user.isAdmin) &&
               (confirming === 'admin' ? (
                 <div className="danger-zone__confirm">
+                  {/* The email sits on its own line so a long address wraps
+                      neatly instead of running out of the box */}
                   <p className="danger-zone__warning">
-                    {user.isAdmin
-                      ? `Remove admin access from ${user.email}?`
-                      : `Give ${user.email} full admin access? They will be able to see and delete every account.`}
+                    {user.isAdmin ? 'Remove admin access from:' : 'Give full admin access to:'}
+                    <strong className="danger-zone__email"><Email>{user.email}</Email></strong>
+                    {!user.isAdmin && 'They will be able to see and delete every account.'}
                   </p>
                   <div className="btn-stack">
                     <button type="button" className="btn btn--danger" onClick={handleToggleAdmin} disabled={busy}>
@@ -371,7 +373,8 @@ export default function AdminUser() {
             {confirming === 'logout' ? (
               <div className="danger-zone__confirm">
                 <p className="danger-zone__warning">
-                  Sign {user.email} out on every device?
+                  Sign this person out on every device?
+                  <strong className="danger-zone__email"><Email>{user.email}</Email></strong>
                 </p>
                 <div className="btn-stack">
                   <button type="button" className="btn btn--danger" onClick={handleLogoutEverywhere} disabled={busy}>
@@ -406,7 +409,8 @@ export default function AdminUser() {
               {confirming === 'delete' ? (
                 <div className="danger-zone__confirm">
                   <p className="danger-zone__warning">
-                    Type <strong>{user.email}</strong> to confirm.
+                    Type this email address to confirm:
+                    <strong className="danger-zone__email"><Email>{user.email}</Email></strong>
                   </p>
                   <input
                     className="form-input mb-md"
