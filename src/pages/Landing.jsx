@@ -197,15 +197,18 @@ export default function Landing() {
       <section className="landing-section landing-section--light">
         <div className="landing-container">
           <h2 className="landing-section__title text-center">How Bladder Sense Works</h2>
-          <div className="landing-steps">
+          {/* One numbered list, read top to bottom, on every screen size */}
+          <ol className="landing-steps">
             {steps.map((step) => (
-              <div key={step.title} className="landing-step">
-                <div className="landing-step__number">{step.number}</div>
-                <h3 className="landing-step__title">{step.title}</h3>
-                <p className="landing-step__desc">{step.desc}</p>
-              </div>
+              <li key={step.title} className="landing-step">
+                <span className="landing-step__number" aria-hidden="true">{step.number}</span>
+                <div>
+                  <h3 className="landing-step__title">{step.title}</h3>
+                  <p className="landing-step__desc">{step.desc}</p>
+                </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 

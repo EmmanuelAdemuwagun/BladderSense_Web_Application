@@ -1231,22 +1231,35 @@ li {
 
 /* Steps */
 .landing-steps {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-lg);
+  list-style: none;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0;
 }
 
 .landing-step {
-  text-align: left;
-  padding: var(--space-lg);
-  background: #fff;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding-bottom: var(--space-lg);
+}
+
+/* Thin line joining each number to the next */
+.landing-step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 25px;
+  top: 52px;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-control-border);
 }
 
 .landing-step__number {
-  width: 40px;
-  height: 40px;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   background: var(--color-gold);
   color: #1F4E79;
@@ -1255,7 +1268,6 @@ li {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto var(--space-sm);
 }
 
 .landing-step__icon { font-size: 40px; margin-bottom: var(--space-sm); }
@@ -1264,12 +1276,13 @@ li {
   font-size: var(--font-size-lg);
   font-weight: 700;
   color: var(--color-primary);
-  margin-bottom: var(--space-xs);
+  /* Centre the first line on the number */
+  margin: 10px 0 4px;
 }
 
 .landing-step__desc {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
   line-height: 1.6;
   margin: 0;
 }
@@ -1326,7 +1339,6 @@ li {
   h1 { font-size: var(--font-size-3xl); }
   .welcome-hero__title { font-size: var(--font-size-3xl); }
   .landing-areas { grid-template-columns: 1fr 1fr; }
-  .landing-steps { grid-template-columns: 1fr 1fr; }
   .landing-whofor { grid-template-columns: 1fr 1fr; }
   .landing-hero { padding: 56px var(--space-lg) 72px; }
   .landing-hero__title { font-size: 48px; }
@@ -1340,7 +1352,6 @@ li {
 
 /* ---- Desktop (900px+) ---- */
 @media (min-width: 900px) {
-  .landing-steps { grid-template-columns: 1fr 1fr 1fr 1fr; }
   .landing-hero { padding: 72px var(--space-xl) 88px; }
   .landing-hero__tagline-main { font-size: 38px; }
   .landing-hero__title { font-size: 56px; }
