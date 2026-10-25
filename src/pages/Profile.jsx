@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Header from '../components/Header'
 import FormField from '../components/FormField'
 import Email from '../components/Email'
 import { api } from '../utils/api'
 import { clearSession } from '../utils/auth'
+import { TEXT_SIZES, getTextSize, setTextSize } from '../utils/textSize'
 
 export default function Profile() {
   const navigate = useNavigate()
@@ -19,6 +20,8 @@ export default function Profile() {
   const [confirmingDelete, setConfirmingDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState('')
+  const [textSize, setTextSizeState] = useState(getTextSize)
+  const location = useLocation()
 
   useEffect(() => {
     let mounted = true
@@ -50,6 +53,18 @@ export default function Profile() {
       mounted = false
     }
   }, [navigate])
+
+  // "Make text bigger" links land here; jump to that setting once shown
+  useEffect(() => {
+    if (!loading && location.hash === '#text-size') {
+      document.getElementById('text-size')?.scrollIntoView({ block: 'start' })
+    }
+  }, [loading, location.hash])
+
+  function chooseTextSize(size) {
+    setTextSize(size)
+    setTextSizeState(size)
+  }
 
   if (loading) {
     return (
@@ -252,6 +267,37 @@ async function handleDeleteAccount() {
                   : 'Save Preferred Name'}
               </button>
             </form>
+          </div>
+        </section>
+
+        {/* Text size */}
+        <section
+          id="text-size"
+          className="card card--compact mt-md"
+          aria-labelledby="text-size-title"
+        >
+          <h3 id="text-size-title">Text size</h3>
+
+          <p className="profile-section__description">
+            Choose the size that is most comfortable to read. This
+            changes the text on every page, on this device.
+          </p>
+
+          <div className="text-size-options" role="group" aria-label="Text size">
+            {TEXT_SIZES.map((size) => (
+              <button
+                key={size.id}
+                type="button"
+                className={`option-btn text-size-option text-size-option--${size.id}${
+                  textSize === size.id ? ' option-btn--selected' : ''
+                }`}
+                aria-pressed={textSize === size.id}
+                onClick={() => chooseTextSize(size.id)}
+              >
+                <span className="text-size-option__sample" aria-hidden="true">A</span>
+                {size.label}
+              </button>
+            ))}
           </div>
         </section>
 

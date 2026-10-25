@@ -12,8 +12,10 @@
 :root {
   --color-primary: #1F4E79;
   --color-primary-dark: #163a5a;
-  --color-primary-light: #2A9D8F;
-  --color-accent: #2A9D8F;
+  /* Teal deepened from #2A9D8F so white text on it, and teal text on
+     light backgrounds, pass WCAG AA (4.5:1) at every size */
+  --color-primary-light: #1f7a70;
+  --color-accent: #1f7a70;
   --color-gold: #F4B942;
   --color-sky: #EAF5FB;
   --color-bg: #EAF5FB;
@@ -24,7 +26,7 @@
   /* Outline for things you can tap or type in — darker than
      --color-border so they stand out as controls (3:1 on white) */
   --color-control-border: #6a8fb0;
-  --color-success: #2A9D8F;
+  --color-success: #1a6a61;
   --color-success-bg: #d0f0ed;
   --color-error: #922b21;
   --color-error-bg: #fde8e8;
@@ -46,6 +48,25 @@
   --space-lg: 32px;
   --space-xl: 48px;
   --max-width: 700px;
+}
+
+/* Reader-chosen text size (Profile → Text size); see utils/textSize.js */
+:root[data-text-size="large"] {
+  --font-size-base: 24px;
+  --font-size-sm: 22px;
+  --font-size-lg: 26px;
+  --font-size-xl: 30px;
+  --font-size-2xl: 36px;
+  --font-size-3xl: 44px;
+}
+
+:root[data-text-size="largest"] {
+  --font-size-base: 27px;
+  --font-size-sm: 25px;
+  --font-size-lg: 29px;
+  --font-size-xl: 33px;
+  --font-size-2xl: 39px;
+  --font-size-3xl: 48px;
 }
 
 *, *::before, *::after {
@@ -127,7 +148,10 @@ img { max-width: 100%; }
 .header__title {
   flex: 1;
   min-width: 0;
-  font-size: var(--font-size-lg);
+  /* The bar keeps one size; only page content grows with the reader's
+     text-size choice, so titles are never cut off on small phones */
+  font-size: min(var(--font-size-lg), 23px);
+  overflow-wrap: anywhere;
   font-weight: 700;
   line-height: 1.25;
   margin: 0;
@@ -149,7 +173,7 @@ img { max-width: 100%; }
   color: #fff;
   border-radius: 8px;
   padding: var(--space-xs) var(--space-sm);
-  font-size: var(--font-size-sm);
+  font-size: min(var(--font-size-sm), 19px);
   font-weight: 600;
   cursor: pointer;
   min-height: var(--tap-min);
@@ -226,7 +250,7 @@ img { max-width: 100%; }
   background: var(--color-accent);
   color: #fff;
 }
-.btn--primary:hover { background: #228b7e; }
+.btn--primary:hover { background: #19665d; }
 
 .btn--secondary {
   background: transparent;
@@ -441,7 +465,6 @@ li {
 .nav-card:hover, .nav-card:focus {
   border-color: var(--color-primary);
   box-shadow: 0 4px 14px rgba(26,82,118,0.18);
-  outline: none;
 }
 
 .nav-card__icon {
@@ -476,6 +499,7 @@ li {
 /* Small status label inside a nav card, e.g. "Done today" */
 .status-pill {
   display: inline-block;
+  align-self: flex-start;
   white-space: nowrap;
   margin-top: 8px;
   padding: 4px 12px;
@@ -530,6 +554,129 @@ li {
   white-space: nowrap;
 }
 
+/* Small "Part 3" label above a topic title in the topic list */
+.nav-card__step {
+  display: block;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+/* Plain text link, for secondary actions */
+.text-link {
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Dashboard: the one main next step into the guide */
+.guide-start {
+  background: var(--color-card);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+  box-shadow: var(--shadow);
+}
+
+.guide-start__title {
+  margin: 0 0 4px;
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+}
+
+.guide-start__progress {
+  margin: 0 0 var(--space-sm);
+  color: var(--color-text);
+}
+
+.guide-start__bar {
+  height: 12px;
+  margin-bottom: var(--space-md);
+  border-radius: 99px;
+  background: var(--color-sky);
+  border: 1px solid var(--color-control-border);
+  overflow: hidden;
+}
+
+.guide-start__bar span {
+  display: block;
+  height: 100%;
+  background: var(--color-accent);
+}
+
+.guide-start__btn {
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.guide-start__next {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+/* Guide page: Next (main) / Previous / Home, stacked full width */
+.guide-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.guide-nav__btn {
+  flex-direction: column;
+  gap: 0;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.guide-nav__label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.guide-nav__done {
+  margin: 0;
+  padding: var(--space-md);
+  border-radius: var(--radius);
+  background: var(--color-success-bg);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Profile: text size choice — each button previews its size */
+/* Clear the sticky header when jumped to from "Make it bigger" */
+#text-size {
+  scroll-margin-top: 96px;
+}
+
+.text-size-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-sm);
+}
+
+.option-btn.text-size-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  padding: 10px 4px;
+  font-size: 17px;
+}
+
+.text-size-option__sample {
+  font-weight: 800;
+  line-height: 1;
+}
+
+.text-size-option--standard .text-size-option__sample { font-size: 22px; }
+.text-size-option--large .text-size-option__sample { font-size: 28px; }
+.text-size-option--largest .text-size-option__sample { font-size: 34px; }
+
 /* ---- Guide Section Content ---- */
 .guide-section {
   padding-bottom: var(--space-xl);
@@ -555,6 +702,12 @@ li {
   font-size: var(--font-size-2xl);
   line-height: 1.2;
   color: var(--color-primary);
+}
+
+.guide-title__full {
+  margin: 6px 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
 }
 
 .guide-title__icon {
@@ -989,6 +1142,11 @@ li {
 }
 
 .landing-section__text {
+  /* Reading text stays left-aligned, in a comfortable column */
+  text-align: left;
+  max-width: 65ch;
+  margin-left: auto;
+  margin-right: auto;
   font-size: var(--font-size-base);
   line-height: 1.8;
   color: var(--color-text);
@@ -1079,7 +1237,7 @@ li {
 }
 
 .landing-step {
-  text-align: center;
+  text-align: left;
   padding: var(--space-lg);
   background: #fff;
   border-radius: var(--radius);
@@ -1198,6 +1356,12 @@ li {
 *:focus-visible {
   outline: 3px solid var(--color-primary-light);
   outline-offset: 3px;
+}
+
+/* Teal is too dark to see on the blue bars; use white there */
+.header *:focus-visible,
+.landing-nav *:focus-visible {
+  outline-color: #fff;
 }
 
 /* ---- Reference Key ---- */

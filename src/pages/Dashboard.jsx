@@ -128,6 +128,7 @@ import { api } from '../utils/api'
 import { getSessionUser, saveSession, clearSession } from '../utils/auth'
 import { guideSections } from '../content/guide'
 import { localDateString } from '../utils/date'
+import { getReadSections, nextUnreadSection } from '../utils/guideProgress'
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -142,6 +143,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(!localUser)
   // null = not known yet; true/false once today's entries have loaded
   const [trackedToday, setTrackedToday] = useState(null)
+  const [showTopics, setShowTopics] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -209,6 +211,10 @@ export default function Dashboard() {
 
   const displayName = user.preferredName || user.firstName
 
+  const readSections = getReadSections()
+  const readCount = guideSections.filter((s) => readSections.has(s.id)).length
+  const nextSection = nextUnreadSection(readSections)
+
   return (
     <>
       <Header title="Bladder Health Guide" showBack={false} />
@@ -243,6 +249,43 @@ export default function Dashboard() {
             Your personal bladder health guide
           </p>
         </div>
+
+        {/* Your guide — the one main next step */}
+        <section className="guide-start mb-md" aria-labelledby="guide-start-title">
+          <h2 id="guide-start-title" className="guide-start__title">Your Guide</h2>
+          <p className="guide-start__progress">
+            {readCount === 0
+              ? `${guideSections.length} short parts. Read them in order, at your own pace.`
+              : `You have read ${readCount} of ${guideSections.length} parts.`}
+          </p>
+          <div
+            className="guide-start__bar"
+            role="progressbar"
+            aria-label="Guide parts read"
+            aria-valuemin={0}
+            aria-valuemax={guideSections.length}
+            aria-valuenow={readCount}
+          >
+            <span style={{ width: `${(readCount / guideSections.length) * 100}%` }} />
+          </div>
+          <Link
+            to={`/guide/${(nextSection || guideSections[0]).id}`}
+            className="btn btn--primary guide-start__btn"
+          >
+            <span>
+              {readCount === 0
+                ? 'Start My Guide'
+                : nextSection
+                  ? 'Continue My Guide'
+                  : 'Read the Guide Again'}
+            </span>
+            <span className="guide-start__next">
+              {nextSection
+                ? `Part ${guideSections.indexOf(nextSection) + 1}: ${nextSection.title}\u00a0→`
+                : 'You have read every part ✓'}
+            </span>
+          </Link>
+        </section>
 
         {/* Daily Tracking */}
         <Link
@@ -323,36 +366,60 @@ export default function Dashboard() {
           </Link>
         )}
 
-        {/* Guide sections */}
-        <h2 className="mt-md mb-md">Your Guide</h2>
+        {/* All topics — tucked behind one button so the page offers one
+            clear next step instead of thirteen choices at once */}
+        <button
+          type="button"
+          className="btn btn--secondary mt-md"
+          aria-expanded={showTopics}
+          aria-controls="all-topics"
+          onClick={() => setShowTopics((open) => !open)}
+        >
+          {showTopics ? 'Hide All Topics ▲' : `View All ${guideSections.length} Topics ▼`}
+        </button>
 
-        <nav className="nav-grid" aria-label="Guide sections">
-          {guideSections.map((section) => (
-            <Link
-              key={section.id}
-              to={`/guide/${section.id}`}
-              className="nav-card"
-            >
-              <span className="nav-card__icon" aria-hidden="true">
-                {section.icon}
-              </span>
-
-              <span className="nav-card__text">
-                <span className="nav-card__title">
-                  {section.title}
+        {showTopics && (
+          <nav id="all-topics" className="nav-grid mt-md" aria-label="All guide topics">
+            {guideSections.map((section, i) => (
+              <Link
+                key={section.id}
+                to={`/guide/${section.id}`}
+                className="nav-card"
+              >
+                <span className="nav-card__icon" aria-hidden="true">
+                  {section.icon}
                 </span>
 
-                <span className="nav-card__desc">
-                  {section.shortDesc}
-                </span>
-              </span>
+                <span className="nav-card__text">
+                  <span className="nav-card__step">Part {i + 1}</span>
+                  <span className="nav-card__title">
+                    {section.title}
+                  </span>
 
-              <span className="nav-card__arrow" aria-hidden="true">
-                ›
-              </span>
-            </Link>
-          ))}
-        </nav>
+                  <span className="nav-card__desc">
+                    {section.shortDesc}
+                  </span>
+
+                  {readSections.has(section.id) && (
+                    <span className="status-pill status-pill--done">
+                      ✓ Read
+                    </span>
+                  )}
+                </span>
+
+                <span className="nav-card__arrow" aria-hidden="true">
+                  ›
+                </span>
+              </Link>
+            ))}
+          </nav>
+        )}
+
+        <p className="text-center mt-lg">
+          <Link to="/profile#text-size" className="text-link">
+            Text too small? Make it bigger
+          </Link>
+        </p>
       </main>
     </>
   )

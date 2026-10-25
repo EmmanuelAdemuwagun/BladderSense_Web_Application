@@ -63,7 +63,9 @@ export const guideSections = [
   {
     id: 'why-4-areas',
     icon: '💡',
-    title: 'Why These 4 Areas?',
+    title: 'Why We Focus on Four Areas',
+    // Original, fuller name — shown under the plain title on the page
+    fullTitle: 'Why These 4 Areas?',
     shortDesc: 'Start where it matters most to you',
     content: {
       keyMessage: 'You do not need to address everything at once. Small changes in one area may sometimes lead to improvements in other areas.',
@@ -142,7 +144,9 @@ export const guideSections = [
   {
     id: 'night-time',
     icon: '🌙',
-    title: 'Night-time Urination & Fluid Balance',
+    title: 'Going to the Toilet at Night',
+    // Original, fuller name — shown under the plain title on the page
+    fullTitle: 'Night-time Urination & Fluid Balance',
     shortDesc: 'Improve sleep by managing fluid timing',
     content: {
       keyMessage: 'Night-time urinary symptoms are often influenced by several connected factors. Small changes in fluid timing, evening habits, and night routines may gradually improve symptoms.',
@@ -261,7 +265,9 @@ export const guideSections = [
   {
     id: 'movement',
     icon: '🚶',
-    title: 'Movement, Activity & Healthy Weight',
+    title: 'Staying Active and Healthy',
+    // Original, fuller name — shown under the plain title on the page
+    fullTitle: 'Movement, Activity & Healthy Weight',
     shortDesc: 'Small steps can make a big difference',
     content: {
       keyMessage: 'Movement and weight changes do not need to be large or difficult to be effective. Small, realistic changes done consistently can gradually improve mobility, confidence, and urinary symptoms.',
@@ -329,7 +335,9 @@ export const guideSections = [
   {
     id: 'stress',
     icon: '🧠',
-    title: 'Stress, Worry & Emotional Wellbeing',
+    title: 'Coping with Stress and Worry',
+    // Original, fuller name — shown under the plain title on the page
+    fullTitle: 'Stress, Worry & Emotional Wellbeing',
     shortDesc: 'Calm strategies for managing worry',
     content: {
       keyMessage: 'Stress, worry, and urinary symptoms often interact. Small steps that improve confidence, calmness, and preparation may gradually make symptoms easier to manage.',
@@ -461,7 +469,9 @@ export const guideSections = [
   {
     id: 'practical-support',
     icon: '🧰',
-    title: 'Practical Support & Products',
+    title: 'Helpful Products and Support',
+    // Original, fuller name — shown under the plain title on the page
+    fullTitle: 'Practical Support & Products',
     shortDesc: 'Tools to help manage symptoms day to day',
     content: {
       keyMessage: 'Using continence products is a practical self-management strategy. It does not mean other approaches are not working.',
@@ -602,7 +612,9 @@ export const guideSections = [
   {
     id: 'seek-help',
     icon: '🩺',
-    title: 'When to Seek Medical Help',
+    title: 'When to See Your Doctor',
+    // Original, fuller name — shown under the plain title on the page
+    fullTitle: 'When to Seek Medical Help',
     shortDesc: 'Knowing when to speak with your doctor',
     content: {
       keyMessage: 'If you are unsure about any symptoms, it is always appropriate to speak with a healthcare professional.',

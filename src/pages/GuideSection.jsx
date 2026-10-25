@@ -4,6 +4,7 @@ import Header from '../components/Header'
 import { guideSections } from '../content/guide'
 import { api } from '../utils/api'
 import { getSessionUser } from '../utils/auth'
+import { markSectionRead } from '../utils/guideProgress'
 
 function renderBlock(block, i) {
   switch (block.type) {
@@ -89,6 +90,13 @@ export default function GuideSection() {
 
   const section = guideSections.find((s) => s.id === sectionId)
 
+  // Tick this part off on the dashboard's topic list
+  useEffect(() => {
+    if (authenticated && section) {
+      markSectionRead(section.id)
+    }
+  }, [authenticated, section])
+
   if (loading) {
     return (
       <main className="page">
@@ -134,12 +142,16 @@ export default function GuideSection() {
           <p className="guide-title__count">
             Part {currentIndex + 1} of {guideSections.length}
           </p>
-          <h1 className="guide-title__heading">
+          {/* h2: the header bar already holds the page's h1 */}
+          <h2 className="guide-title__heading">
             <span className="guide-title__icon" aria-hidden="true">
               {section.icon}
             </span>
             {section.title}
-          </h1>
+          </h2>
+          {section.fullTitle && (
+            <p className="guide-title__full">{section.fullTitle}</p>
+          )}
         </header>
 
         <div className="guide-key-message">
@@ -150,46 +162,40 @@ export default function GuideSection() {
 
         <hr className="divider" />
 
-        {/* Prev / Next navigation */}
-        <div
-          style={{
-            display: 'flex',
-            gap: 'var(--space-md)',
-            flexWrap: 'wrap',
-          }}
-        >
-          {prev && (
+        {/* Next is the main action, so it comes first and full width;
+            each button names where it goes. */}
+        <nav className="guide-nav" aria-label="Guide pages">
+          {next ? (
             <button
-              className="btn btn--secondary"
-              style={{ flex: 1 }}
-              onClick={() => navigate(`/guide/${prev.id}`)}
-            >
-              ← {prev.title}
-            </button>
-          )}
-
-          {next && (
-            <button
-              className="btn btn--primary"
-              style={{ flex: 1 }}
+              className="btn btn--primary guide-nav__btn"
               onClick={() => navigate(`/guide/${next.id}`)}
             >
-              {next.title} →
+              <span className="guide-nav__label">Next</span>
+              <span>{next.title}{'\u00a0'}→</span>
+            </button>
+          ) : (
+            <p className="guide-nav__done">
+              ✓ You have reached the end of the guide.
+            </p>
+          )}
+
+          {prev && (
+            <button
+              className="btn btn--secondary guide-nav__btn"
+              onClick={() => navigate(`/guide/${prev.id}`)}
+            >
+              <span className="guide-nav__label">Previous</span>
+              <span>←{'\u00a0'}{prev.title}</span>
             </button>
           )}
-        </div>
 
-        <button
-          className="btn btn--ghost mt-md"
-          onClick={() => navigate('/dashboard')}
-          style={{
-            display: 'block',
-            width: '100%',
-            textAlign: 'center',
-          }}
-        >
-          Back to Dashboard
-        </button>
+          <button
+            className="btn btn--ghost"
+            onClick={() => navigate('/dashboard')}
+          >
+            Back to Home
+          </button>
+        </nav>
       </main>
     </>
   )

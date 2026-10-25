@@ -4,7 +4,7 @@ import { getSession } from '../utils/auth'
 const areas = [
   {
     icon: '🌙',
-    title: 'Night-time Urination & Fluid Balance',
+    title: 'Going to the Toilet at Night',
     desc: 'Learn practical ways to manage fluid timing, evening habits, and night-time routines that may support better sleep and fewer interruptions.',
   },
   {
@@ -14,12 +14,12 @@ const areas = [
   },
   {
     icon: '🚶',
-    title: 'Movement, Activity & Healthy Weight',
+    title: 'Staying Active and Healthy',
     desc: 'Build confidence, mobility, strength, and healthy daily habits through gentle activity and movement.',
   },
   {
     icon: '🧠',
-    title: 'Stress, Worry & Emotional Wellbeing',
+    title: 'Coping with Stress and Worry',
     desc: 'Discover practical strategies that may help reduce stress, improve confidence, and make symptoms feel easier to manage.',
   },
 ]
@@ -86,6 +86,7 @@ export default function Landing() {
         </div>
       </nav>
 
+      <main>
       {/* ── Hero ── */}
       <section className="landing-hero">
         <div className="landing-container">
@@ -267,6 +268,8 @@ export default function Landing() {
       </section>
 
       {/* ── Footer ── */}
+      </main>
+
       <footer className="landing-footer">
         <p>© 2026 Bladder Sense &nbsp;·&nbsp; Private &amp; Secure &nbsp;·&nbsp; Designed for older men</p>
         <p className="landing-footer__credit">

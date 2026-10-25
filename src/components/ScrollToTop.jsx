@@ -10,14 +10,15 @@ import { useLocation, useNavigationType } from 'react-router-dom'
  * so the browser can restore where the user was.
  */
 export default function ScrollToTop() {
-  const { pathname } = useLocation()
+  const { pathname, hash } = useLocation()
   const navigationType = useNavigationType()
 
   useEffect(() => {
-    if (navigationType !== 'POP') {
+    // A #link (e.g. /profile#text-size) scrolls to its own target
+    if (navigationType !== 'POP' && !hash) {
       window.scrollTo(0, 0)
     }
-  }, [pathname, navigationType])
+  }, [pathname, hash, navigationType])
 
   return null
 }
