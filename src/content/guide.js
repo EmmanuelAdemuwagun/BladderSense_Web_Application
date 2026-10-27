@@ -227,7 +227,7 @@ export const guideSections = [
           text: 'What improvements might you notice?',
         },
         {
-          type: 'list',
+          type: 'timeline',
           items: [
             'Early (weeks): less worry, improved sense of control, slightly less disrupted sleep',
             'Medium-term (weeks to months): fewer night-time toilet trips, improved sleep quality',
@@ -310,7 +310,7 @@ export const guideSections = [
           text: 'What improvements might you notice?',
         },
         {
-          type: 'list',
+          type: 'timeline',
           items: [
             'Early (weeks): falling asleep more easily, feeling slightly more rested',
             'Medium-term: more consistent sleep patterns, fewer night-time disruptions, improved daytime energy',
@@ -341,7 +341,7 @@ export const guideSections = [
             'Feeling less active than you used to be',
             'Reduced strength, mobility, or stamina',
             'Avoiding activities because of urinary symptoms',
-            'Have gained weight over time',
+            'Having gained weight over time',
           ],
         },
         {
@@ -409,7 +409,7 @@ export const guideSections = [
           text: 'What improvements might you notice?',
         },
         {
-          type: 'list',
+          type: 'timeline',
           items: [
             'Early (weeks): feeling slightly more energetic, improved confidence moving around',
             'Medium-term: improved stamina and mobility, more consistent activity habits',
@@ -488,13 +488,14 @@ export const guideSections = [
         {
           type: 'tip',
           text: 'Some people find apps like Insight Timer (insighttimer.com) helpful for guided relaxation.',
+          link: { text: 'insighttimer.com', url: 'https://insighttimer.com/' },
         },
         {
           type: 'heading',
           text: 'What improvements might you notice?',
         },
         {
-          type: 'list',
+          type: 'timeline',
           items: [
             'Early (weeks): feeling calmer, reduced tension about symptoms',
             'Medium-term: reduced avoidance of activities, improved confidence',
@@ -514,7 +515,7 @@ export const guideSections = [
       body: [
         {
           type: 'heading',
-          text: 'Why this matters:',
+          text: 'Why this matters',
         },
         {
           type: 'paragraph',
@@ -653,6 +654,7 @@ export const guideSections = [
         {
           type: 'tip',
           text: 'For help choosing products, visit continenceproductadvisor.org',
+          link: { text: 'continenceproductadvisor.org', url: 'https://www.continenceproductadvisor.org/' },
         },
       ],
     },
@@ -696,7 +698,7 @@ export const guideSections = [
         },
         {
           type: 'paragraph',
-          text: 'Use the ‘Notes for today’ section in Daily Tracking to record what you tried and what helped.',
+          text: 'Use the "Notes for today" section in Daily Tracking to record what you tried and what helped.',
         },
         {
           type: 'tip',
@@ -772,11 +774,8 @@ export const guideSections = [
           ],
         },
         {
-          type: 'heading',
-          text: 'Seek urgent medical attention if you experience:',
-        },
-        {
-          type: 'list',
+          type: 'warning',
+          title: 'Seek urgent medical attention if you experience:',
           items: [
             'Sudden inability to pass urine',
             'Sudden or severe breathlessness',

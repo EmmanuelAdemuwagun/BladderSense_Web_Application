@@ -809,6 +809,37 @@ li {
   overflow-wrap: anywhere;
 }
 
+.guide-tip a {
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+
+.guide-timeline li {
+  margin-bottom: var(--space-xs);
+}
+
+.guide-timeline strong {
+  color: var(--color-primary);
+}
+
+.guide-warning {
+  background: var(--color-error-bg);
+  border-left: 5px solid var(--color-error);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: var(--space-sm) var(--space-md);
+  margin: var(--space-md) 0;
+}
+
+.guide-warning__title {
+  font-weight: 700;
+  color: var(--color-error);
+  margin: 0 0 var(--space-xs);
+}
+
+.guide-warning ul {
+  margin: 0;
+}
+
 .guide-checklist {
   list-style: none;
   padding: 0;

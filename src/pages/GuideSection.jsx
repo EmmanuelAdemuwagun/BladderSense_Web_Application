@@ -6,6 +6,21 @@ import { api } from '../utils/api'
 import { getSessionUser } from '../utils/auth'
 import { markSectionRead } from '../utils/guideProgress'
 
+// Turns link.text inside the sentence into a link to link.url
+function withLink(text, link) {
+  const at = link ? text.indexOf(link.text) : -1
+  if (at === -1) return text
+  return (
+    <>
+      {text.slice(0, at)}
+      <a href={link.url} target="_blank" rel="noopener noreferrer">
+        {link.text}
+      </a>
+      {text.slice(at + link.text.length)}
+    </>
+  )
+}
+
 function renderBlock(block, i) {
   switch (block.type) {
     case 'paragraph':
@@ -39,7 +54,36 @@ function renderBlock(block, i) {
     case 'tip':
       return (
         <div key={i} className="guide-tip">
-          💡 {block.text}
+          💡 {withLink(block.text, block.link)}
+        </div>
+      )
+
+    // "Early (weeks): …" — the time frame is shown in bold
+    case 'timeline':
+      return (
+        <ul key={i} className="guide-timeline">
+          {block.items.map((item, j) => {
+            const split = item.indexOf(': ')
+            return split === -1 ? (
+              <li key={j}>{item}</li>
+            ) : (
+              <li key={j}>
+                <strong>{item.slice(0, split)}:</strong> {item.slice(split + 2)}
+              </li>
+            )
+          })}
+        </ul>
+      )
+
+    case 'warning':
+      return (
+        <div key={i} className="guide-warning" role="note">
+          <p className="guide-warning__title">⚠️ {block.title}</p>
+          <ul>
+            {block.items.map((item, j) => (
+              <li key={j}>{item}</li>
+            ))}
+          </ul>
         </div>
       )
 
