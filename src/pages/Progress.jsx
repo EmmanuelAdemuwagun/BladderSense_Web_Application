@@ -4,44 +4,14 @@ import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import { api } from '../utils/api'
 import { CategoryKey } from '../content/categoryKey'
-
-const FIELDS = [
-  {
-    id: 'nightTimeUrination',
-    label: 'Night-time urination',
-    icon: '🌙',
-    options: ['0', '1', '2', '3+'],
-    lowerIsBetter: true,
-  },
-  {
-    id: 'eveningFluids',
-    label: 'Evening fluids',
-    icon: '🥤',
-    options: ['None', 'Small', 'Moderate', 'Large'],
-    lowerIsBetter: true,
-  },
-  {
-    id: 'activityLevel',
-    label: 'Activity level',
-    icon: '🚶',
-    options: ['None', 'Light', 'Moderate', 'High'],
-    lowerIsBetter: false,
-  },
-  {
-    id: 'stressLevel',
-    label: 'Stress level',
-    icon: '🧠',
-    options: ['1', '2', '3', '4', '5'],
-    lowerIsBetter: true,
-  },
-  {
-    id: 'sleepQuality',
-    label: 'Sleep quality',
-    icon: '🛏️',
-    options: ['Poor', 'Fair', 'Good'],
-    lowerIsBetter: false,
-  },
-]
+import ProgressChart from '../components/ProgressChart'
+import { getSessionUser } from '../utils/auth'
+import { downloadProgressReport } from '../utils/progressReport'
+import {
+  PROGRESS_FIELDS as FIELDS,
+  longDate,
+  shortDate,
+} from '../content/progressFields'
 
 /*
  * Return today's date using the user's local timezone.
@@ -123,81 +93,6 @@ function normalizeDate(value) {
   )
 }
 
-function shortDate(dateStr) {
-  const d = new Date(
-    `${dateStr}T12:00:00`
-  )
-
-  return d.toLocaleDateString(
-    'en-GB',
-    {
-      weekday: 'short',
-      day: 'numeric',
-    }
-  )
-}
-
-/*
- * "12 May" style label used for the week range caption, so the
- * user always knows exactly which dates they are looking at.
- */
-function longDate(dateStr) {
-  const d = new Date(
-    `${dateStr}T12:00:00`
-  )
-
-  return d.toLocaleDateString(
-    'en-GB',
-    {
-      day: 'numeric',
-      month: 'long',
-    }
-  )
-}
-
-function getDotColor(value, field) {
-  const idx =
-    field.options.indexOf(
-      value
-    )
-
-  if (idx === -1) {
-    return '#ccd6e0'
-  }
-
-  const max =
-    field.options.length - 1
-
-  if (max === 0) {
-    return '#1a7a3c'
-  }
-
-  const ratio =
-    idx / max
-
-  if (field.lowerIsBetter) {
-    if (ratio <= 0.25) {
-      return '#1a7a3c'
-    }
-
-    if (ratio <= 0.5) {
-      return '#d4ac0d'
-    }
-
-    return '#922b21'
-  }
-
-  if (ratio >= 0.75) {
-    return '#1a7a3c'
-  }
-
-  if (ratio >= 0.5) {
-    return '#d4ac0d'
-  }
-
-  return '#922b21'
-}
-
 export default function Progress() {
   const navigate = useNavigate()
 
@@ -208,6 +103,12 @@ export default function Progress() {
     useState(true)
 
   const [error, setError] =
+    useState('')
+
+  const [downloading, setDownloading] =
+    useState(false)
+
+  const [downloadError, setDownloadError] =
     useState('')
 
   // 0 = current week; each increment steps one week further back.
@@ -313,6 +214,25 @@ export default function Progress() {
 
   const rangeLabel =
     `${longDate(windowStart)} – ${longDate(windowEnd)}`
+
+  async function handleDownload() {
+    setDownloading(true)
+    setDownloadError('')
+
+    try {
+      await downloadProgressReport({
+        days: last7,
+        entryMap,
+        user: getSessionUser(),
+      })
+    } catch {
+      setDownloadError(
+        'The report could not be created. Please try again.'
+      )
+    } finally {
+      setDownloading(false)
+    }
+  }
 
   function goPreviousWeek() {
     setWeekOffset(
@@ -467,6 +387,31 @@ export default function Progress() {
               </div>
             )}
 
+            {/* PDF of the week on screen */}
+            {trackedCount > 0 && (
+              <div className="mb-md">
+                <button
+                  type="button"
+                  className="btn btn--primary"
+                  onClick={handleDownload}
+                  disabled={downloading}
+                >
+                  {downloading
+                    ? 'Creating report…'
+                    : '📄 Download PDF Report'}
+                </button>
+
+                {downloadError && (
+                  <div
+                    className="alert alert--error mt-sm"
+                    role="alert"
+                  >
+                    {downloadError}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Metrics */}
             {FIELDS.map(
               (field) => (
@@ -507,144 +452,11 @@ export default function Progress() {
                     </span>
                   </div>
 
-                  {/* Seven days */}
-                  <div
-                    style={{
-                      display:
-                        'flex',
-                      gap: 6,
-                      flexWrap:
-                        'wrap',
-                      marginBottom:
-                        12,
-                    }}
-                  >
-                    {last7.map(
-                      (date) => {
-                        const entry =
-                          entryMap[
-                            date
-                          ]
-
-                        const value =
-                          entry?.[
-                            field.id
-                          ]
-
-                        const color =
-                          value
-                            ? getDotColor(
-                                value,
-                                field
-                              )
-                            : '#e8edf2'
-
-                        return (
-                          <div
-                            key={date}
-                            style={{
-                              textAlign:
-                                'center',
-                              flex: 1,
-                              minWidth:
-                                36,
-                            }}
-                          >
-                            <div
-                              title={
-                                value
-                                  ? `${shortDate(
-                                      date
-                                    )}: ${value}`
-                                  : `${shortDate(
-                                      date
-                                    )}: Not recorded`
-                              }
-                              style={{
-                                width:
-                                  40,
-                                height:
-                                  40,
-                                borderRadius:
-                                  '50%',
-                                background:
-                                  color,
-                                margin:
-                                  '0 auto 5px',
-                                display:
-                                  'flex',
-                                alignItems:
-                                  'center',
-                                justifyContent:
-                                  'center',
-                                border:
-                                  '2px solid rgba(0,0,0,0.08)',
-                              }}
-                            >
-                              {value && (
-                                <span
-                                  style={{
-                                    fontSize:
-                                      16,
-                                    fontWeight:
-                                      800,
-                                    // White is unreadable on the yellow "Fair" dot
-                                    color:
-                                      color === '#d4ac0d'
-                                        ? '#1a1a1a'
-                                        : '#fff',
-                                    lineHeight:
-                                      1,
-                                  }}
-                                >
-                                  {String(
-                                    value
-                                  ).length <=
-                                  2
-                                    ? value
-                                    : String(
-                                        value
-                                      ).charAt(
-                                        0
-                                      )}
-                                </span>
-                              )}
-                            </div>
-
-                            <span
-                              style={{
-                                fontSize:
-                                  16,
-                                fontWeight:
-                                  800,
-                                color:
-                                  'var(--color-text)',
-                                display:
-                                  'block',
-                              }}
-                            >
-                              {shortDate(
-                                date
-                              ).split(
-                                ' '
-                              )[0]}
-                            </span>
-                          </div>
-                        )
-                      }
-                    )}
-                  </div>
-
-                  {/* Word answers show as their first letter — spell them out */}
-                  {field.options.some((option) => option.length > 2) && (
-                    <p className="progress-letter-key">
-                      {field.options.map((option) => (
-                        <span key={option}>
-                          {option.charAt(0)} = {option}
-                        </span>
-                      ))}
-                    </p>
-                  )}
+                  <ProgressChart
+                    field={field}
+                    days={last7}
+                    entryMap={entryMap}
+                  />
 
                   {/* Legend */}
                   <div

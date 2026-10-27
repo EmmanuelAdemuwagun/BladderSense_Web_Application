@@ -580,19 +580,73 @@ li {
 }
 
 /* Progress page: explains the letters shown inside the day dots */
-.progress-letter-key {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 16px;
-  margin: 0 0 12px;
+/* 7-day column chart on the Progress page (ProgressChart.jsx) */
+.progress-chart {
+  margin-bottom: 12px;
+}
+
+.progress-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.progress-chart__grid {
+  stroke: #e2e8f0;
+  stroke-width: 1;
+}
+
+.progress-chart__baseline {
+  stroke: #a0aec0;
+  stroke-width: 1.5;
+}
+
+.progress-chart__axis {
   font-size: 17px;
   font-weight: 600;
+  fill: var(--color-text-muted);
+}
+
+.progress-chart__day {
+  cursor: pointer;
+}
+
+.progress-chart__day-label {
+  font-size: 15px;
+  font-weight: 800;
+  fill: var(--color-text);
+}
+
+.progress-chart__day-num {
+  font-size: 15px;
+  font-weight: 600;
+  fill: var(--color-text-muted);
+}
+
+.progress-chart__missing {
+  font-size: 18px;
+  font-weight: 700;
+  fill: var(--color-text-muted);
+}
+
+.progress-chart__readout {
+  margin: 4px 0 0;
+  min-height: 1.6em;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.progress-chart__readout strong {
   color: var(--color-text);
 }
 
-/* Keep "M = Moderate" together on one line */
-.progress-letter-key span {
-  white-space: nowrap;
+.progress-chart__swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  vertical-align: middle;
 }
 
 /* Small "Part 3" label above a topic title in the topic list */
