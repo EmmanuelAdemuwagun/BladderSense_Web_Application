@@ -72,7 +72,7 @@ export const guideSections = [
       body: [
         {
           type: 'paragraph',
-          text: 'This guide focuses on four key areas because they are common concerns in older men, are often linked with bladder control problems, and may be improved through self-management.',
+          text: 'This guide focuses on four key areas because they are common concerns in older men, are often linked with bladder control problems, and may be improved through self-management. Older men also identified these as areas they felt willing and able to work on.',
         },
         {
           type: 'heading',
