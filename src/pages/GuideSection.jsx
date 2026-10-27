@@ -21,10 +21,23 @@ function withLink(text, link) {
   )
 }
 
+// Shows the words in `bold` inside the sentence in bold
+function withBold(text, bold) {
+  const at = bold ? text.indexOf(bold) : -1
+  if (at === -1) return text
+  return (
+    <>
+      {text.slice(0, at)}
+      <strong>{bold}</strong>
+      {text.slice(at + bold.length)}
+    </>
+  )
+}
+
 function renderBlock(block, i) {
   switch (block.type) {
     case 'paragraph':
-      return <p key={i}>{block.text}</p>
+      return <p key={i}>{withBold(block.text, block.bold)}</p>
 
     case 'heading':
       return (

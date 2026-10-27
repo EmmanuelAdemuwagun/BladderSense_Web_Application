@@ -698,7 +698,8 @@ export const guideSections = [
         },
         {
           type: 'paragraph',
-          text: 'Use the "Notes for today" section in Daily Tracking to record what you tried and what helped.',
+          text: 'Use the Notes for today section in Daily Tracking to record what you tried and what helped.',
+          bold: 'Notes for today',
         },
         {
           type: 'tip',
