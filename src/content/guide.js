@@ -341,7 +341,36 @@ export const guideSections = [
             'Feeling less active than you used to be',
             'Reduced strength, mobility, or stamina',
             'Avoiding activities because of urinary symptoms',
+            'Have gained weight over time',
           ],
+        },
+        {
+          type: 'heading',
+          text: 'Why this matters',
+        },
+        {
+          type: 'paragraph',
+          text: 'Reduced activity may affect:',
+        },
+        {
+          type: 'list',
+          items: [
+            'Strength, balance, and mobility',
+            'Sleep, mood, and energy',
+            'Confidence and independence',
+          ],
+        },
+        {
+          type: 'paragraph',
+          text: 'Excess body weight may increase pressure on the bladder and pelvic floor.',
+        },
+        {
+          type: 'paragraph',
+          text: 'Bladder symptoms may also discourage activity, creating a cycle of reduced movement and confidence.',
+        },
+        {
+          type: 'tip',
+          text: 'Small, sustainable changes can help break this cycle.',
         },
         {
           type: 'heading',
@@ -361,7 +390,7 @@ export const guideSections = [
         },
         {
           type: 'heading',
-          text: 'Simple portion awareness:',
+          text: 'Simple portion awareness (guides, not strict rules):',
         },
         {
           type: 'list',
