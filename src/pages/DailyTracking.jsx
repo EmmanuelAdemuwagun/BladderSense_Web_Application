@@ -104,6 +104,14 @@ function TodaySummary({ values, notes }) {
   )
 }
 
+/*
+ * The API sends entryDate as a full timestamp
+ * ("2026-10-27T00:00:00.000Z"), not "2026-10-27", so compare the date part.
+ */
+function isToday(entry) {
+  return String(entry.entryDate).slice(0, 10) === TODAY
+}
+
 function entryToValues(entry) {
   return {
     nightTimeUrination: entry.nightTimeUrination || '',
@@ -137,7 +145,7 @@ export default function DailyTracking() {
         if (!mounted) return
 
         const todayEntry = trackingData.entries?.find(
-          (entry) => entry.entryDate === TODAY
+          isToday
         )
 
         if (todayEntry) {
@@ -224,7 +232,7 @@ export default function DailyTracking() {
         try {
           const data = await api.getTracking()
           const todayEntry = data.entries?.find(
-            (entry) => entry.entryDate === TODAY
+            isToday
           )
           if (todayEntry) {
             setValues(entryToValues(todayEntry))
