@@ -209,8 +209,37 @@ contracts, which are also part of the backend surface.
 
 ---
 
+## 7a. Guide progress endpoints 🆕
+
+Which guide parts the user has opened. Today this lives only in the browser's
+`localStorage`, so a user who signs in on a new browser or device sees
+"0 of 13 parts" again. The frontend now syncs it with these endpoints
+(`src/utils/guideProgress.js`); until they exist it quietly keeps working
+from the local copy only.
+
+Store it per user as a set of section ids. Valid ids (reject others with
+`400`, or silently drop them):
+
+`welcome`, `why-4-areas`, `how-to-use`, `night-time`, `sleep`, `movement`,
+`stress`, `pelvic-floor`, `practical-support`, `personal-plan`, `tips`,
+`seek-help`, `final-message`
+
+- **`GET /guide-progress`** (auth required) →
+  `200 { "readSections": ["welcome", "sleep", …] }`. A user with no progress
+  gets `{ "readSections": [] }` (not `404`).
+- **`POST /guide-progress`** (auth required) — body:
+  `{ "sectionIds": ["sleep"] }` (one or more ids).
+  **Adds** the ids to the user's set — it never removes, and repeating an id
+  is a no-op (idempotent). Returns the full set:
+  `200 { "readSections": [ … ] }`. The frontend sends one id each time a part
+  is opened, and occasionally a batch of ids read before this existed.
+- Delete this data with the account (§5.7).
+
+---
+
 ## 8. Quick checklist for the backend developer
 
+- [ ] 🆕 Implement **`GET` / `POST /api/guide-progress`** (per-user set of read guide parts) — §7a.
 - [ ] 🆕 Implement **`DELETE /api/profile`** (delete user + all their data, clear cookie) — §5.7.
 - [ ] ⚠️ Confirm the session cookie is **host-only** (no `Domain=…herokuapp.com`), `HttpOnly`, `Secure`, `SameSite=Lax` — §2.
 - [ ] ⚠️ Confirm `POST /auth/verify-login` returns `{ "user": … }` and sets the cookie — §5.5.

@@ -128,7 +128,11 @@ import { api } from '../utils/api'
 import { getSessionUser, saveSession, clearSession } from '../utils/auth'
 import { guideSections } from '../content/guide'
 import { localDateString } from '../utils/date'
-import { getReadSections, nextUnreadSection } from '../utils/guideProgress'
+import {
+  getReadSections,
+  nextUnreadSection,
+  syncGuideProgress,
+} from '../utils/guideProgress'
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -144,6 +148,8 @@ export default function Dashboard() {
   // null = not known yet; true/false once today's entries have loaded
   const [trackedToday, setTrackedToday] = useState(null)
   const [showTopics, setShowTopics] = useState(false)
+  // This device's copy first, then the merged server copy once it loads
+  const [readSections, setReadSections] = useState(getReadSections)
 
   useEffect(() => {
     let mounted = true
@@ -176,6 +182,12 @@ export default function Dashboard() {
     }
 
     loadProfile()
+
+    syncGuideProgress().then((read) => {
+      if (mounted) {
+        setReadSections(read)
+      }
+    })
 
     api
       .getTracking()
@@ -211,7 +223,6 @@ export default function Dashboard() {
 
   const displayName = user.preferredName || user.firstName
 
-  const readSections = getReadSections()
   const readCount = guideSections.filter((s) => readSections.has(s.id)).length
   const nextSection = nextUnreadSection(readSections)
 

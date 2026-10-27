@@ -120,6 +120,21 @@ updateTracking: (id, data) =>
   }),
 
   // ============================
+  // GUIDE PROGRESS
+  // ============================
+
+  // → { readSections: ["welcome", ...] }
+  getGuideProgress: () =>
+    request("/guide-progress"),
+
+  // Adds parts to the read list (never removes). → { readSections: [...] }
+  addGuideProgress: (sectionIds) =>
+    request("/guide-progress", {
+      method: "POST",
+      body: JSON.stringify({ sectionIds }),
+    }),
+
+  // ============================
   // ADMIN (server enforces admin access on every call)
   // ============================
 
