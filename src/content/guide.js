@@ -607,6 +607,10 @@ export const guideSections = [
           text: 'Supportive measures are practical tools that help you manage symptoms in daily life. They can be used alongside lifestyle changes and pelvic floor exercises.',
         },
         {
+          type: 'paragraph',
+          text: 'These products help manage leakage but do not treat its underlying causes.',
+        },
+        {
           type: 'heading',
           text: 'Products that may help:',
         },
@@ -684,7 +688,15 @@ export const guideSections = [
         },
         {
           type: 'paragraph',
-          text: 'Write 1–3 small, practical actions you want to try. For example: "I will reduce fluids after 7pm and try a short evening walk three times this week."',
+          text: 'Choose 1–3 small, practical actions from this guide that you want to try.',
+        },
+        {
+          type: 'paragraph',
+          text: 'For example: "I will reduce fluids after 7pm and try a short evening walk three times this week."',
+        },
+        {
+          type: 'paragraph',
+          text: 'Use the ‘Notes for today’ section in Daily Tracking to record what you tried and what helped.',
         },
         {
           type: 'tip',
