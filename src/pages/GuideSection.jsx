@@ -43,6 +43,20 @@ function renderBlock(block, i) {
         </div>
       )
 
+    case 'resource':
+      return (
+        <div key={i} className="guide-resource">
+          <p className="guide-resource__title">🔗 {block.title}</p>
+          <p>{block.text}</p>
+          <p>
+            Website:{' '}
+            <a href={block.url} target="_blank" rel="noopener noreferrer">
+              {block.linkText || block.url}
+            </a>
+          </p>
+        </div>
+      )
+
     default:
       return null
   }

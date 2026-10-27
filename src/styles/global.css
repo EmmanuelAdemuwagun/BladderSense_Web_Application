@@ -781,6 +781,34 @@ li {
   font-weight: 600;
 }
 
+.guide-resource {
+  background: #eaf3fb;
+  border-left: 5px solid var(--color-primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: var(--space-sm) var(--space-md);
+  margin: var(--space-md) 0;
+  font-size: var(--font-size-sm);
+}
+
+.guide-resource p {
+  margin: 0 0 var(--space-xs);
+}
+
+.guide-resource p:last-child {
+  margin-bottom: 0;
+}
+
+.guide-resource__title {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.guide-resource a {
+  font-weight: 700;
+  color: var(--color-primary);
+  overflow-wrap: anywhere;
+}
+
 .guide-checklist {
   list-style: none;
   padding: 0;

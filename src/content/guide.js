@@ -544,6 +544,10 @@ export const guideSections = [
           ],
         },
         {
+          type: 'paragraph',
+          text: 'The movement should feel internal and controlled.',
+        },
+        {
           type: 'heading',
           text: 'A simple starting routine:',
         },
@@ -556,6 +560,10 @@ export const guideSections = [
             'Gradually increase the holding time as your strength improves',
             'Try quick squeezes before coughing, standing, or lifting',
           ],
+        },
+        {
+          type: 'tip',
+          text: 'Consistency is more important than intensity.',
         },
         {
           type: 'tip',
@@ -573,6 +581,13 @@ export const guideSections = [
             'If you experience pain or discomfort',
             'If you want guided physiotherapy support',
           ],
+        },
+        {
+          type: 'resource',
+          title: 'Additional Resource: Squeezy Men',
+          text: 'The Squeezy Men app provides guided pelvic floor exercises, reminders, and progress tracking.',
+          url: 'https://squeezyapp.com/men/',
+          linkText: 'squeezyapp.com/men',
         },
       ],
     },
