@@ -260,12 +260,38 @@ export const guideSections = [
         },
         {
           type: 'heading',
+          text: 'Why this matters',
+        },
+        {
+          type: 'paragraph',
+          text: 'Poor sleep may:',
+        },
+        {
+          type: 'list',
+          items: [
+            'Reduce daytime energy and concentration',
+            'Increase stress and irritability',
+            'Make bladder symptoms feel more noticeable',
+            'Affect confidence and daily activities',
+          ],
+        },
+        {
+          type: 'paragraph',
+          text: 'Waking at night to urinate can also disrupt sleep and reduce rest quality.',
+        },
+        {
+          type: 'tip',
+          text: 'Better sleep habits may support both wellbeing and bladder symptom management.',
+        },
+        {
+          type: 'heading',
           text: 'Things you can try:',
         },
         {
           type: 'checklist',
           items: [
-            'Keep a consistent bedtime and waking time',
+            'Keep regular bedtimes and waking times where possible',
+            'Use a night light if you need to get up to urinate',
             'Avoid screens (TV, phone, tablet) for 30–60 minutes before bed',
             'Keep the bedroom cool, quiet, and dark',
             'Avoid caffeine after midday',
@@ -287,8 +313,8 @@ export const guideSections = [
           type: 'list',
           items: [
             'Early (weeks): falling asleep more easily, feeling slightly more rested',
-            'Medium-term: more consistent sleep patterns, fewer night-time disruptions',
-            'Longer-term: improved daytime energy, better mood, improved bladder management',
+            'Medium-term: more consistent sleep patterns, fewer night-time disruptions, improved daytime energy',
+            'Longer-term: improved daytime energy, better mood, improved bladder management, improved daily functioning',
           ],
         },
       ],
