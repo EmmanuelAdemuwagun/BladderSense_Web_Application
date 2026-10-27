@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Header from '../components/Header'
 import { api } from '../utils/api'
 import { CategoryKey } from '../content/categoryKey'
@@ -83,23 +83,49 @@ function OptionGroup({
   )
 }
 
-export default function DailyTracking() {
-  const navigate = useNavigate()
+// Today's answers once saved. A day's record can't be changed after saving.
+function TodaySummary({ values, notes }) {
+  return (
+    <div className="card card--compact mb-md">
+      <dl className="tracking-summary">
+        {FIELDS.map((field) => (
+          <div key={field.id} className="tracking-summary__row">
+            <dt>{field.label}</dt>
+            <dd>{values[field.id] || '—'}</dd>
+          </div>
+        ))}
+      </dl>
+      {notes && (
+        <p className="tracking-summary__notes">
+          <strong>Notes:</strong> {notes}
+        </p>
+      )}
+    </div>
+  )
+}
 
+function entryToValues(entry) {
+  return {
+    nightTimeUrination: entry.nightTimeUrination || '',
+    eveningFluids: entry.eveningFluids || '',
+    activityLevel: entry.activityLevel || '',
+    stressLevel: entry.stressLevel || '',
+    sleepQuality: entry.sleepQuality || '',
+  }
+}
+
+export default function DailyTracking() {
   const [values, setValues] = useState({})
   const [notes, setNotes] = useState('')
-  const [entryId, setEntryId] = useState(null)
 
   const [loading, setLoading] = useState(false)
   const [fetchLoading, setFetchLoading] = useState(true)
 
-  const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
   // The question the user skipped when they last pressed Save
   const [missingId, setMissingId] = useState('')
 
   const [alreadyTracked, setAlreadyTracked] = useState(false)
-  const [editing, setEditing] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -115,16 +141,7 @@ export default function DailyTracking() {
         )
 
         if (todayEntry) {
-          setEntryId(todayEntry.id)
-
-          setValues({
-            nightTimeUrination: todayEntry.nightTimeUrination || '',
-            eveningFluids: todayEntry.eveningFluids || '',
-            activityLevel: todayEntry.activityLevel || '',
-            stressLevel: todayEntry.stressLevel || '',
-            sleepQuality: todayEntry.sleepQuality || '',
-          })
-
+          setValues(entryToValues(todayEntry))
           setNotes(todayEntry.notes || '')
           setAlreadyTracked(true)
         }
@@ -154,7 +171,6 @@ export default function DailyTracking() {
       [fieldId]: val,
     }))
 
-    setSuccess(false)
     setError('')
 
     if (fieldId === missingId) {
@@ -166,7 +182,6 @@ export default function DailyTracking() {
     e.preventDefault()
 
     setError('')
-    setSuccess(false)
 
     const missingField = FIELDS.find(
       (field) => !values[field.id]
@@ -195,26 +210,34 @@ export default function DailyTracking() {
     }
 
     try {
-      if (alreadyTracked && entryId) {
-        await api.updateTracking(entryId, payload)
-      } else {
-        const data = await api.saveTracking(payload)
+      await api.saveTracking(payload)
 
-        if (data.entry?.id) {
-          setEntryId(data.entry.id)
-        }
-
-        setAlreadyTracked(true)
-      }
-
-      setSuccess(true)
-      setEditing(false)
+      setAlreadyTracked(true)
 
       window.scrollTo({
         top: 0,
         behavior: 'smooth',
       })
     } catch (err) {
+      // Already saved today (e.g. on another device): show that record
+      if (err.status === 409) {
+        try {
+          const data = await api.getTracking()
+          const todayEntry = data.entries?.find(
+            (entry) => entry.entryDate === TODAY
+          )
+          if (todayEntry) {
+            setValues(entryToValues(todayEntry))
+            setNotes(todayEntry.notes || '')
+            setAlreadyTracked(true)
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+            return
+          }
+        } catch {
+          // Fall through to the error message below
+        }
+      }
+
       setError(
         err.message || 'Unable to save your tracking entry.'
       )
@@ -239,8 +262,6 @@ export default function DailyTracking() {
     }
   )
 
-  const isReadOnly = alreadyTracked && !editing
-
   if (fetchLoading) {
     return (
       <main className="page">
@@ -262,15 +283,6 @@ export default function DailyTracking() {
           {todayFormatted}
         </p>
 
-        {success && (
-          <div
-            className="alert alert--success"
-            role="alert"
-          >
-            Today's record has been saved successfully.
-          </div>
-        )}
-
         {error && (
           <div
             className="alert alert--error"
@@ -280,136 +292,110 @@ export default function DailyTracking() {
           </div>
         )}
 
-        {alreadyTracked && !editing && (
-          <div className="alert alert--info mb-md">
-            ✅ You have already recorded today's information.
-
-            <br />
-
-            <button
-              type="button"
-              className="btn btn--ghost mt-sm"
-              style={{
-                display: 'inline',
-                padding: 0,
-              }}
-              onClick={() => {
-                setEditing(true)
-                setSuccess(false)
-                setError('')
-              }}
-            >
-              Tap here if you want to update today's entry
-            </button>
-          </div>
-        )}
-
-        {!alreadyTracked && (
-          <div className="alert alert--info mb-md">
-            This is not about perfection. It is about noticing
-            patterns over time.
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          {FIELDS.map((field) => (
+        {alreadyTracked ? (
+          <>
             <div
-              key={field.id}
-              id={`question-${field.id}`}
-              className={`card card--compact mb-md${
-                missingId === field.id ? ' card--missing' : ''
-              }`}
+              className="alert alert--success"
+              role="status"
             >
-              <label className="tracking-label">
-                {field.label}
-              </label>
+              ✅ <strong>Today's record is saved.</strong>
+              <br />
+              You can add a new record tomorrow.
+            </div>
 
-              {missingId === field.id && (
-                <p className="tracking-missing" role="alert">
-                  Please choose an answer for this question.
+            <TodaySummary values={values} notes={notes} />
+          </>
+        ) : (
+          <>
+            <div className="alert alert--info mb-md">
+              This is not about perfection. It is about noticing
+              patterns over time.
+            </div>
+
+            <form onSubmit={handleSubmit}>
+              {FIELDS.map((field) => (
+                <div
+                  key={field.id}
+                  id={`question-${field.id}`}
+                  className={`card card--compact mb-md${
+                    missingId === field.id ? ' card--missing' : ''
+                  }`}
+                >
+                  <label className="tracking-label">
+                    {field.label}
+                  </label>
+
+                  {missingId === field.id && (
+                    <p className="tracking-missing" role="alert">
+                      Please choose an answer for this question.
+                    </p>
+                  )}
+
+                  <p
+                    className="form-hint"
+                    style={{ marginBottom: 12 }}
+                  >
+                    {field.sublabel}
+                  </p>
+
+                  <OptionGroup
+                    fieldId={field.id}
+                    options={field.options}
+                    value={values[field.id] || ''}
+                    onChange={handleChange}
+                    disabled={loading}
+                  />
+
+                  {/* Objective category key — shown under every section */}
+                  <CategoryKey fieldId={field.id} />
+                </div>
+              ))}
+
+              <div className="card card--compact mb-md">
+                <label
+                  className="tracking-label"
+                  htmlFor="notes"
+                >
+                  Notes for today (optional)
+                </label>
+
+                <p className="form-hint">
+                  What did you try? What helped?
                 </p>
-              )}
 
-              <p
-                className="form-hint"
-                style={{ marginBottom: 12 }}
-              >
-                {field.sublabel}
+                <textarea
+                  id="notes"
+                  className="form-input"
+                  rows={4}
+                  value={notes}
+                  onChange={(e) => {
+                    setNotes(e.target.value)
+                    setError('')
+                  }}
+                  placeholder="e.g. Reduced fluids after 7pm. Went for a short walk."
+                  style={{
+                    minHeight: 100,
+                    resize: 'vertical',
+                  }}
+                  disabled={loading}
+                />
+              </div>
+
+              <p className="form-hint mb-md">
+                Please check your answers. Once saved, today's record
+                can't be changed.
               </p>
 
-              <OptionGroup
-                fieldId={field.id}
-                options={field.options}
-                value={values[field.id] || ''}
-                onChange={handleChange}
-                disabled={isReadOnly || loading}
-              />
-
-              {/* Objective category key — shown under every section */}
-              <CategoryKey fieldId={field.id} />
-            </div>
-          ))}
-
-          <div className="card card--compact mb-md">
-            <label
-              className="tracking-label"
-              htmlFor="notes"
-            >
-              Notes for today (optional)
-            </label>
-
-            <p className="form-hint">
-              What did you try? What helped?
-            </p>
-
-            <textarea
-              id="notes"
-              className="form-input"
-              rows={4}
-              value={notes}
-              onChange={(e) => {
-                setNotes(e.target.value)
-                setSuccess(false)
-                setError('')
-              }}
-              placeholder="e.g. Reduced fluids after 7pm. Went for a short walk."
-              style={{
-                minHeight: 100,
-                resize: 'vertical',
-              }}
-              disabled={isReadOnly || loading}
-              readOnly={isReadOnly}
-            />
-          </div>
-
-          {!isReadOnly && (
-            <button
-              type="submit"
-              className="btn btn--primary"
-              disabled={loading}
-            >
-              {loading
-                ? 'Saving…'
-                : alreadyTracked
-                  ? "Update Today's Record"
-                  : "Save Today's Record"}
-            </button>
-          )}
-
-          {editing && (
-            <button
-              type="button"
-              className="btn btn--secondary mt-md"
-              onClick={() => {
-                setEditing(false)
-                setMissingId('')
-                setError('')
-              }}
-            >
-              Cancel
-            </button>
-          )}
-        </form>
+              <button
+                type="submit"
+                className="btn btn--primary"
+                disabled={loading}
+              >
+                {loading ? 'Saving…' : "Save Today's Record"}
+              </button>
+            </form>
+          </>
+        )}
 
         <hr className="divider" />
 
@@ -419,6 +405,15 @@ export default function DailyTracking() {
         >
           📈 View My 7-Day Progress
         </Link>
+
+        {alreadyTracked && (
+          <Link
+            to="/dashboard"
+            className="btn btn--secondary mt-md"
+          >
+            Back to Dashboard
+          </Link>
+        )}
       </main>
     </>
   )
