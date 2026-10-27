@@ -131,6 +131,7 @@ import { localDateString } from '../utils/date'
 import {
   getReadSections,
   nextUnreadSection,
+  resetGuideProgress,
   syncGuideProgress,
 } from '../utils/guideProgress'
 
@@ -223,6 +224,14 @@ export default function Dashboard() {
 
   const displayName = user.preferredName || user.firstName
 
+  // Finished readers start over: clear progress, then open the first part
+  async function readAgain(event) {
+    event.preventDefault()
+    await resetGuideProgress()
+    setReadSections(new Set())
+    navigate(`/guide/${guideSections[0].id}`)
+  }
+
   const readCount = guideSections.filter((s) => readSections.has(s.id)).length
   const nextSection = nextUnreadSection(readSections)
 
@@ -282,6 +291,7 @@ export default function Dashboard() {
           <Link
             to={`/guide/${(nextSection || guideSections[0]).id}`}
             className="btn btn--primary guide-start__btn"
+            onClick={nextSection ? undefined : readAgain}
           >
             <span>
               {readCount === 0

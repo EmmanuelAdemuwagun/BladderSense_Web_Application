@@ -134,6 +134,12 @@ updateTracking: (id, data) =>
       body: JSON.stringify({ sectionIds }),
     }),
 
+  // Clears the read list ("Read the Guide Again"). → { readSections: [] }
+  resetGuideProgress: () =>
+    request("/guide-progress", {
+      method: "DELETE",
+    }),
+
   // ============================
   // ADMIN (server enforces admin access on every call)
   // ============================

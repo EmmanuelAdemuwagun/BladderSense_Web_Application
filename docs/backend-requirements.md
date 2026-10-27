@@ -233,13 +233,17 @@ Store it per user as a set of section ids. Valid ids (reject others with
   is a no-op (idempotent). Returns the full set:
   `200 { "readSections": [ … ] }`. The frontend sends one id each time a part
   is opened, and occasionally a batch of ids read before this existed.
+- **`DELETE /guide-progress`** (auth required) — clears the user's set
+  (the "Read the Guide Again" button). `200 { "readSections": [] }`.
+  The frontend waits for this before opening part 1, so the `POST` for part 1
+  always arrives after it.
 - Delete this data with the account (§5.7).
 
 ---
 
 ## 8. Quick checklist for the backend developer
 
-- [ ] 🆕 Implement **`GET` / `POST /api/guide-progress`** (per-user set of read guide parts) — §7a.
+- [ ] 🆕 Implement **`GET` / `POST` / `DELETE /api/guide-progress`** (per-user set of read guide parts) — §7a.
 - [ ] 🆕 Implement **`DELETE /api/profile`** (delete user + all their data, clear cookie) — §5.7.
 - [ ] ⚠️ Confirm the session cookie is **host-only** (no `Domain=…herokuapp.com`), `HttpOnly`, `Secure`, `SameSite=Lax` — §2.
 - [ ] ⚠️ Confirm `POST /auth/verify-login` returns `{ "user": … }` and sets the cookie — §5.5.
