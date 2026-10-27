@@ -170,13 +170,45 @@ export const guideSections = [
         },
         {
           type: 'heading',
+          text: 'Why this matters',
+        },
+        {
+          type: 'paragraph',
+          text: 'Waking frequently at night to urinate (nocturia) can affect:',
+        },
+        {
+          type: 'list',
+          items: [
+            'Sleep quality and daytime energy',
+            'Mood, confidence, and independence',
+            'Risk of falls during night-time toilet trips',
+          ],
+        },
+        {
+          type: 'paragraph',
+          text: 'Night-time urination may be influenced by:',
+        },
+        {
+          type: 'list',
+          items: [
+            'Fluid timing and bladder activity',
+            'Sleep difficulties',
+            'Medications and other health conditions',
+          ],
+        },
+        {
+          type: 'paragraph',
+          text: 'Understanding these factors can help you choose suitable strategies.',
+        },
+        {
+          type: 'heading',
           text: 'Things you can try:',
         },
         {
           type: 'checklist',
           items: [
             'Drink most of your fluids earlier in the day',
-            'Reduce fluid intake in the 2–3 hours before bed',
+            'Drink less fluid in the 2–3 hours before bedtime',
             'Empty your bladder before going to bed',
             'Reduce caffeine in the afternoon and evening',
             'Reduce alcohol intake in the evening',
