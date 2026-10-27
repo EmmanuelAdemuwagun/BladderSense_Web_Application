@@ -445,6 +445,30 @@ export const guideSections = [
         },
         {
           type: 'heading',
+          text: 'Why this matters',
+        },
+        {
+          type: 'paragraph',
+          text: 'Urinary symptoms may increase worry, reduce confidence, and lead to avoiding activities.',
+        },
+        {
+          type: 'paragraph',
+          text: 'Stress and worry may:',
+        },
+        {
+          type: 'list',
+          items: [
+            'Make urgency feel more noticeable',
+            'Disrupt sleep',
+            'Increase muscle tension',
+          ],
+        },
+        {
+          type: 'tip',
+          text: 'Stress and urinary symptoms can reinforce each other. Stress does not cause incontinence on its own but may affect how symptoms are experienced.',
+        },
+        {
+          type: 'heading',
           text: 'Things you can try:',
         },
         {
