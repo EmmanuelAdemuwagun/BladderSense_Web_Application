@@ -764,12 +764,22 @@ export const guideSections = [
         {
           type: 'list',
           items: [
-            'Symptoms getting worse or changing suddenly',
-            'Blood or pain in the urine',
-            'New swelling in the legs, abdomen, or breathlessness',
-            'Sudden inability to pass urine',
+            'Urinary symptoms getting worse or changing suddenly',
+            'Blood in your urine or pain when urinating',
+            'New swelling in the legs or abdomen, or breathlessness',
             'Frequent falls or dizziness',
-            'Concerns about infection or discomfort',
+            'Possible urinary infection or persistent discomfort',
+          ],
+        },
+        {
+          type: 'heading',
+          text: 'Seek urgent medical attention if you experience:',
+        },
+        {
+          type: 'list',
+          items: [
+            'Sudden inability to pass urine',
+            'Sudden or severe breathlessness',
           ],
         },
         {
