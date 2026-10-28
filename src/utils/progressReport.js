@@ -48,7 +48,11 @@ function drawChart(doc, field, days, entryMap, x, y, w, h) {
   doc.setTextColor(NAVY)
   doc.text(field.label, x, y + 4)
 
-  const axisW = 19
+  // Label column only as wide as this chart's longest answer
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(7.5)
+  const axisW =
+    Math.max(...field.options.map((option) => doc.getTextWidth(option))) + 4
   const top = y + 9
   const dayH = 6
   const plotH = h - (top - y) - dayH

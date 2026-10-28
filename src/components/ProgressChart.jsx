@@ -17,7 +17,10 @@ import {
  * Tapping a column spells out that day's answer under the chart.
  */
 const WIDTH = 340
-const AXIS_W = 92
+// Room for the answer labels on the left: sized to this chart's longest
+// label (about 10 units per character at the 17px label size)
+const AXIS_CHAR_W = 10
+const AXIS_PAD = 14
 const TOP = 10
 const PLOT_H = 150
 const DAY_H = 48
@@ -41,6 +44,9 @@ function columnPath(x, y, w, h) {
 export default function ProgressChart({ field, days, entryMap }) {
   const [selected, setSelected] = useState(null)
 
+  const AXIS_W =
+    Math.max(...field.options.map((option) => option.length)) * AXIS_CHAR_W +
+    AXIS_PAD
   const levels = field.options.length
   const step = PLOT_H / levels
   const band = (WIDTH - AXIS_W) / days.length
