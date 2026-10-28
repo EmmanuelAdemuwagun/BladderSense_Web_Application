@@ -324,7 +324,7 @@ export default function Dashboard() {
             <span className="nav-card__desc">
               {trackedToday === true
                 ? "Today's record is saved. Tap to view it."
-                : "Record today's symptoms. It takes about a minute."}
+                : "Track your bladder symptoms and daily habits. It takes about a minute."}
             </span>
             {trackedToday !== null && (
               <span
