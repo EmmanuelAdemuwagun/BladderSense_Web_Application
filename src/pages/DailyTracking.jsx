@@ -411,7 +411,7 @@ export default function DailyTracking() {
           to="/progress"
           className="btn btn--secondary"
         >
-          📈 View My 7-Day Progress
+          📈 View My Progress
         </Link>
 
         {alreadyTracked && (

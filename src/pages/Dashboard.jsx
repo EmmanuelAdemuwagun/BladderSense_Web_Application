@@ -356,11 +356,11 @@ export default function Dashboard() {
               className="nav-card__title"
               style={{ color: '#1a7a3c' }}
             >
-              My 7-Day Progress
+              My Progress
             </span>
 
             <span className="nav-card__desc">
-              See how you have been doing this week
+              See how you have been doing over 7 or 30 days
             </span>
           </span>
 

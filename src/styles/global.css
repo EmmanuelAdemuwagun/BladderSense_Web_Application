@@ -580,7 +580,101 @@ li {
 }
 
 /* Progress page: explains the letters shown inside the day dots */
-/* 7-day column chart on the Progress page (ProgressChart.jsx) */
+/* 7 Days / 30 Days switch on the Progress page */
+.period-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  background: #fff;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius);
+}
+
+.period-toggle__btn {
+  min-height: 52px;
+  border: 0;
+  border-radius: calc(var(--radius) - 4px);
+  background: transparent;
+  color: var(--color-primary);
+  font: inherit;
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.period-toggle__btn--active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* 30-day summary above each chart (PeriodSummary.jsx) */
+.period-summary {
+  margin-bottom: 12px;
+}
+
+.period-summary p {
+  margin: 0 0 8px;
+}
+
+.period-summary__headline {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.period-summary__trend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+}
+
+.period-summary__badge {
+  display: inline-block;
+  padding: 2px 12px;
+  border: 2px solid;
+  border-radius: 20px;
+  background: #fff;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.period-summary__trend-note {
+  font-size: 16px;
+  color: var(--color-text-muted);
+}
+
+.period-summary__counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 17px;
+  color: var(--color-text);
+}
+
+.period-summary__counts li {
+  white-space: nowrap;
+}
+
+.period-summary__dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.period-summary__empty {
+  margin: 0 0 12px;
+  color: var(--color-text-muted);
+}
+
+/* 7- or 30-day column chart on the Progress page (ProgressChart.jsx) */
 .progress-chart {
   margin-bottom: 12px;
 }

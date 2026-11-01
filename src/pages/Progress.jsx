@@ -5,6 +5,7 @@ import Header from '../components/Header'
 import { api } from '../utils/api'
 import { CategoryKey } from '../content/categoryKey'
 import ProgressChart from '../components/ProgressChart'
+import PeriodSummary from '../components/PeriodSummary'
 import { getSessionUser } from '../utils/auth'
 import { downloadProgressReport } from '../utils/progressReport'
 import {
@@ -35,25 +36,25 @@ function getLocalDateString(date = new Date()) {
 }
 
 /*
- * Return the 7 calendar dates for a given week.
+ * Return the calendar dates for one period of `length` days (7 or 30).
  *
- * weekOffset 0 = the current week (ending today)
- * weekOffset 1 = the previous week (ending 7 days ago)
- * weekOffset 2 = two weeks ago, and so on.
+ * offset 0 = the period ending today
+ * offset 1 = the period before that (ending `length` days ago)
+ * offset 2 = the one before that, and so on.
  *
- * This lets the user step back through earlier weeks while the
- * on-screen layout stays exactly the same (always 7 days).
+ * This lets the user step back through earlier periods while the
+ * on-screen layout stays exactly the same.
  */
-function getWeekDays(weekOffset = 0) {
+function getPeriodDays(length, offset = 0) {
   const days = []
 
   const today = new Date()
 
   today.setHours(12, 0, 0, 0)
 
-  const anchor = 7 * weekOffset
+  const anchor = length * offset
 
-  for (let i = 6; i >= 0; i--) {
+  for (let i = length - 1; i >= 0; i--) {
     const d = new Date(today)
 
     d.setDate(
@@ -111,7 +112,11 @@ export default function Progress() {
   const [downloadError, setDownloadError] =
     useState('')
 
-  // 0 = current week; each increment steps one week further back.
+  // Days per period: 7 (a week) or 30 (a month)
+  const [period, setPeriod] =
+    useState(7)
+
+  // 0 = the period ending today; each increment steps one period further back.
   const [weekOffset, setWeekOffset] =
     useState(0)
 
@@ -158,8 +163,8 @@ export default function Progress() {
     }
   }, [])
 
-  const last7 =
-    getWeekDays(weekOffset)
+  const periodDays =
+    getPeriodDays(period, weekOffset)
 
   /*
    * Create a lookup table:
@@ -187,7 +192,7 @@ export default function Progress() {
   })
 
   const trackedCount =
-    last7.filter(
+    periodDays.filter(
       (date) =>
         Boolean(
           entryMap[date]
@@ -198,10 +203,10 @@ export default function Progress() {
     weekOffset === 0
 
   const windowStart =
-    last7[0]
+    periodDays[0]
 
   const windowEnd =
-    last7[last7.length - 1]
+    periodDays[periodDays.length - 1]
 
   // Enable "Previous week" only while there is still older data to show.
   const hasOlderData =
@@ -221,7 +226,7 @@ export default function Progress() {
 
     try {
       await downloadProgressReport({
-        days: last7,
+        days: periodDays,
         entryMap,
         user: getSessionUser(),
       })
@@ -233,6 +238,15 @@ export default function Progress() {
       setDownloading(false)
     }
   }
+
+  function choosePeriod(length) {
+    setPeriod(length)
+    setWeekOffset(0)
+    setDownloadError('')
+  }
+
+  const isWeek =
+    period === 7
 
   function goPreviousWeek() {
     setWeekOffset(
@@ -250,7 +264,7 @@ export default function Progress() {
   return (
     <>
       <Header
-        title="My 7-Day Progress"
+        title={`My ${period}-Day Progress`}
         backTo="/daily-tracking"
       />
 
@@ -290,6 +304,27 @@ export default function Progress() {
               </div>
             )}
 
+            {/* 7 days or 30 days */}
+            <div
+              className="period-toggle mb-md"
+              role="group"
+              aria-label="Show progress for"
+            >
+              {[7, 30].map((length) => (
+                <button
+                  key={length}
+                  type="button"
+                  className={`period-toggle__btn${
+                    period === length ? ' period-toggle__btn--active' : ''
+                  }`}
+                  aria-pressed={period === length}
+                  onClick={() => choosePeriod(length)}
+                >
+                  {length} Days
+                </button>
+              ))}
+            </div>
+
             {/* Summary */}
             <div
               className="card card--compact mb-md"
@@ -308,8 +343,10 @@ export default function Progress() {
                 }}
               >
                 {isCurrentWeek
-                  ? 'Last 7 Days'
-                  : 'Earlier Week'}
+                  ? `Last ${period} Days`
+                  : isWeek
+                    ? 'Earlier Week'
+                    : 'Earlier 30 Days'}
               </p>
 
               <p
@@ -333,7 +370,7 @@ export default function Progress() {
                     'var(--font-size-sm)',
                 }}
               >
-                {trackedCount} of 7 days recorded
+                {trackedCount} of {period} days recorded
               </p>
             </div>
 
@@ -351,7 +388,7 @@ export default function Progress() {
                 className="btn btn--secondary"
                 onClick={goPreviousWeek}
                 disabled={!hasOlderData}
-                aria-label="Show the previous week"
+                aria-label={isWeek ? 'Show the previous week' : 'Show the previous 30 days'}
                 style={{
                   flex: 1,
                   minHeight: 54,
@@ -359,7 +396,7 @@ export default function Progress() {
                     'var(--font-size-base)',
                 }}
               >
-                ◀ Previous week
+                {isWeek ? '◀ Previous week' : '◀ Previous 30 days'}
               </button>
 
               <button
@@ -367,7 +404,7 @@ export default function Progress() {
                 className="btn btn--secondary"
                 onClick={goNextWeek}
                 disabled={isCurrentWeek}
-                aria-label="Show the next week"
+                aria-label={isWeek ? 'Show the next week' : 'Show the next 30 days'}
                 style={{
                   flex: 1,
                   minHeight: 54,
@@ -375,15 +412,17 @@ export default function Progress() {
                     'var(--font-size-base)',
                 }}
               >
-                Next week ▶
+                {isWeek ? 'Next week ▶' : 'Next 30 days ▶'}
               </button>
             </div>
 
             {trackedCount === 0 && (
               <div className="alert alert--info mb-md">
                 {isCurrentWeek
-                  ? 'No entries yet for the last 7 days. Start tracking today to see your progress here.'
-                  : 'No entries were recorded during this week.'}
+                  ? `No entries yet for the last ${period} days. Start tracking today to see your progress here.`
+                  : isWeek
+                    ? 'No entries were recorded during this week.'
+                    : 'No entries were recorded during these 30 days.'}
               </div>
             )}
 
@@ -452,9 +491,18 @@ export default function Progress() {
                     </span>
                   </div>
 
+                  {/* 30 days: a short summary above the chart */}
+                  {!isWeek && (
+                    <PeriodSummary
+                      field={field}
+                      days={periodDays}
+                      entryMap={entryMap}
+                    />
+                  )}
+
                   <ProgressChart
                     field={field}
-                    days={last7}
+                    days={periodDays}
                     entryMap={entryMap}
                   />
 
@@ -561,17 +609,19 @@ export default function Progress() {
             )}
 
             {/* Notes */}
-            {last7.some(
+            {periodDays.some(
               (date) =>
                 entryMap[date]
                   ?.notes
             ) && (
               <div className="card card--compact mb-md">
                 <h3 className="mb-md">
-                  📝 Your Notes This Week
+                  {isWeek
+                    ? '📝 Your Notes This Week'
+                    : '📝 Your Notes for These 30 Days'}
                 </h3>
 
-                {last7
+                {periodDays
                   .filter(
                     (date) =>
                       entryMap[

@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import {
   STATUS_COLORS,
+  dayMonth,
   getStatus,
   getStatusColor,
   shortDate,
 } from '../content/progressFields'
 
 /*
- * Seven-day column chart for one tracked item.
+ * Column chart of one tracked item over a period (7 or 30 days).
  *
  * Answers are ordered (e.g. None < Small < Moderate < Large), so each
  * answer gets its own gridline, labelled on the left, and a column rises to
@@ -15,6 +16,9 @@ import {
  * column, so "0" or "None" never looks the same as a day with no record.
  * Column colour is the same Good / Fair / Needs work colour as the legend.
  * Tapping a column spells out that day's answer under the chart.
+ *
+ * Over 7 days every day is labelled; over longer periods there is no room,
+ * so only every 7th day (counting back from the last) gets a date.
  */
 const WIDTH = 340
 // Room for the answer labels on the left: sized to this chart's longest
@@ -24,11 +28,12 @@ const AXIS_PAD = 14
 const TOP = 10
 const PLOT_H = 150
 const DAY_H = 48
-const BAR_W = 24
+const MAX_BAR_W = 24
 const RADIUS = 4
+const WEEK = 7
 
 function columnPath(x, y, w, h) {
-  const r = Math.min(RADIUS, h)
+  const r = Math.min(RADIUS, h, w / 3)
   // Rounded top, square at the baseline
   return [
     `M${x},${y + h}`,
@@ -51,6 +56,8 @@ export default function ProgressChart({ field, days, entryMap }) {
   const step = PLOT_H / levels
   const band = (WIDTH - AXIS_W) / days.length
   const baseline = TOP + PLOT_H
+  const barW = Math.min(MAX_BAR_W, band * 0.6)
+  const everyDay = days.length <= WEEK
 
   // y of the gridline for answer index i (0 = lowest answer)
   const levelY = (i) => baseline - step * (i + 1)
@@ -70,7 +77,7 @@ export default function ProgressChart({ field, days, entryMap }) {
       <svg
         viewBox={`0 0 ${WIDTH} ${baseline + DAY_H}`}
         role="img"
-        aria-label={`${field.label}, last 7 days. ${summary}`}
+        aria-label={`${field.label}, ${days.length} days. ${summary}`}
       >
         {/* Gridline and label for every possible answer */}
         {field.options.map((option, i) => (
@@ -108,6 +115,11 @@ export default function ProgressChart({ field, days, entryMap }) {
           const cx = AXIS_W + band * d + band / 2
           const [weekday, dayNum] = shortDate(date).split(' ')
           const isSelected = selected === date
+          const showDate = everyDay || (days.length - 1 - d) % WEEK === 0
+          // Long periods: "28" over "Oct" at weekly ticks
+          const [tickDay, tickMonth] = dayMonth(date).split(' ')
+          // Keep the last date label inside the chart's right edge
+          const labelX = everyDay ? cx : Math.min(cx, WIDTH - 18)
 
           return (
             <g
@@ -130,40 +142,56 @@ export default function ProgressChart({ field, days, entryMap }) {
               {idx >= 0 ? (
                 <path
                   d={columnPath(
-                    cx - BAR_W / 2,
+                    cx - barW / 2,
                     levelY(idx),
-                    BAR_W,
+                    barW,
                     baseline - levelY(idx)
                   )}
                   fill={getStatusColor(value, field)}
                 />
               ) : (
-                <text
-                  x={cx}
-                  y={baseline - 8}
-                  textAnchor="middle"
-                  className="progress-chart__missing"
-                >
-                  –
-                </text>
+                // A dash is too busy across 30 days; the gap says enough there
+                everyDay && (
+                  <text
+                    x={cx}
+                    y={baseline - 8}
+                    textAnchor="middle"
+                    className="progress-chart__missing"
+                  >
+                    –
+                  </text>
+                )
               )}
 
-              <text
-                x={cx}
-                y={baseline + 20}
-                textAnchor="middle"
-                className="progress-chart__day-label"
-              >
-                {weekday}
-              </text>
-              <text
-                x={cx}
-                y={baseline + 40}
-                textAnchor="middle"
-                className="progress-chart__day-num"
-              >
-                {dayNum}
-              </text>
+              {showDate && (
+                <>
+                  {!everyDay && (
+                    <line
+                      x1={cx}
+                      x2={cx}
+                      y1={baseline}
+                      y2={baseline + 5}
+                      className="progress-chart__baseline"
+                    />
+                  )}
+                  <text
+                    x={labelX}
+                    y={baseline + 20}
+                    textAnchor="middle"
+                    className="progress-chart__day-label"
+                  >
+                    {everyDay ? weekday : tickDay}
+                  </text>
+                  <text
+                    x={labelX}
+                    y={baseline + 40}
+                    textAnchor="middle"
+                    className="progress-chart__day-num"
+                  >
+                    {everyDay ? dayNum : tickMonth}
+                  </text>
+                </>
+              )}
             </g>
           )
         })}
