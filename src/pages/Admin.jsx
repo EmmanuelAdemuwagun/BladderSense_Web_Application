@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-do
 import Header from '../components/Header'
 import AdminNoAccess from '../components/AdminNoAccess'
 import { api } from '../utils/api'
-import { formatDay, formatShortDay, formatDateTime, fullName, handleAuthError } from '../utils/admin'
+import { formatDay, formatShortDay, formatDateTime, formatLastSeen, fullName, handleAuthError } from '../utils/admin'
 import Email from '../components/Email'
 
 const STATUS_OPTIONS = [
@@ -12,6 +12,30 @@ const STATUS_OPTIONS = [
   { value: 'unverified', label: 'Unverified' },
   { value: 'admin', label: 'Admins' },
 ]
+
+// Sent to the API as `sort`; the server orders the whole list
+const SORT_OPTIONS = [
+  { value: '', label: 'Newest members first' },
+  { value: 'lastLogin', label: 'Last signed in' },
+  { value: 'lastEntry', label: 'Latest tracking entry' },
+]
+
+/*
+ * Also order the page we got back, newest first, so the list reads right
+ * even if the server doesn't yet support sorting (it then sorts by join date
+ * and only each page's order can be fixed here). Never-signed-in users and
+ * users with no entries go last.
+ */
+function sortUsers(users, sort) {
+  const key = { lastLogin: 'lastLoginAt', lastEntry: 'lastEntryDate' }[sort]
+  if (!key) return users
+  return [...users].sort((a, b) => {
+    if (!a[key] && !b[key]) return 0
+    if (!a[key]) return 1
+    if (!b[key]) return -1
+    return String(b[key]).localeCompare(String(a[key]))
+  })
+}
 
 const PAGE_SIZE = 20
 
@@ -117,6 +141,10 @@ function UserRow({ user }) {
             )}
           </span>
 
+          <span className="admin-user__seen">
+            Last sign-in: <strong>{formatLastSeen(user.lastLoginAt)}</strong>
+          </span>
+
           <span className="admin-user__meta">
             {user.entryCount} {user.entryCount === 1 ? 'entry' : 'entries'}
             {' · '}last entry {formatDay(user.lastEntryDate)}
@@ -137,6 +165,7 @@ function Users({ onForbidden }) {
   const page = Math.max(1, Number(params.get('page')) || 1)
   const status = params.get('status') || ''
   const search = params.get('search') || ''
+  const sort = params.get('sort') || ''
 
   const [searchInput, setSearchInput] = useState(search)
   const [data, setData] = useState(null)
@@ -183,7 +212,7 @@ function Users({ onForbidden }) {
     setError('')
 
     api
-      .adminListUsers({ page, limit: PAGE_SIZE, search, status })
+      .adminListUsers({ page, limit: PAGE_SIZE, search, status, sort })
       .then((result) => {
         if (mounted) setData(result)
       })
@@ -199,10 +228,10 @@ function Users({ onForbidden }) {
     return () => {
       mounted = false
     }
-  }, [page, search, status, reloadKey, navigate, onForbidden])
+  }, [page, search, status, sort, reloadKey, navigate, onForbidden])
 
   const pagination = data?.pagination
-  const users = data?.users || []
+  const users = sortUsers(data?.users || [], sort)
 
   return (
     <section className="card card--compact" aria-labelledby="admin-users-title">
@@ -232,6 +261,18 @@ function Users({ onForbidden }) {
           onChange={(e) => updateParams({ status: e.target.value, page: 1 })}
         >
           {STATUS_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+
+        <label className="form-label" htmlFor="admin-sort">Sort by</label>
+        <select
+          id="admin-sort"
+          className="form-input"
+          value={sort}
+          onChange={(e) => updateParams({ sort: e.target.value, page: 1 })}
+        >
+          {SORT_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>{option.label}</option>
           ))}
         </select>

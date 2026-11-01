@@ -34,6 +34,33 @@ export function formatDateTime(value, fallback = '—') {
   })
 }
 
+/*
+ * When someone last signed in, in plain words: "Today, 14:32",
+ * "Yesterday, 09:10", "Mon, 10:05" within the last week, otherwise the
+ * full date and time.
+ */
+export function formatLastSeen(value, fallback = 'Never') {
+  if (!value) return fallback
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return fallback
+
+  const time = date.toLocaleTimeString(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+  const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate())
+  const daysAgo = Math.round(
+    (startOfDay(new Date()) - startOfDay(date)) / 86400000
+  )
+
+  if (daysAgo === 0) return `Today, ${time}`
+  if (daysAgo === 1) return `Yesterday, ${time}`
+  if (daysAgo > 1 && daysAgo < 7) {
+    return `${date.toLocaleDateString(undefined, { weekday: 'long' })}, ${time}`
+  }
+  return formatDateTime(value, fallback)
+}
+
 export function fullName(user) {
   if (!user) return ''
   return [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email

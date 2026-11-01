@@ -2149,6 +2149,11 @@ li {
   overflow-wrap: anywhere;
 }
 
+.admin-user__seen {
+  font-size: 16px;
+  color: var(--color-text);
+}
+
 .admin-user__meta {
   font-size: 15px;
   color: var(--color-text-muted);

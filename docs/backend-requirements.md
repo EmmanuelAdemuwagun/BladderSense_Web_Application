@@ -241,9 +241,27 @@ Store it per user as a set of section ids. Valid ids (reject others with
 
 ---
 
+## 7b. Admin user list sorting 🆕
+
+**`GET /admin/users`** (admin only) — existing endpoint; the admin page now
+also sends **`sort`**:
+
+| `sort` | Order |
+|---|---|
+| *(missing)* or `joined` | newest members first (current behaviour) |
+| `lastLogin` | most recent `last_login_at` first; never signed in last |
+| `lastEntry` | most recent tracking entry first; no entries last |
+
+Accept only these values (anything else → `joined`) so nothing from the
+query string reaches the SQL. Until this ships, the page still sorts each
+page of results itself, so it's only wrong across pages.
+
+---
+
 ## 8. Quick checklist for the backend developer
 
-- [ ] 🆕 Implement **`GET` / `POST` / `DELETE /api/guide-progress`** (per-user set of read guide parts) — §7a.
+- [ ] 🆕 Support **`?sort=lastLogin|lastEntry|joined`** on `GET /api/admin/users` — §7b.
+- [x] Implement **`GET` / `POST` / `DELETE /api/guide-progress`** (per-user set of read guide parts) — §7a.
 - [ ] 🆕 Implement **`DELETE /api/profile`** (delete user + all their data, clear cookie) — §5.7.
 - [ ] ⚠️ Confirm the session cookie is **host-only** (no `Domain=…herokuapp.com`), `HttpOnly`, `Secure`, `SameSite=Lax` — §2.
 - [ ] ⚠️ Confirm `POST /auth/verify-login` returns `{ "user": … }` and sets the cookie — §5.5.
